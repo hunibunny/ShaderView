@@ -10,13 +10,13 @@
 import SwiftUI
 
 
-struct MetalSwiftUIView: View {
+public struct MetalSwiftUIView: View {
     #if os(macOS)
-    var body: some View {
+    public var body: some View {
         MetalNSViewRepresentable()
     }
     #else
-    var body: some View {
+    public var body: some View {
         MetalUIViewRepresentable()
     }
     #endif
