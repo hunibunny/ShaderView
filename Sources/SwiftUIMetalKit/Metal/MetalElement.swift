@@ -7,11 +7,20 @@
 
 import MetalKit
 
-
+//default MTKView containig MetalElement, shape of square from -1 to 1 on both x and y
 #if os(macOS)
-class MetalElement: MTKView, MetalElementProtocol {
+public class MetalElement: MTKView, MetalElementProtocol {
+    var viewWidth: Int!
+    
+    var viewHeight: Int!
+    
+    
+    var vertexShaderName: String!
+    
+    var fragmentShaderName: String!
+    
     func commonInit() {
-        
+    
     }
     
     var commandQueue: MTLCommandQueue!
@@ -24,10 +33,11 @@ class MetalElement: MTKView, MetalElementProtocol {
     
     var elapsedTime: Float = 0.0
     
-   
+    
 }
+
 #else
-class MetalElement: MTKView, MetalElementProtocol {
+public class MetalElement: MTKView, MetalElementProtocol {
     // Your default implementation for iOS.
     func commonInit() {
         defaultInit()
