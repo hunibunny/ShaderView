@@ -76,6 +76,20 @@ extension MetalConfigurable where Self: MTKView {
                 return
             }
 
+            //setting up stuff for scaling
+            let aspectRatio = Float(drawableSize.width) / Float(drawableSize.height)
+            var shaderWidth: Float = 1.0
+            var shaderHeight: Float = 1.0
+            
+            if shouldScaleByDimensions {
+                if aspectRatio > 1 { // landscape or square
+                    shaderHeight /= aspectRatio
+                } else { // portrait
+                    shaderWidth *= aspectRatio
+                }
+            }
+            
+            let iResolution = SIMD3<Float>(shaderWidth, shaderHeight, 0)
             
             let commandBuffer = commandQueue.makeCommandBuffer()!
             let renderPassDescriptor = self.currentRenderPassDescriptor!
@@ -89,8 +103,13 @@ extension MetalConfigurable where Self: MTKView {
                 elapsedTime = Float(Date().timeIntervalSince(startTime!))
             }
         
+            
+            
+            
+            
             //var input = ShaderInput(iTime: elapsedTime, iResolution: SIMD3<Float>(Float(viewWidth), Float(viewHeight), 0))
-
+            //var input = ShaderInput(iTime: elapsedTime, iResolution: iResolution)
+            
             var input = ShaderInput(iTime: elapsedTime, iResolution: SIMD3<Float>(Float(drawableSize.width), Float(drawableSize.height), 0))
             let buffer = device.makeBuffer(bytes: &input, length: MemoryLayout<ShaderInput>.size, options: [])
            
@@ -121,10 +140,4 @@ extension MetalConfigurable where Self: MTKView {
        
 }
 
-import simd
-
-struct ShaderInput {
-    var iTime: Float
-    var iResolution: vector_float3
-}
 //what gets passed to shader

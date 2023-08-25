@@ -20,7 +20,7 @@ protocol MetalConfigurable {
     var fragmentShaderName: String! {get set}
     var viewWidth: Int! {get set}
     var viewHeight: Int! {get set}
-
+    var shouldScaleByDimensions: Bool! {get set}
     //func commonInit()
 
 }
