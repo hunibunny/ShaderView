@@ -7,17 +7,25 @@
 
 //alternative name metalview wrapper
 
+
 import SwiftUI
 
-
 public struct MetalSwiftUIView: View {
-    #if os(macOS)
-    public var body: some View {
-        MetalNSViewRepresentable()
+    let fragmentShaderName: String
+    let shouldScaleByDimensions: Bool
+
+    public init(fragmentShaderName: String, shouldScaleByDimensions: Bool = false) {
+        self.fragmentShaderName = fragmentShaderName
+        self.shouldScaleByDimensions = shouldScaleByDimensions
     }
-    #else
+
     public var body: some View {
-        MetalUIViewRepresentable()
+        GeometryReader { geometry in
+            #if os(macOS)
+                MetalNSViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
+            #else
+                MetalUIViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
+            #endif
+        }
     }
-    #endif
 }

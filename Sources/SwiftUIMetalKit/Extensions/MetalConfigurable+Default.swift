@@ -69,7 +69,7 @@ extension MetalConfigurable where Self: MTKView {
              1.0,  1.0, 0.0, 1.0, // Top right corner
         ]
         
-        
+        //default render
         func render() {
             guard let drawable = currentDrawable else {
                 print("No drawable")
@@ -88,10 +88,15 @@ extension MetalConfigurable where Self: MTKView {
             } else {
                 elapsedTime = Float(Date().timeIntervalSince(startTime!))
             }
+        
+            //var input = ShaderInput(iTime: elapsedTime, iResolution: SIMD3<Float>(Float(viewWidth), Float(viewHeight), 0))
 
             var input = ShaderInput(iTime: elapsedTime, iResolution: SIMD3<Float>(Float(drawableSize.width), Float(drawableSize.height), 0))
             let buffer = device.makeBuffer(bytes: &input, length: MemoryLayout<ShaderInput>.size, options: [])
+           
+
             renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
+            //passes data to shader
             
 
             let dataSize = vertices.count * MemoryLayout.size(ofValue: vertices[0])
@@ -122,3 +127,4 @@ struct ShaderInput {
     var iTime: Float
     var iResolution: vector_float3
 }
+//what gets passed to shader
