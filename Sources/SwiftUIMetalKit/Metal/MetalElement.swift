@@ -57,7 +57,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
         fatalError("init(coder:) has not been implemented")
     }
     func commonInit() {
-        defaultInit()
+        defaultInit() //renders etc other functions inside the metalelement protocol
     }
 }
 #endif

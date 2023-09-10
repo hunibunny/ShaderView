@@ -41,7 +41,7 @@
         let viewSize: CGSize
         let fragmentShaderName: String
         let shouldScaleByDimensions: Bool
-        public typealias NSViewType = MetalElement
+        public typealias UIViewType = MetalElement
         
         public init(viewSize: CGSize, fragmentShaderName: String, shouldScaleByDimensions: Bool) {
             self.viewSize = viewSize
@@ -49,7 +49,7 @@
             self.shouldScaleByDimensions = shouldScaleByDimensions
         }
 
-        public func makeUIView(context: Context) -> NSViewType {
+        public func makeUIView(context: Context) -> UIViewType {
             let metalElement = MetalElement(fragmentShaderName: fragmentShaderName)
             metalElement.viewWidth = Int(viewSize.width)
             metalElement.viewHeight = Int(viewSize.height)
