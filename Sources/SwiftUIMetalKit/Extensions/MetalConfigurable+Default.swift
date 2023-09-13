@@ -11,6 +11,8 @@ import MetalKit
 
 //lays the default methods of an element which can use metal on it, thus laying out how metal is displayed on mtkView
 
+//provide a way to send new data to shader after launch
+
 extension MetalConfigurable where Self: MTKView {
     mutating func defaultInit() {
         //fix this weird layout if functions to something more readable and usdable
@@ -98,21 +100,24 @@ extension MetalConfigurable where Self: MTKView {
             let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
             renderEncoder.setRenderPipelineState(renderPipelineState)
             
+            /*
             if startTime == nil {
                 startTime = Date()
             } else {
                 elapsedTime = Float(Date().timeIntervalSince(startTime!))
             }
         
-            
+            */
             
             
             
             //var input = ShaderInput(iTime: elapsedTime, iResolution: SIMD3<Float>(Float(viewWidth), Float(viewHeight), 0))
             //var input = ShaderInput(iTime: elapsedTime, iResolution: iResolution)
             
-            var input = ShaderInput(iTime: elapsedTime, iResolution: SIMD3<Float>(Float(drawableSize.width), Float(drawableSize.height), 0))
-            let buffer = device.makeBuffer(bytes: &input, length: MemoryLayout<ShaderInput>.size, options: [])
+            //most recent one var input = ShaderInput(iTime: elapsedTime, iResolution: SIMD3<Float>(Float(drawableSize.width), Float(drawableSize.height), 0))
+            
+            
+            let buffer = device.makeBuffer(bytes: &shaderInput, length: MemoryLayout<ShaderInput>.size, options: [])
            
 
             renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)

@@ -22,7 +22,7 @@ internal protocol MetalConfigurable {
     var viewHeight: Int! {get set}
     var shouldScaleByDimensions: Bool! {get set}
     //func commonInit() or defaultinit?
-
+    var shaderInput: ShaderInput? {get set}
 }
 
 //
