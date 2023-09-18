@@ -9,7 +9,7 @@
 import SwiftUI
 //import simd
 
-struct ShaderInput {
+public struct ShaderInput {
     var iTime: Float
     var iResolution: SIMD3<Float>
     
