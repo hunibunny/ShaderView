@@ -14,19 +14,22 @@
         
         let viewSize: CGSize
         let fragmentShaderName: String
+        let vertexShaderName: String
         let shouldScaleByDimensions: Bool
         
-        public init(viewSize: CGSize, fragmentShaderName: String, shouldScaleByDimensions: Bool) {
+        
+        public init(viewSize: CGSize, fragmentShaderName: String, vertexShaderName: String, shouldScaleByDimensions: Bool) {
             self.viewSize = viewSize
             self.fragmentShaderName = fragmentShaderName
+            self.vertexShaderName = vertexShaderName
             self.shouldScaleByDimensions = shouldScaleByDimensions
         }
 
         public func makeNSView(context: Context) -> NSViewType {
-            let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
+            let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
             metalElement.viewWidth = Int(viewSize.width)
             metalElement.viewHeight = Int(viewSize.height)
-            metalElement.commonInit()
+            //metalElement.commonInit()
             return metalElement
         }
 
@@ -58,8 +61,6 @@
             return metalElement
         }
         
-      //updateuiveiw missing, idk if it will be needed or not
-        
-    }
-
-    #endif
+      //updateuiveiw missing, idk if it will be needed or not        
+}
+#endif
