@@ -14,23 +14,21 @@ internal protocol MetalConfigurable {
     var commandQueue: MTLCommandQueue! { get set }
     var renderPipelineState: MTLRenderPipelineState? { get set }
     var outputTexture: MTLTexture? { get set }
-    //var startTime: Date? { get set }  //not necessary
-    //var elapsedTime: Float { get set }  //not necessary
     var vertexShaderName: String! {get set}
     var fragmentShaderName: String! {get set}
     var viewWidth: Int! {get set}
     var viewHeight: Int! {get set}
     var shouldScaleByDimensions: Bool! {get set}
-    //func commonInit() or defaultinit?
+ 
     var shaderInput: ShaderInput? {get set}
-    //default square vertices
     var vertices: [Float] { get }
    
-    mutating func createOutputTexture()
-    mutating func render()
-    mutating func draw(_ rect: CGRect)
+    func createOutputTexture()
+    func render()
 }
 
 //
-
-    
+//default square vertices
+//func commonInit() or defaultinit?
+//var startTime: Date? { get set }  //not necessary
+//var elapsedTime: Float { get set }  //not necessary

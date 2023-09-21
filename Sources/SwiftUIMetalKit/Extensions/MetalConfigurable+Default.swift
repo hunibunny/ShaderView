@@ -12,6 +12,7 @@ import MetalKit
 //lays the default methods of an element which can use metal on it, thus laying out how metal is displayed on mtkView
 
 //provide a way to send new data to shader after launch
+//these extension finctions wont ever be used becayse they only work if owner extends mtkview :)
 
 extension MetalConfigurable where Self: MTKView {
     mutating func defaultInit() {
@@ -19,9 +20,7 @@ extension MetalConfigurable where Self: MTKView {
         guard let device = MTLCreateSystemDefaultDevice() else {
             fatalError("Metal is not supported on this device")
         }
-        
-        
-        
+    
         //self.device = device probably unnecessary
         //self.commandQueue = device.makeCommandQueue() //remove this if will keep the other one in the definiotn of self
         
@@ -46,11 +45,6 @@ extension MetalConfigurable where Self: MTKView {
             fatalError("Failed to create pipeline state, error: \(error)")
         }
         self.createOutputTexture()
-    }
-        
-        
-    mutating func draw(_ rect: CGRect) {
-        render()
     }
 
     mutating func createOutputTexture() {

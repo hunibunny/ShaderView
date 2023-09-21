@@ -37,6 +37,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
 }
 
 */
+//should the name be smht else
 public class MetalElement: MTKView, MetalElementProtocol {
     var shouldScaleByDimensions: Bool!
     var shaderInput: ShaderInput?
@@ -59,15 +60,94 @@ public class MetalElement: MTKView, MetalElementProtocol {
         super.init(frame: .zero, device: MTLCreateSystemDefaultDevice())//device probably sholdsnt be nil here, that makes no sense :)
         self.commandQueue = device?.makeCommandQueue()//standard practice to call here according to chat gpt
         assert(self.commandQueue != nil, "Failed to create a command queue. Ensure device is properly initialized and available.")
-        commonInit()
+        
+        //metalinit starts from here
+        guard let device = MTLCreateSystemDefaultDevice() else {
+            fatalError("Metal is not supported on this device")
+        }
+      
+        
+        let library = device.makeDefaultLibrary()!
+        let vertexFunction = library.makeFunction(name: vertexShaderName) // metal vertex shader
+        let fragmentFunction = library.makeFunction(name: fragmentShaderName) // name of metal fragment function
+        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.vertexFunction = vertexFunction
+        pipelineDescriptor.fragmentFunction = fragmentFunction
+        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        do {
+            self.renderPipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        } catch let error {
+            fatalError("Failed to create pipeline state, error: \(error)")
+        }
+        self.createOutputTexture()
+    
     }
     required init(coder: NSCoder) {
         super.init(coder: coder)
-        commonInit()
+        
         //fatalError("init(coder:) has not been implemented")
     }
-    func commonInit(){
-        defaultInit()
+    func createOutputTexture() {
+        let descriptor = MTLTextureDescriptor()
+        descriptor.width = viewWidth
+        descriptor.height = viewHeight
+        descriptor.pixelFormat = .rgba32Float
+        descriptor.usage = [.shaderWrite, .shaderRead]
+            
+        outputTexture = device?.makeTexture(descriptor: descriptor)
+    }
+    
+    func render() {
+        guard let drawable = currentDrawable else {
+        print("No drawable")
+        return
+        }
+            //setting up stuff for scaling
+            let aspectRatio = Float(drawableSize.width) / Float(drawableSize.height)
+            var shaderWidth: Float = 1.0
+            var shaderHeight: Float = 1.0
+            
+            if shouldScaleByDimensions {
+                if aspectRatio > 1 { // landscape or square
+                    shaderHeight /= aspectRatio
+                } else { // portrait
+                    shaderWidth *= aspectRatio
+                }
+            }
+            
+            let iResolution = SIMD3<Float>(shaderWidth, shaderHeight, 0)//currently not in use :)
+            
+            let commandBuffer = commandQueue.makeCommandBuffer()!
+            let renderPassDescriptor = self.currentRenderPassDescriptor!
+            renderPassDescriptor.colorAttachments[0].texture = drawable.texture
+            let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
+            renderEncoder.setRenderPipelineState(renderPipelineState!)
+            
+          
+            
+            let buffer = device?.makeBuffer(bytes: &shaderInput, length: MemoryLayout<ShaderInput>.size, options: [])
+           
+
+            renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
+            //passes data to shader
+            
+
+            let dataSize = vertices.count * MemoryLayout.size(ofValue: vertices[0])
+            let vertexBuffer = device?.makeBuffer(bytes: vertices, length: dataSize, options: [])
+
+            renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+
+            // Draw first triangle (bottom-left to top-right)
+            renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+
+            // Draw second triangle (top-right to bottom-left)
+            renderEncoder.drawPrimitives(type: .triangle, vertexStart: 1, vertexCount: 3)
+
+            renderEncoder.endEncoding()
+
+            commandBuffer.present(drawable)
+            commandBuffer.commit()
+        
     }
 }
 //#endif
