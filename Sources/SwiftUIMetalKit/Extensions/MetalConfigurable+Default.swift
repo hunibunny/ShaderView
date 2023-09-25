@@ -13,7 +13,34 @@ import MetalKit
 
 //provide a way to send new data to shader after launch
 //these extension finctions wont ever be used becayse they only work if owner extends mtkview :)
-
+/*
+extension MetalConfigurable{
+    var vertices: [Float] {
+        get { return [//is this the standard layout of vertices for displaying metal :)
+            -1.0, -1.0, 0.0, 1.0, // Bottom left corner
+            1.0, -1.0, 0.0, 1.0, // Bottom right corner
+            -1.0,  1.0, 0.0, 1.0, // Top left corner
+            1.0,  1.0, 0.0, 1.0, // Top right corner
+            ]
+        }
+        
+    }
+}
+*/
+/*
+ extension Identifiable {
+     var id: Int {
+         get { return identifiableComponent.id }
+         set { identifiableComponent.id = newValue }
+     }
+     var name: String {
+         get { return identifiableComponent.name }
+         set { identifiableComponent.name = newValue }
+     }
+ }
+ */
+/*
+ 
 extension MetalConfigurable where Self: MTKView {
     mutating func defaultInit() {
         //fix this weird layout if functions to something more readable and usdable
@@ -121,7 +148,7 @@ extension MetalConfigurable where Self: MTKView {
         ]
     }
 }
-
+*/
 /*
 if startTime == nil {
     startTime = Date()

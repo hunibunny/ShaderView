@@ -39,6 +39,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
 */
 //should the name be smht else
 public class MetalElement: MTKView, MetalElementProtocol {
+    var vertices: [Float]
     var shouldScaleByDimensions: Bool!
     var shaderInput: ShaderInput?
     var viewWidth: Int!
@@ -57,7 +58,12 @@ public class MetalElement: MTKView, MetalElementProtocol {
         self.vertexShaderName = vertexShaderName
         self.viewWidth = 100;
         self.viewHeight = 100;
-        super.init(frame: .zero, device: MTLCreateSystemDefaultDevice())//device probably sholdsnt be nil here, that makes no sense :)
+        self.vertices = [//is this the standard layout of vertices for displaying metal :)
+                -1.0, -1.0, 0.0, 1.0, // Bottom left corner
+                1.0, -1.0, 0.0, 1.0, // Bottom right corner
+                -1.0,  1.0, 0.0, 1.0, // Top left corner
+                1.0,  1.0, 0.0, 1.0] // Top right corner
+        super.init(frame: .zero, device: MTLCreateSystemDefaultDevice())
         self.commandQueue = device?.makeCommandQueue()//standard practice to call here according to chat gpt
         assert(self.commandQueue != nil, "Failed to create a command queue. Ensure device is properly initialized and available.")
         
@@ -82,8 +88,15 @@ public class MetalElement: MTKView, MetalElementProtocol {
         self.createOutputTexture()
     
     }
+    
+   
     required init(coder: NSCoder) {
-        super.init(coder: coder)
+        self.vertices = [//is this the standard layout of vertices for displaying metal :)
+                -1.0, -1.0, 0.0, 1.0, // Bottom left corner
+                1.0, -1.0, 0.0, 1.0, // Bottom right corner
+                -1.0,  1.0, 0.0, 1.0, // Top left corner
+                1.0,  1.0, 0.0, 1.0] // Top right corner
+        super.init(coder: coder) //jank here with required to dfene vertices twice :D funny haha
         
         //fatalError("init(coder:) has not been implemented")
     }
@@ -116,7 +129,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
             }
             
             let iResolution = SIMD3<Float>(shaderWidth, shaderHeight, 0)//currently not in use :)
-            
+            // i wonder where i wanted to put this one :D
             let commandBuffer = commandQueue.makeCommandBuffer()!
             let renderPassDescriptor = self.currentRenderPassDescriptor!
             renderPassDescriptor.colorAttachments[0].texture = drawable.texture

@@ -12,7 +12,7 @@ import XCTest
 @testable import SwiftUIMetalKit
 
 
-
+/*
 class MockMetalObject: MetalConfigurable {
     var commandQueue: MTLCommandQueue!
     
@@ -84,3 +84,4 @@ class MetalConfigurableTests: XCTestCase {
     }
     
 }
+*/
