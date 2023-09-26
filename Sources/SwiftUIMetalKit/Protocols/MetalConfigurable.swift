@@ -13,22 +13,33 @@ import Metal
 
 //think about splitting this into 2 protocols like gtp recommended, idk if needed or will work tho
 //thin if i really need both get and set or just i can have lazy ones instead of get and set
-internal protocol MetalConfigurable {
-    var commandQueue: MTLCommandQueue! { get set }
-    var renderPipelineState: MTLRenderPipelineState? { get set }
-    var outputTexture: MTLTexture? { get set }
-    var vertexShaderName: String! {get set}
-    var fragmentShaderName: String! {get set}
-    var viewWidth: Int! {get set}
-    var viewHeight: Int! {get set}
-    var shouldScaleByDimensions: Bool! {get set}
- 
-    var shaderInput: ShaderInput? {get set}
-    var vertices: [Float] { get }
+internal protocol ShaderConfigurable {
+    var vertexShaderName: String? { get set }
+    var fragmentShaderName: String { get set }
+    var shaderInput: ShaderInput? { get set }
+}
 
-    func createOutputTexture()
+internal protocol RenderingConfigurable {
+    var renderPipelineState: MTLRenderPipelineState? { get set }
+    var vertices: [Float] { get }
     func render()
 }
+
+internal protocol TextureConfigurable {
+    var outputTexture: MTLTexture? { get set }
+    func createOutputTexture()
+}
+
+internal protocol ViewConfigurable {
+    var commandQueue: MTLCommandQueue! { get set }
+    var viewWidth: Int { get set }
+    var viewHeight: Int { get set }
+    var shouldScaleByDimensions: Bool { get set }
+}
+
+// If a class needs all of the functionalities:
+internal typealias MetalConfigurable = ShaderConfigurable & RenderingConfigurable & TextureConfigurable & ViewConfigurable
+
 
 //
 //default square vertices

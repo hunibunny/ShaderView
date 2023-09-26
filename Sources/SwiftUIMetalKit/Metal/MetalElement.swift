@@ -39,30 +39,29 @@ public class MetalElement: MTKView, MetalElementProtocol {
 */
 //should the name be smht else
 public class MetalElement: MTKView, MetalElementProtocol {
-    var vertices: [Float]
-    var shouldScaleByDimensions: Bool!
+    var vertexShaderName: String?
+    var fragmentShaderName: String = "Default name :D (maybe throw error here?)"
+    var viewWidth: Int = 100
+    var viewHeight: Int = 100
+    var shouldScaleByDimensions: Bool = true
+    var vertices: [Float] = [//is this the standard layout of vertices for displaying metal :)
+        -1.0, -1.0, 0.0, 1.0, // Bottom left corner
+        1.0, -1.0, 0.0, 1.0, // Bottom right corner
+        -1.0,  1.0, 0.0, 1.0, // Top left corner
+        1.0,  1.0, 0.0, 1.0] // Top right corner
     var shaderInput: ShaderInput?
-    var viewWidth: Int!
-    var viewHeight: Int!
     var commandQueue: MTLCommandQueue!
     var renderPipelineState: MTLRenderPipelineState?
     var outputTexture: MTLTexture?
     var startTime: Date?
     var elapsedTime: Float = 0.0
-    var fragmentShaderName: String!
-    var vertexShaderName: String!
     
-    public init(fragmentShaderName: String, vertexShaderName: String, shouldScaleByDimensions: Bool = true) {
+    init(fragmentShaderName: String, vertexShaderName: String?, shouldScaleByDimensions: Bool = true) {
         self.shouldScaleByDimensions = shouldScaleByDimensions
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
         self.viewWidth = 100;
         self.viewHeight = 100;
-        self.vertices = [//is this the standard layout of vertices for displaying metal :)
-                -1.0, -1.0, 0.0, 1.0, // Bottom left corner
-                1.0, -1.0, 0.0, 1.0, // Bottom right corner
-                -1.0,  1.0, 0.0, 1.0, // Top left corner
-                1.0,  1.0, 0.0, 1.0] // Top right corner
         super.init(frame: .zero, device: MTLCreateSystemDefaultDevice())
         self.commandQueue = device?.makeCommandQueue()//standard practice to call here according to chat gpt
         assert(self.commandQueue != nil, "Failed to create a command queue. Ensure device is properly initialized and available.")
@@ -72,9 +71,17 @@ public class MetalElement: MTKView, MetalElementProtocol {
             fatalError("Metal is not supported on this device")
         }
       
-        
         let library = device.makeDefaultLibrary()!
-        let vertexFunction = library.makeFunction(name: vertexShaderName) // metal vertex shader
+        
+        let vertexFunction: MTLFunction?
+        if let shaderName = vertexShaderName { //
+            let library = device.makeDefaultLibrary()
+            vertexFunction = library?.makeFunction(name: shaderName)
+        } else {
+            let sourceLibrary = try? device.makeLibrary(source: ShaderLibrary.basicVertexFunction, options: nil)
+            vertexFunction = sourceLibrary?.makeFunction(name: "basic_vertex_function")
+        }
+        
         let fragmentFunction = library.makeFunction(name: fragmentShaderName) // name of metal fragment function
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction
@@ -88,16 +95,8 @@ public class MetalElement: MTKView, MetalElementProtocol {
         self.createOutputTexture()
     
     }
-    
-   
     required init(coder: NSCoder) {
-        self.vertices = [//is this the standard layout of vertices for displaying metal :)
-                -1.0, -1.0, 0.0, 1.0, // Bottom left corner
-                1.0, -1.0, 0.0, 1.0, // Bottom right corner
-                -1.0,  1.0, 0.0, 1.0, // Top left corner
-                1.0,  1.0, 0.0, 1.0] // Top right corner
-        super.init(coder: coder) //jank here with required to dfene vertices twice :D funny haha
-        
+        super.init(coder: coder)
         //fatalError("init(coder:) has not been implemented")
     }
     func createOutputTexture() {

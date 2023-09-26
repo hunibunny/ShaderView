@@ -7,8 +7,6 @@
 
 import AppKit
 
-
-
 #if os(macOS)
 typealias MetalCompatibleView = NSView
 #else
