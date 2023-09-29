@@ -11,6 +11,7 @@
 import AppKit
 typealias MetalCompatibleView = NSView
 #else
+import UIKit
 typealias MetalCompatibleView = UIView
 #endif
 
