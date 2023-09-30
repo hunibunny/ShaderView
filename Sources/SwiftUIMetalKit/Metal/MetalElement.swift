@@ -154,3 +154,10 @@ public class MetalElement: MTKView, MetalElementProtocol {
     }
 }
 //#endif
+
+
+//increase clarity with extensions :)
+//extension MetalElement: ShaderHandling { /* ... */ }
+//extension MetalElement: RenderManagement { /* ... */ }
+//extension MetalElement: ResourceManagement { /* ... */ }
+
