@@ -62,21 +62,6 @@ public struct MetalSwiftUIView: View {
 
 //for more control over stopping and starting shader if thought it will be needed
 /*
- class ShaderViewModel: ObservableObject {
-     let shaderDidStart = PassthroughSubject<Void, Never>()
-     let shaderDidStop = PassthroughSubject<Void, Never>()
-     
-     func startShader() {
-         // Start your shader
-         shaderDidStart.send()
-     }
-     
-     func stopShader() {
-         // Stop your shader
-         shaderDidStop.send()
-     }
- }
-
  Custom Bindings: Allow users to pass in bindings to your view, which can be updated based on shader lifecycle events. This is useful for two-way communication.
 
  Delegate Pattern: Although SwiftUI largely moves away from delegation in favor of more reactive patterns, you can still use a delegate approach if it fits better with your architecture.

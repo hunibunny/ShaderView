@@ -7,7 +7,6 @@
 
 
 import SwiftUI
-//import simd
 
 public struct ShaderInput: ShaderInputProtocol{
     

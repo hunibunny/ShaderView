@@ -6,37 +6,7 @@
 //
 
 import MetalKit
-/*
-//default MTKView containig MetalElement, shape of square from -1 to 1 on both x and y
-#if os(macOS)
-public class MetalElement: MTKView, MetalElementProtocol {
-    var shaderInput: ShaderInput?
-    var viewWidth: Int!
-    var viewHeight: Int!
-    var commandQueue: MTLCommandQueue!
-    var renderPipelineState: MTLRenderPipelineState!
-    var outputTexture: MTLTexture!
-    var startTime: Date?
-    var elapsedTime: Float = 0.0
-    var fragmentShaderName: String!
-    var vertexShaderName: String!
-    var shouldScaleByDimensions: Bool!
-    
-    public init(fragmentShaderName: String, shouldScaleByDimensions: Bool = true) {
-        self.shouldScaleByDimensions = shouldScaleByDimensions
-        self.fragmentShaderName = fragmentShaderName
-        super.init(frame: .zero, device: nil)
-        defaultInit()
-    }
-    required init(coder: NSCoder) {
-        super.init(coder: coder)
-        defaultInit()
-        //fatalError("init(coder:) has not been implemented")
-    }
-   
-}
 
-*/
 //should the name be smht else
 public class MetalElement: MTKView, MetalElementProtocol {
     var vertexShaderName: String?
