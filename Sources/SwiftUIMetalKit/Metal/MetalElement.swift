@@ -56,7 +56,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
     var startTime: Date?
     var elapsedTime: Float = 0.0
     
-    init(fragmentShaderName: String, vertexShaderName: String?, shouldScaleByDimensions: Bool = true) {
+    init(fragmentShaderName: String, vertexShaderName: String, shouldScaleByDimensions: Bool = true) {
         self.shouldScaleByDimensions = shouldScaleByDimensions
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
@@ -70,19 +70,10 @@ public class MetalElement: MTKView, MetalElementProtocol {
         guard let device = MTLCreateSystemDefaultDevice() else {
             fatalError("Metal is not supported on this device")
         }
-      
-        let library = device.makeDefaultLibrary()!
+        let vertexFunction = ShaderLibrary.shared.retrieveShader(forKey: vertexShaderName)
+        let fragmentFunction = ShaderLibrary.shared.retrieveShader(forKey: fragmentShaderName)
         
-        let vertexFunction: MTLFunction?
-        if let shaderName = vertexShaderName { //
-            let library = device.makeDefaultLibrary()
-            vertexFunction = library?.makeFunction(name: shaderName)
-        } else {
-            let sourceLibrary = try? device.makeLibrary(source: ShaderLibrary.basicVertexFunction, options: nil)
-            vertexFunction = sourceLibrary?.makeFunction(name: "basic_vertex_function")
-        }
-        
-        let fragmentFunction = library.makeFunction(name: fragmentShaderName) // name of metal fragment function
+        //let fragmentFunction = library.makeFunction(name: fragmentShaderName) // name of metal fragment function
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction

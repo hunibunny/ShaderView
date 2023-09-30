@@ -12,6 +12,7 @@ import Metal
 //this is only for me, not for others hehe
 internal class ShaderLibrary {
     static let shared = ShaderLibrary()
+    private let metalLibrary: MTLLibrary
     
     private var shaderCache: [String: MTLFunction] = [:]
     
@@ -27,8 +28,13 @@ internal class ShaderLibrary {
     }
     """
     private init() {
-        compileAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragment")
-        compileAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertex")
+        guard let device = MTLCreateSystemDefaultDevice(),
+                      let library = device.makeDefaultLibrary() else {
+                    fatalError("Failed to initialize Metal library")
+        }
+        self.metalLibrary = library
+        compileAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragmentShader")
+        compileAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertexShader")
     }
     
     private func compileAndStore(shaderSource: String, forKey key: String) {
@@ -47,6 +53,18 @@ internal class ShaderLibrary {
     func retrieveShader(forKey key: String) -> MTLFunction? {
         return shaderCache[key]
     }
+    
+    func makeFunction(name: String) -> MTLFunction {
+        if let shaderFunction = metalLibrary.makeFunction(name: name) {
+            return shaderFunction
+        } else {
+            assert(false, "Failed to compile the provided shader. Please ensure your custom shader is correctly defined.")
+            // Force unwrapping here because the default shaders are foundational to the package.
+            // If they are absent, the entire functionality is compromised.
+            return retrieveShader(forKey: "defaultFragmentShader")!
+        }
+    }
+
 }
 
 //ShaderLibrary.shared.store(shader: someShader, forKey: "basicVertex")

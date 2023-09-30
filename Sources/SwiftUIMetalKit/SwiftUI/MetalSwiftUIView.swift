@@ -9,19 +9,30 @@
 
 
 import SwiftUI
+import MetalKit
 
 public struct MetalSwiftUIView: View {
     let fragmentShaderName: String
     let vertexShaderName: String
     var shouldScaleByDimensions: Bool = true
 
-    public init(fragmentShaderName: String, vertexShaderName: String, shouldScaleByDimensions: Bool = false) {
-        self.fragmentShaderName = fragmentShaderName
-        self.vertexShaderName = vertexShaderName
+    public init(fragmentShaderName: String?, vertexShaderName: String?, shouldScaleByDimensions: Bool = false) {
         self.shouldScaleByDimensions = shouldScaleByDimensions
+        if let name = fragmentShaderName {
+            self.fragmentShaderName = name
+            let shader = ShaderLibrary.shared.makeFunction(name: name)
+            ShaderLibrary.shared.store(shader: shader, forKey: name)
+        } else {
+            self.fragmentShaderName = "defaultFragmentShader"
+        }
+        if let name = vertexShaderName {
+            self.vertexShaderName = name
+            let shader = ShaderLibrary.shared.makeFunction(name: name)
+            ShaderLibrary.shared.store(shader: shader, forKey: name)
+        } else {
+            self.vertexShaderName = "defaultVertexShader"
+        }
     }
-    //Then you'd need to pass this setting down to the appropriate rendering layer, in this case, the MetalConfigurable+Default.swift instance that does the rendering. You could make this an instance variable of the class/protocol and set it appropriately when the view is created/updated.
-    
     public var body: some View {
         GeometryReader { geometry in
             #if os(macOS)
