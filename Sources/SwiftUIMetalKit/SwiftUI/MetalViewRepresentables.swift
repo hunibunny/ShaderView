@@ -25,6 +25,7 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
         self.shouldScaleByDimensions = shouldScaleByDimensions
     }
 
+    //will not work untill this one /mobile one gets called automatically or manually, need to decide which one iwant to do :)
     public func makeNSView(context: Context) -> NSViewType {
         let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
         metalElement.viewWidth = Int(viewSize.width)
