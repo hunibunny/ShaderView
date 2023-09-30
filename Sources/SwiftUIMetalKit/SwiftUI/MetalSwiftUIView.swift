@@ -11,7 +11,9 @@
 import SwiftUI
 import MetalKit
 
+@available(macOS 11.0, *)
 public struct MetalSwiftUIView: View {
+    @StateObject private var viewModel = ShaderViewModel()
     let fragmentShaderName: String
     let vertexShaderName: String
     var shouldScaleByDimensions: Bool = true
@@ -41,5 +43,41 @@ public struct MetalSwiftUIView: View {
                 MetalUIViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
             #endif
         }
+        
+        /*
+         public var body: some View {
+                MetalUIViewRepresentable(viewModel: viewModel)
+                    .onAppear {
+                        viewModel.startShader()
+                    }
+                    .onDisappear {
+                        viewModel.stopShader()
+                    }
+            }
+         */
+        
     }
 }
+
+
+//for more control over stopping and starting shader if thought it will be needed
+/*
+ class ShaderViewModel: ObservableObject {
+     let shaderDidStart = PassthroughSubject<Void, Never>()
+     let shaderDidStop = PassthroughSubject<Void, Never>()
+     
+     func startShader() {
+         // Start your shader
+         shaderDidStart.send()
+     }
+     
+     func stopShader() {
+         // Stop your shader
+         shaderDidStop.send()
+     }
+ }
+
+ Custom Bindings: Allow users to pass in bindings to your view, which can be updated based on shader lifecycle events. This is useful for two-way communication.
+
+ Delegate Pattern: Although SwiftUI largely moves away from delegation in favor of more reactive patterns, you can still use a delegate approach if it fits better with your architecture.
+ */
