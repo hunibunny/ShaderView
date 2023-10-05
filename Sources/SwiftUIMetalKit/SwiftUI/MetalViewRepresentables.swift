@@ -68,8 +68,7 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
         return metalElement
     }
 
-    /*
-    func updateUIView(_ uiView: MTKView, context: Context) {
+    public func updateUIView(_ uiView: MetalElement, context: Context) {
         /*
         if viewModel.isRunning {
             uiView.startShader()
@@ -77,7 +76,6 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
             uiView.stopShader()
         }*/
     }
-     */
  
 }
 #endif
