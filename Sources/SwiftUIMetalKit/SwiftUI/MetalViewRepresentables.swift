@@ -48,6 +48,7 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
 public struct MetalUIViewRepresentable: UIViewRepresentable {
     let viewSize: CGSize
     let fragmentShaderName: String
+    let vertexShaderName: String
     let shouldScaleByDimensions: Bool
     public typealias UIViewType = MetalElement
     
@@ -67,7 +68,7 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
         return metalElement
     }
 
-    
+    /*
     func updateUIView(_ uiView: MTKView, context: Context) {
         /*
         if viewModel.isRunning {
@@ -76,6 +77,7 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
             uiView.stopShader()
         }*/
     }
+     */
  
 }
 #endif

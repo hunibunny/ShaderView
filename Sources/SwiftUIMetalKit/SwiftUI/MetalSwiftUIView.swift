@@ -11,6 +11,7 @@
 import SwiftUI
 import MetalKit
 
+@available(iOS 14.0, *)
 @available(macOS 11.0, *)
 public struct MetalSwiftUIView: View {
     @StateObject private var viewModel = ShaderViewModel()
