@@ -88,7 +88,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
                 }
             }
             
-            let iResolution = SIMD3<Float>(shaderWidth, shaderHeight, 0)//currently not in use :)
+            //let iResolution = SIMD3<Float>(shaderWidth, shaderHeight, 0)//currently not in use :)
             // i wonder where i wanted to put this one :D
             let commandBuffer = commandQueue.makeCommandBuffer()!
             let renderPassDescriptor = self.currentRenderPassDescriptor!
