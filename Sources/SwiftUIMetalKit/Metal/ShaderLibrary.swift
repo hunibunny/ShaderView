@@ -8,12 +8,13 @@
 import Foundation
 import Metal
 
-
+// Manages storage, retrieval, and usage of compiled shaders.
 //todo: check why default shaders don't compile :)
 internal class ShaderLibrary {
     static let shared = ShaderLibrary()
    
     private let metalLibrary: MTLLibrary
+    //let device: MTLDevice
     
     private var shaderCache: [String: MTLFunction] = [:]
     
@@ -39,6 +40,11 @@ internal class ShaderLibrary {
     
  
     private init() {
+        /*
+        guard let validDevice = MetalManager.shared.device else {
+            fatalError("Metal is not supported on this device.")
+        }
+        self.device = validDevice*/
         guard let device = MTLCreateSystemDefaultDevice(),
               let library = device.makeDefaultLibrary() else {
                     fatalError("Failed to initialize Metal library")
@@ -84,3 +90,45 @@ internal class ShaderLibrary {
 //let retrievedShader = ShaderLibrary.shared.retrieveShader(forKey: "basicVertex")
 
 
+/*
+ class ShaderLibrary {
+     static let shared = ShaderLibrary()
+     let device: MTLDevice
+     
+     private init() {
+         guard let validDevice = MetalManager.shared.device else {
+             fatalError("Metal is not supported on this device.")
+         }
+         self.device = validDevice
+         // Other setup code...
+     }
+     
+     // Additional code...
+ }
+
+ */
+
+/*
+ class ThreadSafeShaderLibrary {
+     static let shared = ThreadSafeShaderLibrary()
+     
+     private let accessQueue = DispatchQueue(label: "com.example.shaderlibrary.access")
+     private var _shader: MTLFunction?
+     
+     var shader: MTLFunction? {
+         get {
+             return accessQueue.sync {
+                 return _shader
+             }
+         }
+         set {
+             accessQueue.sync {
+                 _shader = newValue
+             }
+         }
+     }
+     
+     // Other code...
+ }
+
+ */
