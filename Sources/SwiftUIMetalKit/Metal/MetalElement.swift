@@ -25,6 +25,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
     var outputTexture: MTLTexture?
     var startTime: Date?
     var elapsedTime: Float = 0.0
+
     
     init(fragmentShaderName: String, vertexShaderName: String, shouldScaleByDimensions: Bool = true) {
         self.shouldScaleByDimensions = shouldScaleByDimensions
@@ -32,14 +33,18 @@ public class MetalElement: MTKView, MetalElementProtocol {
         self.vertexShaderName = vertexShaderName
         self.viewWidth = 100;
         self.viewHeight = 100;
-        super.init(frame: .zero, device: MTLCreateSystemDefaultDevice())
-        self.commandQueue = device?.makeCommandQueue()//standard practice to call here according to chat gpt
+        guard let device = DeviceManager.shared.device else {
+                fatalError("Metal is not supported on this device")
+            }
+        super.init(frame: .zero, device: device)
+        self.commandQueue = device.makeCommandQueue()//standard practice to call here according to chat gpt
         assert(self.commandQueue != nil, "Failed to create a command queue. Ensure device is properly initialized and available.")
         
         //metalinit starts from here
+        /* not needed anymore since we have singleton for it
         guard let device = MTLCreateSystemDefaultDevice() else {
             fatalError("Metal is not supported on this device")
-        }
+        }*/
         let vertexFunction = ShaderLibrary.shared.retrieveShader(forKey: vertexShaderName)
         let fragmentFunction = ShaderLibrary.shared.retrieveShader(forKey: fragmentShaderName)
         
@@ -48,11 +53,13 @@ public class MetalElement: MTKView, MetalElementProtocol {
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        
         do {
             self.renderPipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
         } catch let error {
             fatalError("Failed to create pipeline state, error: \(error)")
         }
+        //self.renderPipelineState = device?.makeRenderPipelineState(descriptor: pipelineDescriptor)
         self.createOutputTexture()
     
     }

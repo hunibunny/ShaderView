@@ -57,6 +57,7 @@ internal class ShaderLibrary {
  
     
     private func compileAndStore(shaderSource: String, forKey key: String) {
+        //this part should be moved to shadercompiler
         guard let device = MTLCreateSystemDefaultDevice(),
               let library = try? device.makeLibrary(source: shaderSource, options: nil),
               let shaderFunction = library.makeFunction(name: key) else {
