@@ -10,7 +10,7 @@ import Metal
 
 // Manages the compilation of shader source code into usable shaders.
 class ShaderCompiler {
-    static let shared = ShaderCompiler(device: DeviceManager.shared.device)
+    //static let shared = ShaderCompiler(device: DeviceManager.shared.device)
 
     
     let device: MTLDevice
