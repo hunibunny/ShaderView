@@ -16,6 +16,8 @@ internal class ShaderLibrary {
     private let metalLibrary: MTLLibrary
     //let device: MTLDevice
     
+    private let shaderCompiler = ShaderCompiler(device: MTLCreateSystemDefaultDevice()) // Or whatever device you need
+        
     private var shaderCache: [String: MTLFunction] = [:]
     
     // default shaders in the case user doesnt provide anything and is just trying out stuff
@@ -50,12 +52,12 @@ internal class ShaderLibrary {
                     fatalError("Failed to initialize Metal library")
         }
         self.metalLibrary = library
-        compileAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragmentShader")
-        compileAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertexShader")
+        compileFromStringAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragmentShader")
+        compileFromStringAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertexShader")
     }
     
  
-    
+    /*
     private func compileAndStore(shaderSource: String, forKey key: String) {
         //this part should be moved to shadercompiler
         guard let device = MTLCreateSystemDefaultDevice(),
@@ -64,7 +66,20 @@ internal class ShaderLibrary {
             fatalError("Failed to compile and store shader for key \(key)")
         }
         shaderCache[key] = shaderFunction
-    }
+    }*/
+    
+    
+    //asunch version
+    private func compileFromStringAndStore(shaderSource: String, forKey key: String) {
+            shaderCompiler.compileShaderSource(shaderSource, key: key) { [weak self] (shaderFunction) in
+                guard let shaderFunction = shaderFunction else {
+                    fatalError("Failed to compile and store shader for key \(key)")
+                }
+                DispatchQueue.main.async {
+                    self?.shaderCache[key] = shaderFunction
+                }
+            }
+        }
     
     func store(shader: MTLFunction, forKey key: String) {
         shaderCache[key] = shader
