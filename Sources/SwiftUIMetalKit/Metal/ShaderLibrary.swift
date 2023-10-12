@@ -14,9 +14,9 @@ internal class ShaderLibrary {
     static let shared = ShaderLibrary()
    
     private let metalLibrary: MTLLibrary
-    //let device: MTLDevice
+    let device: MTLDevice = DeviceManager.shared.device! //if its nil it already would have crashed
     
-    private let shaderCompiler = ShaderCompiler(device: MTLCreateSystemDefaultDevice()) // Or whatever device you need
+    private let shaderCompiler: ShaderCompiler  // Or whatever device you need
         
     private var shaderCache: [String: MTLFunction] = [:]
     
@@ -47,11 +47,11 @@ internal class ShaderLibrary {
             fatalError("Metal is not supported on this device.")
         }
         self.device = validDevice*/
-        guard let device = MTLCreateSystemDefaultDevice(),
-              let library = device.makeDefaultLibrary() else {
+        guard let library = device.makeDefaultLibrary() else {
                     fatalError("Failed to initialize Metal library")
         }
         self.metalLibrary = library
+        self.shaderCompiler = ShaderCompiler(library: library)
         compileFromStringAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragmentShader")
         compileFromStringAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertexShader")
     }
@@ -71,7 +71,7 @@ internal class ShaderLibrary {
     
     //asunch version
     private func compileFromStringAndStore(shaderSource: String, forKey key: String) {
-            shaderCompiler.compileShaderSource(shaderSource, key: key) { [weak self] (shaderFunction) in
+            shaderCompiler.compileShaderAsync(shaderSource, key: key) { [weak self] (shaderFunction) in
                 guard let shaderFunction = shaderFunction else {
                     fatalError("Failed to compile and store shader for key \(key)")
                 }

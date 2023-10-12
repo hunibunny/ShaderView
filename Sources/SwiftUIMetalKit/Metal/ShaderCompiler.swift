@@ -13,21 +13,17 @@ class ShaderCompiler {
     //static let shared = ShaderCompiler(device: DeviceManager.shared.device)
 
     
-    let device: MTLDevice
+    let device: MTLDevice = DeviceManager.shared.device!  //i should really remove the optionality lol
+    let library: MTLLibrary
     
-    init(device: MTLDevice?) {
-        guard let validDevice = device else {
-            fatalError("Metal is not supported on this device.")
-        }
-        self.device = validDevice
+    init(library: MTLLibrary) {
+        self.library = library
         
     }
     
-    func compileShaderSource(_ source: String, key: String, completion: @escaping (MTLFunction?) -> ()) {
+    func compileShaderAsync(_ source: String, key: String, completion: @escaping (MTLFunction?) -> ()) {
             DispatchQueue.global().async {
-                guard let device = MTLCreateSystemDefaultDevice(),
-                      let library = try? device.makeLibrary(source: source, options: nil),
-                      let shaderFunction = library.makeFunction(name: key) else {
+                guard let shaderFunction = self.library.makeFunction(name: key) else {
                     completion(nil)
                     return
                 }
