@@ -18,7 +18,12 @@ internal class ShaderLibrary {
     
     private let shaderCompiler: ShaderCompiler  // Or whatever device you need
         
-    private var shaderCache: [String: MTLFunction] = [:]
+    enum ShaderState {
+        case compiling
+        case compiled(MTLFunction)
+    }
+    
+    private var shaderCache: [String: ShaderState] = [:]
     
     // default shaders in the case user doesnt provide anything and is just trying out stuff
     static let defaultVertexShader: String = """
@@ -40,13 +45,9 @@ internal class ShaderLibrary {
     return blackToWhite * blueToWhite;}
     """
     
+  
  
     private init() {
-        /*
-        guard let validDevice = MetalManager.shared.device else {
-            fatalError("Metal is not supported on this device.")
-        }
-        self.device = validDevice*/
         guard let library = device.makeDefaultLibrary() else {
                     fatalError("Failed to initialize Metal library")
         }
@@ -56,38 +57,64 @@ internal class ShaderLibrary {
         compileFromStringAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertexShader")
     }
     
- 
-    /*
-    private func compileAndStore(shaderSource: String, forKey key: String) {
-        //this part should be moved to shadercompiler
-        guard let device = MTLCreateSystemDefaultDevice(),
-              let library = try? device.makeLibrary(source: shaderSource, options: nil),
-              let shaderFunction = library.makeFunction(name: key) else {
-            fatalError("Failed to compile and store shader for key \(key)")
-        }
-        shaderCache[key] = shaderFunction
-    }*/
-    
-    
-    //asunch version
+
     private func compileFromStringAndStore(shaderSource: String, forKey key: String) {
             shaderCompiler.compileShaderAsync(shaderSource, key: key) { [weak self] (shaderFunction) in
                 guard let shaderFunction = shaderFunction else {
                     fatalError("Failed to compile and store shader for key \(key)")
                 }
                 DispatchQueue.main.async {
-                    self?.shaderCache[key] = shaderFunction
+                    //self?.shaderCache[key] = shaderFunction
+                    self?.store(shader: shaderFunction, forKey: key)
                 }
             }
         }
     
+    
+    func store(shader: MTLFunction, forKey key: String) {
+            shaderCache[key] = .compiled(shader)
+        }
+    /*
     func store(shader: MTLFunction, forKey key: String) {
         shaderCache[key] = shader
     }
+    */
+    func retrieveShader(forKey key: String) -> MTLFunction? {
+        guard let shaderState = shaderCache[key] else {
+            // Handle error: Shader doesn't exist
+            fatalError("Shader for key \(key) does not exist.")
+        }
+        
+        switch shaderState {
+        case .compiling:
+            // Handle waiting logic: wait until the shader is compiled
+            let semaphore = DispatchSemaphore(value: 0)
+            var shader: MTLFunction?
+            DispatchQueue.global().async {
+                while true {
+                    if case let .compiled(compiledShader)? = self.shaderCache[key] {
+                        shader = compiledShader
+                        semaphore.signal()
+                        break
+                    }
+                    // Optional: Sleep for a small amount of time to reduce active waiting
+                    usleep(1000)  // 1ms
+                }
+            }
+            semaphore.wait()
+            return shader
+            
+        case .compiled(let compiledShader):
+            // The shader is compiled, return it directly
+            return compiledShader
+        }
+    }
+
     
+    /*
     func retrieveShader(forKey key: String) -> MTLFunction? {
         return shaderCache[key]
-    }
+    }*/
     
     func makeFunction(name: String) -> MTLFunction {
         if let shaderFunction = metalLibrary.makeFunction(name: name) {
@@ -102,49 +129,3 @@ internal class ShaderLibrary {
 
 }
 
-//ShaderLibrary.shared.store(shader: someShader, forKey: "basicVertex")
-//let retrievedShader = ShaderLibrary.shared.retrieveShader(forKey: "basicVertex")
-
-
-/*
- class ShaderLibrary {
-     static let shared = ShaderLibrary()
-     let device: MTLDevice
-     
-     private init() {
-         guard let validDevice = MetalManager.shared.device else {
-             fatalError("Metal is not supported on this device.")
-         }
-         self.device = validDevice
-         // Other setup code...
-     }
-     
-     // Additional code...
- }
-
- */
-
-/*
- class ThreadSafeShaderLibrary {
-     static let shared = ThreadSafeShaderLibrary()
-     
-     private let accessQueue = DispatchQueue(label: "com.example.shaderlibrary.access")
-     private var _shader: MTLFunction?
-     
-     var shader: MTLFunction? {
-         get {
-             return accessQueue.sync {
-                 return _shader
-             }
-         }
-         set {
-             accessQueue.sync {
-                 _shader = newValue
-             }
-         }
-     }
-     
-     // Other code...
- }
-
- */
