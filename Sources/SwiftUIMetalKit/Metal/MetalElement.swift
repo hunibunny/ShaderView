@@ -37,6 +37,14 @@ public class MetalElement: MTKView, MetalElementProtocol {
     var startTime: Date?
     var elapsedTime: Float = 0.0
 
+    /*
+     let vertexDescriptor = MTLVertexDescriptor()
+     vertexDescriptor.attributes[0].format = .float4
+     vertexDescriptor.attributes[0].offset = 0
+     vertexDescriptor.attributes[0].bufferIndex = 0
+     // other configurations...
+
+     */
     
     init(fragmentShaderName: String, vertexShaderName: String, shouldScaleByDimensions: Bool = true) {
         self.shouldScaleByDimensions = shouldScaleByDimensions
