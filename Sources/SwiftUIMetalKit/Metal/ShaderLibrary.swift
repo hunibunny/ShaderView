@@ -28,7 +28,7 @@ internal class ShaderLibrary {
     
     // default shaders in the case user doesnt provide anything and is just trying out stuff
     static let defaultVertexShader: String = """
-    fragment float4 defaultFragmentShader() {
+    fragment float4 defaultVertexShader() {
         return float4(1.0, 1.0, 1.0, 1.0); // RGBA for white
     }
     """
