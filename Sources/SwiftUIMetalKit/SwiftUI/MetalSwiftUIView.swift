@@ -23,15 +23,15 @@ public struct MetalSwiftUIView: View {
         self.shouldScaleByDimensions = shouldScaleByDimensions
         if let name = fragmentShaderName {
             self.fragmentShaderName = name
-            let shader = ShaderLibrary.shared.makeFunction(name: name)
-            ShaderLibrary.shared.store(shader: shader, forKey: name)
+            //let shader = ShaderLibrary.shared.makeFunction(name: name)
+            //ShaderLibrary.shared.store(shader: shader, forKey: name)
         } else {
             self.fragmentShaderName = "defaultFragmentShader"
         }
         if let name = vertexShaderName {
             self.vertexShaderName = name
-            let shader = ShaderLibrary.shared.makeFunction(name: name)
-            ShaderLibrary.shared.store(shader: shader, forKey: name)
+            //let shader = ShaderLibrary.shared.makeFunction(name: name)
+            //ShaderLibrary.shared.store(shader: shader, forKey: name)
         } else {
             self.vertexShaderName = "defaultVertexShader"
         }
