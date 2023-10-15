@@ -7,6 +7,7 @@
 
 import Foundation
 import Metal
+import os.log
 
 // Manages the compilation of shader source code into usable shaders.
 class ShaderCompiler {
@@ -27,6 +28,7 @@ class ShaderCompiler {
                 completion(.failure(.functionCreationFailed("Failed to create shader function with key: \(key)")))
                 return
             }
+            os_log("Successfully created a shader with key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
             completion(.success(shaderFunction))
         }
     }
