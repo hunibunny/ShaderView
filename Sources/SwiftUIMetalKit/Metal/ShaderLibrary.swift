@@ -147,7 +147,7 @@ internal class ShaderLibrary {
         if let shaderFunction = metalLibrary.makeFunction(name: name) {
             return shaderFunction
         } else {
-            assert(false, "Failed to compile the provided shader. Please ensure your custom shader is correctly defined.")
+            assert(false, "Failed to compile the provided shader \(name). Please ensure your custom shader is correctly defined.")
             // Force unwrapping here because the default shaders are foundational to the package.
             // If they are absent, the entire functionality is compromised.
             return retrieveShader(forKey: "defaultFragmentShader")!
