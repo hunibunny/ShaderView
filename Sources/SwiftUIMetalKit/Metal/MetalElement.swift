@@ -19,6 +19,17 @@ public class MetalElement: MTKView, MetalElementProtocol {
         1.0, -1.0, 0.0, 1.0, // Bottom right corner
         -1.0,  1.0, 0.0, 1.0, // Top left corner
         1.0,  1.0, 0.0, 1.0] // Top right corner
+    
+    /*
+     var vertices: [Float] = [ //should be the same as previous one but i need to double check that  the other one works 
+         -1,  1,  0,    // triangle 1
+          1, -1,  0,
+         -1, -1,  0,
+         -1,  1,  0,    // triangle 2
+          1,  1,  0,
+          1, -1,  0
+       ]
+     */
     var shaderInput: ShaderInput?
     var commandQueue: MTLCommandQueue!
     var renderPipelineState: MTLRenderPipelineState?

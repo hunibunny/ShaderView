@@ -27,10 +27,15 @@ internal class ShaderLibrary {
     
     // default shaders in the case user doesnt provide anything and is just trying out stuff
     static let defaultVertexShader: String = """
+    vertex float4 defaultVertexShader(device float3 *vertices [[ buffer (0) ]], uint vertexID [[ vertex_id ]]){ return float4(vertices[vertexID], 1);}
+    """
+                                        
+    
+    /*"""
     vertex float4 defaultVertexShader(const device float4 *vertices [[ buffer(0) ]], uint vid [[ vertex_id ]]) {
         return vertices[vid];
     }
-    """
+    """*/
     /*
     static let defaultFragmentShader: String = """
     fragment float4 defaultFragmentShader() {
@@ -45,7 +50,12 @@ internal class ShaderLibrary {
     return blackToWhite * blueToWhite;}
     """
     
-  
+  /*
+   vertex float4 basic_vertex_shader (device float3 *vertices [[ buffer (0) ]],
+                                      uint vertexID [[ vertex_id ]]){
+        return float4(vertices[vertexID], 1);
+   }
+   */
  
     private init() {
         guard let library = device.makeDefaultLibrary() else {
