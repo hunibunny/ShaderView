@@ -7,6 +7,7 @@
 
 import Foundation
 import Metal
+import os.log
 
 // Manages storage, retrieval, and usage of compiled shaders.
 //todo: check why default shaders don't compile :)
@@ -85,6 +86,15 @@ internal class ShaderLibrary {
     }
     
     func store(shader: MTLFunction, forKey key: String) {
+        /*
+         if /* shader already exists for the key */ {
+             os_log("Overwriting shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
+         }
+         // Your storage logic
+         os_log("Stored shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
+
+         */
+            os_log("Storing shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
             shaderCache[key] = .compiled(shader)
         }
     /*
@@ -93,8 +103,10 @@ internal class ShaderLibrary {
     }
     */
     func retrieveShader(forKey key: String) -> MTLFunction? {
+        os_log("Retrieving shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
         guard let shaderState = shaderCache[key] else {
             // Handle error: Shader doesn't exist
+            os_log("Shader for key %{PUBLIC}@ not found!", log: OSLog.default, type: .error, key)
             fatalError("Shader for key \(key) does not exist.")
         }
         
