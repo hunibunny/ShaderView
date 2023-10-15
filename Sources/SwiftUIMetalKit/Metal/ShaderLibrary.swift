@@ -27,15 +27,14 @@ internal class ShaderLibrary {
     
     // default shaders in the case user doesnt provide anything and is just trying out stuff
     static let defaultVertexShader: String = """
+    vertex float4 defaultVertexShader(const device float4 *vertices [[ buffer(0) ]], uint vid [[ vertex_id ]]) { return vertices[vid];}
+    """
+    /*"""
     vertex float4 defaultVertexShader(device float3 *vertices [[ buffer (0) ]], uint vertexID [[ vertex_id ]]){ return float4(vertices[vertexID], 1);}
     """
                                         
     
-    /*"""
-    vertex float4 defaultVertexShader(const device float4 *vertices [[ buffer(0) ]], uint vid [[ vertex_id ]]) {
-        return vertices[vid];
-    }
-    """*/
+   */
     /*
     static let defaultFragmentShader: String = """
     fragment float4 defaultFragmentShader() {
@@ -69,17 +68,21 @@ internal class ShaderLibrary {
     
 
     private func compileFromStringAndStore(shaderSource: String, forKey key: String) {
-            shaderCompiler.compileShaderAsync(shaderSource, key: key) { [weak self] (shaderFunction) in
-                guard let shaderFunction = shaderFunction else {
-                    fatalError("Failed to compile and store shader for key \(key)")
-                }
-                DispatchQueue.main.async {
-                    //self?.shaderCache[key] = shaderFunction
+        shaderCompiler.compileShaderAsync(shaderSource, key: key) { [weak self] (result) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let shaderFunction):
                     self?.store(shader: shaderFunction, forKey: key)
+                case .failure(let error):
+                    switch error {
+                    case .functionCreationFailed(let errorMessage):
+                        fatalError("Failed to compile and store shader for key \(key): \(errorMessage)")
+                        // Remember to replace `fatalError` with appropriate error handling for production 
+                    }
                 }
             }
         }
-    
+    }
     
     func store(shader: MTLFunction, forKey key: String) {
             shaderCache[key] = .compiled(shader)

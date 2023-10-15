@@ -21,15 +21,16 @@ class ShaderCompiler {
         
     }
     
-    func compileShaderAsync(_ source: String, key: String, completion: @escaping (MTLFunction?) -> ()) {
-            DispatchQueue.global().async {
-                guard let shaderFunction = self.library.makeFunction(name: key) else {
-                    completion(nil)
-                    return
-                }
-                completion(shaderFunction)
+    func compileShaderAsync(_ source: String, key: String, completion: @escaping (Result<MTLFunction, ShaderCompilationError>) -> Void) {
+        DispatchQueue.global().async {
+            guard let shaderFunction = self.library.makeFunction(name: key) else {
+                completion(.failure(.functionCreationFailed("Failed to create shader function with key: \(key)")))
+                return
             }
+            completion(.success(shaderFunction))
         }
+    }
+
 }
 
 
