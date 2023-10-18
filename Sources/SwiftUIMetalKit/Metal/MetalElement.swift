@@ -64,6 +64,9 @@ public class MetalElement: MTKView, MetalElementProtocol {
         guard let device = MTLCreateSystemDefaultDevice() else {
             fatalError("Metal is not supported on this device")
         }*/
+        print(vertexShaderName, fragmentShaderName)
+        assert(vertexShaderName == "defaultVertexShader")
+        assert(fragmentShaderName == "defaultFragmentShader")
         let vertexFunction = ShaderLibrary.shared.retrieveShader(forKey: vertexShaderName)
         let fragmentFunction = ShaderLibrary.shared.retrieveShader(forKey: fragmentShaderName)
         

@@ -23,6 +23,7 @@ class ShaderCompiler {
     }
     
     func compileShaderAsync(_ source: String, key: String, completion: @escaping (Result<MTLFunction, ShaderCompilationError>) -> Void) {
+        print("compile started")
         DispatchQueue.global().async {
             os_log("Attempting to create shader with key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
             guard let shaderFunction = self.library.makeFunction(name: key) else {

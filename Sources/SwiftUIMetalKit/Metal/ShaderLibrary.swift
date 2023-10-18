@@ -71,11 +71,12 @@ internal class ShaderLibrary {
     
 
     private func compileFromStringAndStore(shaderSource: String, forKey key: String) {
+        self.store(shader: .compiling, forKey: key)
         shaderCompiler.compileShaderAsync(shaderSource, key: key) { [weak self] (result) in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let shaderFunction):
-                    self?.store(shader: shaderFunction, forKey: key)
+                    self?.store(shader: .compiled(shaderFunction), forKey: key)
                 case .failure(let error):
                     switch error {
                     case .functionCreationFailed(let errorMessage):
@@ -87,18 +88,19 @@ internal class ShaderLibrary {
         }
     }
     
-    func store(shader: MTLFunction, forKey key: String) {
-        /*
-         if /* shader already exists for the key */ {
-             os_log("Overwriting shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
-         }
-         // Your storage logic
-         os_log("Stored shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
+    func store(shader: ShaderState, forKey key: String) {
+        os_log("Storing shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
+        shaderCache[key] = shader
+    }
 
-         */
-            os_log("Storing shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
-            shaderCache[key] = .compiled(shader)
-        }
+    /*
+     if /* shader already exists for the key */ {
+         os_log("Overwriting shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
+     }
+     // Your storage logic
+     os_log("Stored shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
+
+     */
     /*
     func store(shader: MTLFunction, forKey key: String) {
         shaderCache[key] = shader
