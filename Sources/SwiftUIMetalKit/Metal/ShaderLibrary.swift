@@ -115,6 +115,18 @@ internal class ShaderLibrary {
         switch shaderState {
         case .compiling:
             // Handle waiting logic: wait until the shader is compiled
+            while case .compiling = shaderCache[key]! {
+                // Sleep for a small amount of time to reduce active waiting
+                usleep(10000)  // 10ms
+            }
+
+            if case let .compiled(compiledShader) = shaderCache[key]! {
+                        return compiledShader
+                    } else {
+                        // Handle error: Shader failed to compile or some other unexpected state
+                        fatalError("Shader for key \(key) failed to compile or is in an unexpected state.")
+                    }
+            /*
             let semaphore = DispatchSemaphore(value: 0)
             var shader: MTLFunction?
             DispatchQueue.global().async {
@@ -129,7 +141,7 @@ internal class ShaderLibrary {
                 }
             }
             semaphore.wait()
-            return shader
+            return shader*/
             
         case .compiled(let compiledShader):
             // The shader is compiled, return it directly
