@@ -11,10 +11,12 @@ import Metal
 class DeviceManager {
     static let shared = DeviceManager()
     let device: MTLDevice?
+    let commandQueue: MTLCommandQueue?
 
     private init() {
         device = MTLCreateSystemDefaultDevice()
-        // Additional setup code...
+        commandQueue = device!.makeCommandQueue()//the device is there, if its not there rip, i need to put better error message here
+        assert(self.commandQueue != nil, "Failed to create a command queue. Ensure device is properly initialized and available.")
     }
     
     // Other utility functions related to Metal could go here...
