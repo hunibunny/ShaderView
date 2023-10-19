@@ -15,22 +15,6 @@ public class MetalElement: MTKView, MetalElementProtocol {
     var viewHeight: Int = 100
     var vertexBuffer: MTLBuffer?
     var shouldScaleByDimensions: Bool = true
-    var vertices: [Float] = [//is this the standard layout of vertices for displaying metal :)
-        -1.0, -1.0, 0.0, 1.0, // Bottom left corner
-        1.0, -1.0, 0.0, 1.0, // Bottom right corner
-        -1.0,  1.0, 0.0, 1.0, // Top left corner
-        1.0,  1.0, 0.0, 1.0] // Top right corner
-    
-    /*
-     var vertices: [Float] = [ //should be the same as previous one but i need to double check that  the other one works 
-         -1,  1,  0,    // triangle 1
-          1, -1,  0,
-         -1, -1,  0,
-         -1,  1,  0,    // triangle 2
-          1,  1,  0,
-          1, -1,  0
-       ]
-     */
     var shaderInput: ShaderInput?
     var commandQueue: MTLCommandQueue!
     var renderPipelineState: MTLRenderPipelineState?
@@ -57,7 +41,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
                 fatalError("Metal is not supported on this device")
             }
         super.init(frame: .zero, device: device)
-        setupBuffers()
+        //setupBuffers()
         
         
         print(vertexShaderName, fragmentShaderName)
@@ -86,11 +70,11 @@ public class MetalElement: MTKView, MetalElementProtocol {
         //fatalError("init(coder:) has not been implemented")
     }
     
-    
+    /*
     func setupBuffers() {
         let dataSize = vertices.count * MemoryLayout.size(ofValue: vertices[0])
         vertexBuffer = DeviceManager.shared.device?.makeBuffer(bytes: vertices, length: dataSize, options: [])
-    }
+    }*/
     
     func createOutputTexture() {
         let descriptor = MTLTextureDescriptor()
@@ -123,6 +107,8 @@ public class MetalElement: MTKView, MetalElementProtocol {
             //let iResolution = SIMD3<Float>(shaderWidth, shaderHeight, 0)//currently not in use :)
             // i wonder where i wanted to put this one :D
             //let commandBuffer = commandQueue.makeCommandBuffer()!
+        
+        
         let commandBuffer = DeviceManager.shared.commandQueue?.makeCommandBuffer()!
         let renderPassDescriptor = self.currentRenderPassDescriptor!
         renderPassDescriptor.colorAttachments[0].texture = drawable.texture
@@ -133,22 +119,21 @@ public class MetalElement: MTKView, MetalElementProtocol {
         
         
         let buffer = device?.makeBuffer(bytes: &shaderInput, length: MemoryLayout<ShaderInput>.size, options: [])
-           
-
         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
             //passes data to shader
             
 
-        let dataSize = vertices.count * MemoryLayout.size(ofValue: vertices[0])
-        let vertexBuffer = device?.makeBuffer(bytes: vertices, length: dataSize, options: [])
-
-        renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+        //let dataSize = vertices.count * MemoryLayout.size(ofValue: vertices[0])
+        //let vertexBuffer = device?.makeBuffer(bytes: vertices, length: dataSize, options: [])
+        //renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
         
             // Draw first triangle (bottom-left to top-right)
-        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+        //renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
 
             // Draw second triangle (top-right to bottom-left)
-        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 1, vertexCount: 3)
+        //renderEncoder.drawPrimitives(type: .triangle, vertexStart: 1, vertexCount: 3)
+        
+        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
 
         renderEncoder.endEncoding()
 

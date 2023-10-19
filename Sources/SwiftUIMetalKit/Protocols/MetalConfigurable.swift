@@ -16,7 +16,6 @@ internal protocol ShaderConfigurable {
 
 internal protocol RenderingConfigurable {
     var renderPipelineState: MTLRenderPipelineState? { get set }
-    var vertices: [Float] { get }
     func render()
 }
 
