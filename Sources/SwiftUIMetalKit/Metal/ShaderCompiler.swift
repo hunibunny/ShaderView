@@ -73,9 +73,9 @@ class ShaderCompiler {
             }
             os_log("Successfully created a shader with key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
             completion(.success(shaderFunction))
-        }*/
+        }
     }
-
+     */
 }
 
 
