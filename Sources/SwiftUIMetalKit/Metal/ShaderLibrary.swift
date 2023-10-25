@@ -86,7 +86,9 @@ internal class ShaderLibrary {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let shaderFunction):
+                    os_log("Attempting to store shader with a key %@", log: OSLog.default, type: .debug, key)
                     self?.store(shader: .compiled(shaderFunction), forKey: key)
+                    os_log("Succesfully stored the shader with a key %@", log: OSLog.default, type: .debug, key)
                 case .failure(let error):
                     switch error {
                     case .functionCreationFailed(let errorMessage):
