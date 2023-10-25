@@ -33,7 +33,7 @@ internal class ShaderLibrary {
     // default shaders in the case user doesnt provide anything and is just trying out stuff
     static let defaultVertexShader: String = """
     vertex float4 defaultVertexShader(uint vertexID [[vertex_id]],
-                                      out float2 textureCoordinate [[user(0)]]) {
+                                      float2 textureCoordinate [[stage_out]]) {
         float2 positions[4] = {
             float2(-1.0, -1.0),
             float2(1.0, -1.0),

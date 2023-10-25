@@ -118,7 +118,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
         let renderEncoder = commandBuffer!.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
         //! is not justified here imo!!!!
         renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-            //renderEncoder.setRenderPipelineState(renderPipelineState!)
+        renderEncoder.setRenderPipelineState(renderPipelineState!)
         
         
         let buffer = device?.makeBuffer(bytes: &shaderInput, length: MemoryLayout<ShaderInput>.size, options: [])
