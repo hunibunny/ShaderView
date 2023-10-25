@@ -127,38 +127,24 @@ internal class ShaderLibrary {
      
      func retrieveShader(forKey key: String) -> MTLFunction? {
     */
-    func retrieveShader(forKey key: String, completion: @escaping ShaderRetrievalCompletion) {
+    
+    
+    func retrieveShader(forKey key: String) -> MTLFunction? {
         os_log("Retrieving shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
+        
         guard let shaderState = shaderCache[key] else {
-            // Handle error: Shader doesn't exist
             os_log("Shader for key %{PUBLIC}@ not found!", log: OSLog.default, type: .error, key)
-            fatalError("Shader for key \(key) does not exist.")
+            return nil
         }
-        
+
         switch shaderState {
-        case .compiling:
-            DispatchQueue.global().async {
-                while case .compiling = self.shaderCache[key]! {
-                    // Sleep for a small amount of time to reduce active waiting
-                    usleep(10000)  // 10ms
-                }
-
-                DispatchQueue.main.async {
-                    if case let .compiled(compiledShader) = self.shaderCache[key]! {
-                        completion(compiledShader, nil)
-                    } else {
-                        let error = NSError(domain: "ShaderCompilationError", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Shader for key \(key) failed to compile or is in an unexpected state."])
-                        completion(nil, error)
-                    }
-                }
-            }
-            
         case .compiled(let compiledShader):
-            completion(compiledShader, nil)
-
+            return compiledShader
+        case .compiling, .error:
+            return nil
         }
-        
     }
+
 
     
     /*
@@ -173,7 +159,7 @@ internal class ShaderLibrary {
             assert(false, "Failed to load/retrieve the provided shade \(name). Please ensure your custom shader is correctly defined.")
             // Force unwrapping here because the default shaders are foundational to the package.
             // If they are absent, the entire functionality is compromised.
-            return retrieveShader(forKey: "defaultFragmentShader")
+            return retrieveShader(forKey: "defaultFragmentShader")!
         }
     }
 
