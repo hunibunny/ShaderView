@@ -65,7 +65,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
             fatalError("Failed to create pipeline state, error: \(error)")
             //think if this error message here is good
         }
-        self.createOutputTexture()
+        //self.createOutputTexture()
     
     }
     required init(coder: NSCoder) {
@@ -83,7 +83,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
         let descriptor = MTLTextureDescriptor()
         descriptor.width = viewWidth
         descriptor.height = viewHeight
-        descriptor.pixelFormat = .rgba32Float
+        descriptor.pixelFormat = .bgra8Unorm
         descriptor.usage = [.shaderWrite, .shaderRead]
             
         outputTexture = device?.makeTexture(descriptor: descriptor)
@@ -94,6 +94,14 @@ public class MetalElement: MTKView, MetalElementProtocol {
             print("No drawable")
             return
         }
+        
+        let renderPassDescriptor = MTLRenderPassDescriptor()
+        renderPassDescriptor.colorAttachments[0].texture = drawable.texture
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
+        renderPassDescriptor.colorAttachments[0].loadAction = .clear
+        renderPassDescriptor.colorAttachments[0].storeAction = .store
+
+        /*
             //setting up stuff for scaling
         let aspectRatio = Float(drawableSize.width) / Float(drawableSize.height)
         var shaderWidth: Float = 1.0
@@ -106,15 +114,11 @@ public class MetalElement: MTKView, MetalElementProtocol {
                 shaderWidth *= aspectRatio
             }
         }
-            
-            //let iResolution = SIMD3<Float>(shaderWidth, shaderHeight, 0)//currently not in use :)
-            // i wonder where i wanted to put this one :D
-            //let commandBuffer = commandQueue.makeCommandBuffer()!
-        
+         */
         
         let commandBuffer = DeviceManager.shared.commandQueue?.makeCommandBuffer()!
-        let renderPassDescriptor = self.currentRenderPassDescriptor!
-        renderPassDescriptor.colorAttachments[0].texture = drawable.texture
+        //let renderPassDescriptor = self.currentRenderPassDescriptor!
+        // renderPassDescriptor.colorAttachments[0].texture = drawable.texture
         let renderEncoder = commandBuffer!.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
         //! is not justified here imo!!!!
         renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)

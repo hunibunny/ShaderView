@@ -26,7 +26,7 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
         self.shouldScaleByDimensions = shouldScaleByDimensions
-     
+      
     }
 
     //will not work untill this one /mobile one gets called automatically or manually, need to decide which one iwant to do :)

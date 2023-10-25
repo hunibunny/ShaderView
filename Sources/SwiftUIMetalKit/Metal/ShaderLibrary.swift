@@ -32,26 +32,13 @@ internal class ShaderLibrary {
     
     // default shaders in the case user doesnt provide anything and is just trying out stuff
     static let defaultVertexShader: String = """
-    vertex float4 defaultVertexShader(uint vertexID [[vertex_id]],
-                                      float2 textureCoordinate [[stage_out]]) {
+    vertex float4 defaultVertexShader(uint vertexID [[vertex_id]]) {
         float2 positions[4] = {
             float2(-1.0, -1.0),
             float2(1.0, -1.0),
             float2(-1.0, 1.0),
             float2(1.0, 1.0)
         };
-
-        // This will generate texture coordinates that range from (0,0) to (1,1)
-        // for the corresponding vertices
-        float2 texCoords[4] = {
-            float2(0.0, 0.0),
-            float2(1.0, 0.0),
-            float2(0.0, 1.0),
-            float2(1.0, 1.0)
-        };
-
-        textureCoordinate = texCoords[vertexID];
-
         return float4(positions[vertexID], 0.0, 1.0);
     }
     """
@@ -85,12 +72,14 @@ internal class ShaderLibrary {
      */
     
     static let defaultFragmentShader: String = """
-    fragment float4 defaultFragmentShader(float2 textureCoordinate [[stage_in]]) {
+    fragment float4 defaultFragmentShader([[stage_in]] float4 fragCoord : SV_Position) {
+        float2 textureCoordinate = fragCoord.xy / float2(1000.0, 1000.0); // Adjust 1000.0 to the actual dimensions you want.
         float4 blackToWhite = float4(textureCoordinate.x, textureCoordinate.x, textureCoordinate.x, 1.0);
         float4 blueToWhite = float4(0.0, 0.0, 1.0, 1.0) * (1.0 - textureCoordinate.y) + float4(1.0, 1.0, 1.0, 1.0) * textureCoordinate.y;
         return blackToWhite * blueToWhite;
     }
     """
+
 /*
     
     """
