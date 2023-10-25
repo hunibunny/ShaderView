@@ -61,10 +61,11 @@ internal class ShaderLibrary {
      */
     
     static let defaultFragmentShader: String = """
-    fragment float4 defaultFragmentShader(float2 textureCoordinate) {
-    float4 blackToWhite = float4(textureCoordinate.x, textureCoordinate.x, textureCoordinate.x, 1.0);
-    float4 blueToWhite = float4(0.0, 0.0, 1.0, 1.0) * (1.0 - textureCoordinate.y) + float4(1.0, 1.0, 1.0, 1.0) * textureCoordinate.y;
-    return blackToWhite * blueToWhite;}
+    fragment float4 defaultFragmentShader(float2 textureCoordinate [[stage_in]]) {
+        float4 blackToWhite = float4(textureCoordinate.x, textureCoordinate.x, textureCoordinate.x, 1.0);
+        float4 blueToWhite = float4(0.0, 0.0, 1.0, 1.0) * (1.0 - textureCoordinate.y) + float4(1.0, 1.0, 1.0, 1.0) * textureCoordinate.y;
+        return blackToWhite * blueToWhite;
+    }
     """
    
   /*

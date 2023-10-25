@@ -47,9 +47,12 @@ public class MetalElement: MTKView, MetalElementProtocol {
         print(vertexShaderName, fragmentShaderName)
         //assert(vertexShaderName == "defaultVertexShader")
         //assert(fragmentShaderName == "defaultFragmentShader")
-        let vertexFunction = ShaderLibrary.shared.retrieveShader(forKey: vertexShaderName)
-        let fragmentFunction = ShaderLibrary.shared.retrieveShader(forKey: fragmentShaderName)
-        
+        guard
+            let vertexFunction = ShaderLibrary.shared.retrieveShader(forKey: vertexShaderName),
+            let fragmentFunction = ShaderLibrary.shared.retrieveShader(forKey: fragmentShaderName)
+        else {
+            fatalError("Failed to retrieve shaders")
+        }
        
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction
