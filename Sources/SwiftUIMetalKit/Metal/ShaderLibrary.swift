@@ -32,6 +32,32 @@ internal class ShaderLibrary {
     
     // default shaders in the case user doesnt provide anything and is just trying out stuff
     static let defaultVertexShader: String = """
+    vertex float4 defaultVertexShader(uint vertexID [[vertex_id]],
+                                      out float2 textureCoordinate [[user(0)]]) {
+        float2 positions[4] = {
+            float2(-1.0, -1.0),
+            float2(1.0, -1.0),
+            float2(-1.0, 1.0),
+            float2(1.0, 1.0)
+        };
+
+        // This will generate texture coordinates that range from (0,0) to (1,1)
+        // for the corresponding vertices
+        float2 texCoords[4] = {
+            float2(0.0, 0.0),
+            float2(1.0, 0.0),
+            float2(0.0, 1.0),
+            float2(1.0, 1.0)
+        };
+
+        textureCoordinate = texCoords[vertexID];
+
+        return float4(positions[vertexID], 0.0, 1.0);
+    }
+    """
+    /*"""
+     
+     """
     vertex float4 defaultVertexShader(uint vertexID [[vertex_id]]) {
         float2 positions[4] = {
             float2(-1.0, -1.0),
@@ -42,8 +68,6 @@ internal class ShaderLibrary {
         return float4(positions[vertexID], 0.0, 1.0);
     }
     """
-    /*"""
-     
      fragment float4 defaultVertexShader() {
          return float4(1.0, 1.0, 1.0, 1.0); // RGBA for white
      }
@@ -67,7 +91,16 @@ internal class ShaderLibrary {
         return blackToWhite * blueToWhite;
     }
     """
-   
+/*
+    
+    """
+    fragment float4 defaultFragmentShader(float2 textureCoordinate [[stage_in]]) {
+        float4 blackToWhite = float4(textureCoordinate.x, textureCoordinate.x, textureCoordinate.x, 1.0);
+        float4 blueToWhite = float4(0.0, 0.0, 1.0, 1.0) * (1.0 - textureCoordinate.y) + float4(1.0, 1.0, 1.0, 1.0) * textureCoordinate.y;
+        return blackToWhite * blueToWhite;
+    }
+    """
+   */
   /*
    vertex float4 basic_vertex_shader (device float3 *vertices [[ buffer (0) ]],
                                       uint vertexID [[ vertex_id ]]){
