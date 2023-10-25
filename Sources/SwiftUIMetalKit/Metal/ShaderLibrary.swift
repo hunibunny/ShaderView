@@ -75,8 +75,9 @@ internal class ShaderLibrary {
         }
         self.metalLibrary = library
         self.shaderCompiler = ShaderCompiler(library: library)
-        compileFromStringAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragmentShader")
         compileFromStringAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertexShader")
+        compileFromStringAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragmentShader")
+        
     }
     
 
