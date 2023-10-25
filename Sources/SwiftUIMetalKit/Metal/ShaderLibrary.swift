@@ -30,72 +30,44 @@ internal class ShaderLibrary {
     private var shaderCache: [String: ShaderState] = [:]
     let shaderStateSubject = PassthroughSubject<(name: String, state: ShaderState), Never>() // Subject to publish shader state changes.
     
-    // default shaders in the case user doesnt provide anything and is just trying out stuff
-    static let defaultVertexShader: String = """
-    vertex float4 defaultVertexShader(uint vertexID [[vertex_id]]) {
-        float2 positions[4] = {
-            float2(-1.0, -1.0),
-            float2(1.0, -1.0),
-            float2(-1.0, 1.0),
-            float2(1.0, 1.0)
-        };
-        return float4(positions[vertexID], 0.0, 1.0);
-    }
-    """
-    /*"""
-     
-     """
-    vertex float4 defaultVertexShader(uint vertexID [[vertex_id]]) {
-        float2 positions[4] = {
-            float2(-1.0, -1.0),
-            float2(1.0, -1.0),
-            float2(-1.0, 1.0),
-            float2(1.0, 1.0)
-        };
-        return float4(positions[vertexID], 0.0, 1.0);
-    }
-    """
-     fragment float4 defaultVertexShader() {
-         return float4(1.0, 1.0, 1.0, 1.0); // RGBA for white
-     }
-    vertex float4 defaultVertexShader(device float3 *vertices [[ buffer (0) ]], uint vertexID [[ vertex_id ]]){ return float4(vertices[vertexID], 1);}
-    """
-                                        
-    
-   */
-    /*
-    static let defaultFragmentShader: String = """
-    fragment float4 defaultFragmentShader() {
-        return float4(1.0, 1.0, 1.0, 1.0); // RGBA for white
-    }
-    """
-     */
-    
-    static let defaultFragmentShader: String = """
-    fragment float4 defaultFragmentShader(float4 fragCoord [[stage_in]]) {
-        float2 textureCoordinate = fragCoord.xy / float2(1000.0, 1000.0); // Adjust 1000.0 to the actual dimensions you want.
-        float4 blackToWhite = float4(textureCoordinate.x, textureCoordinate.x, textureCoordinate.x, 1.0);
-        float4 blueToWhite = float4(0.0, 0.0, 1.0, 1.0) * (1.0 - textureCoordinate.y) + float4(1.0, 1.0, 1.0, 1.0) * textureCoordinate.y;
-        return blackToWhite * blueToWhite;
-    }
+    static let commonShaderSource: String = """
+    struct ViewportSize {
+        float2 size;
+    };
+    struct VertexOutput {
+        float4 position [[position]];
+        float2 screenCoord;
+    };
     """
 
-/*
     
+    // default shaders in the case user doesnt provide anything and is just trying out stuff
+    static let defaultVertexShader: String = commonShaderSource + """
+    vertex VertexOutput defaultVertexShader(uint vertexID [[vertex_id]], constant ViewportSize &viewport [[buffer(1)]]) {
+        float2 positions[4] = {
+            float2(-1.0, -1.0),
+            float2(1.0, -1.0),
+            float2(-1.0, 1.0),
+            float2(1.0, 1.0)
+        };
+        
+        VertexOutput out;
+        out.position = float4(positions[vertexID], 0.0, 1.0);
+        out.screenCoord = positions[vertexID] * 0.5 * viewport.size;  // Convert from clip space [-1, 1] to screen space.
+        return out;
+    }
     """
-    fragment float4 defaultFragmentShader(float2 textureCoordinate [[stage_in]]) {
+    
+    static let defaultFragmentShader: String = commonShaderSource + """
+    fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]]) {
+        float2 textureCoordinate = in.screenCoord / float2(1000.0, 1000.0); // Adjust 1000.0 to the actual dimensions you want.
         float4 blackToWhite = float4(textureCoordinate.x, textureCoordinate.x, textureCoordinate.x, 1.0);
         float4 blueToWhite = float4(0.0, 0.0, 1.0, 1.0) * (1.0 - textureCoordinate.y) + float4(1.0, 1.0, 1.0, 1.0) * textureCoordinate.y;
         return blackToWhite * blueToWhite;
     }
+
     """
-   */
-  /*
-   vertex float4 basic_vertex_shader (device float3 *vertices [[ buffer (0) ]],
-                                      uint vertexID [[ vertex_id ]]){
-        return float4(vertices[vertexID], 1);
-   }
-   */
+
  
     private init() {
         guard let library = device.makeDefaultLibrary() else {
@@ -136,21 +108,6 @@ internal class ShaderLibrary {
         //shaderStateSubject.send((name: name, state: .compiled))
     }
 
-    /*
-     if /* shader already exists for the key */ {
-         os_log("Overwriting shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
-     }
-     // Your storage logic
-     os_log("Stored shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
-
-     */
-    /*
-    func store(shader: MTLFunction, forKey key: String) {
-        shaderCache[key] = shader
-    }
-     
-     func retrieveShader(forKey key: String) -> MTLFunction? {
-    */
     
     
     func retrieveShader(forKey key: String) -> MTLFunction? {
@@ -170,11 +127,6 @@ internal class ShaderLibrary {
     }
 
 
-    
-    /*
-    func retrieveShader(forKey key: String) -> MTLFunction? {
-        return shaderCache[key]
-    }*/
     
     func makeFunction(name: String) -> MTLFunction {
         if let shaderFunction = metalLibrary.makeFunction(name: name) {

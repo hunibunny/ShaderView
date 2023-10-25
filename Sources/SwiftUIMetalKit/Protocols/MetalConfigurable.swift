@@ -26,9 +26,6 @@ internal protocol TextureConfigurable {
 
 internal protocol ViewConfigurable {
     var commandQueue: MTLCommandQueue! { get set }
-    var viewWidth: Int { get set }
-    var viewHeight: Int { get set }
-    var shouldScaleByDimensions: Bool { get set }
 }
 
 // If a class needs all of the functionalities:
