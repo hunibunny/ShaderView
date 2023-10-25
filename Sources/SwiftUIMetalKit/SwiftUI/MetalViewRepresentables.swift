@@ -10,7 +10,7 @@ import SwiftUI
 #if os(macOS)
 @available(macOS 11.0, *)
 public struct MetalNSViewRepresentable: NSViewRepresentable {
-    @StateObject private var viewModel = ShaderViewModel()
+    //@StateObject private var viewModel = ShaderViewModel()
 
     public typealias NSViewType = MetalElement
     

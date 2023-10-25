@@ -11,32 +11,39 @@ class ShaderViewModel: ObservableObject {
     @Published var viewState: ViewState = .placeholder
     private var cancellables: Set<AnyCancellable> = []
     private var shaderSubscription: AnyCancellable?
-//consider moving fragmentshadername and vertexshadername here
     
-    init() {
-           shaderSubscription = ShaderLibrary.shared.shaderStateSubject.sink { [weak self] in
-               let (key, state) = $0
-               self?.handleShaderStateUpdate(forKey: key, state: state)
-           }
+    var vertexShaderName: String
+    var fragmentShaderName: String
+    private var vertexShaderCompiled = false
+    private var fragmentShaderCompiled = false
+//consider moving fragmentshadername and vertexshadername here completely, now they r saved in both
+    
+    init(vertexShaderName: String, fragmentShaderName: String) {
+        self.vertexShaderName = vertexShaderName
+        self.fragmentShaderName = fragmentShaderName
 
-           // Store the subscription to manage it later.
-           shaderSubscription?.store(in: &cancellables)
-       }
+        shaderSubscription = ShaderLibrary.shared.shaderStateSubject.sink { [weak self] in
+            let (key, state) = $0
+            self?.handleShaderStateUpdate(forKey: key, state: state)
+        }
+
+        // Store the subscription to manage it later.
+        shaderSubscription?.store(in: &cancellables)
+    }
 
     private func handleShaderStateUpdate(forKey key: String, state: ShaderState) {
-        // Handle the received state for the shader.
-        switch state {
-        case .compiled(_):
-            // Do something with mtlFunction if needed.
-            viewState = .metalView // Set the view state
+        // Check which shader has been compiled and update the status accordingly.
+        if key == vertexShaderName, case .compiled(_) = state {
+            vertexShaderCompiled = true
+        } else if key == fragmentShaderName, case .compiled(_) = state {
+            fragmentShaderCompiled = true
+        }
+
+        // If both shaders are compiled, update the view state.
+        if vertexShaderCompiled && fragmentShaderCompiled {
+            viewState = .metalView
             shaderSubscription?.cancel()  // Stop listening to further updates
             shaderSubscription = nil
-        case .compiling:
-            // Handle the compiling state if necessary.
-            break
-        case .error:
-            // Handle error state if necessary.
-            break
         }
     }
 

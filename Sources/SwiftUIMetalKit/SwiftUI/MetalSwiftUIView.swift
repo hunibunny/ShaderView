@@ -14,7 +14,7 @@ import MetalKit
 @available(iOS 14.0, *)
 @available(macOS 11.0, *)
 public struct MetalSwiftUIView: View {
-    @ObservedObject var shaderViewModel = ShaderViewModel()
+    @ObservedObject var shaderViewModel: ShaderViewModel
     let fragmentShaderName: String
     let vertexShaderName: String
     var shouldScaleByDimensions: Bool = true
@@ -35,6 +35,7 @@ public struct MetalSwiftUIView: View {
         } else {
             self.vertexShaderName = "defaultVertexShader"
         }
+        self.shaderViewModel = ShaderViewModel(vertexShaderName: self.vertexShaderName, fragmentShaderName: self.fragmentShaderName)
     }
     
     
