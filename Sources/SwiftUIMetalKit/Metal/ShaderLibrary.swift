@@ -8,23 +8,27 @@
 import Foundation
 import Metal
 import os.log
+import Combine
+
+
+typealias ShaderRetrievalCompletion = (MTLFunction?, Error?) -> Void
+
 
 // Manages storage, retrieval, and usage of compiled shaders.
 //todo: check why default shaders don't compile :)
 internal class ShaderLibrary {
     static let shared = ShaderLibrary()
    
+    
     private let metalLibrary: MTLLibrary
     let device: MTLDevice = DeviceManager.shared.device! //if its nil it already would have crashed
     
     private let shaderCompiler: ShaderCompiler  // Or whatever device you need
         
-    enum ShaderState {
-        case compiling
-        case compiled(MTLFunction)
-    }
+   
     
     private var shaderCache: [String: ShaderState] = [:]
+    let shaderStateSubject = PassthroughSubject<(name: String, state: ShaderState), Never>() // Subject to publish shader state changes.
     
     // default shaders in the case user doesnt provide anything and is just trying out stuff
     static let defaultVertexShader: String = """
@@ -104,6 +108,8 @@ internal class ShaderLibrary {
     func store(shader: ShaderState, forKey key: String) {
         os_log("Storing shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
         shaderCache[key] = shader
+        shaderStateSubject.send((name: key, state: shaderCache[key]!))
+        //shaderStateSubject.send((name: name, state: .compiled))
     }
 
     /*
@@ -118,8 +124,10 @@ internal class ShaderLibrary {
     func store(shader: MTLFunction, forKey key: String) {
         shaderCache[key] = shader
     }
+     
+     func retrieveShader(forKey key: String) -> MTLFunction? {
     */
-    func retrieveShader(forKey key: String) -> MTLFunction? {
+    func retrieveShader(forKey key: String, completion: @escaping ShaderRetrievalCompletion) {
         os_log("Retrieving shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
         guard let shaderState = shaderCache[key] else {
             // Handle error: Shader doesn't exist
@@ -129,39 +137,27 @@ internal class ShaderLibrary {
         
         switch shaderState {
         case .compiling:
-            // Handle waiting logic: wait until the shader is compiled
-            while case .compiling = shaderCache[key]! {
-                // Sleep for a small amount of time to reduce active waiting
-                usleep(10000)  // 10ms
-            }
-
-            if case let .compiled(compiledShader) = shaderCache[key]! {
-                        return compiledShader
-                    } else {
-                        // Handle error: Shader failed to compile or some other unexpected state
-                        fatalError("Shader for key \(key) failed to compile or is in an unexpected state.")
-                    }
-            /*
-            let semaphore = DispatchSemaphore(value: 0)
-            var shader: MTLFunction?
             DispatchQueue.global().async {
-                while true {
-                    if case let .compiled(compiledShader)? = self.shaderCache[key] {
-                        shader = compiledShader
-                        semaphore.signal()
-                        break
+                while case .compiling = self.shaderCache[key]! {
+                    // Sleep for a small amount of time to reduce active waiting
+                    usleep(10000)  // 10ms
+                }
+
+                DispatchQueue.main.async {
+                    if case let .compiled(compiledShader) = self.shaderCache[key]! {
+                        completion(compiledShader, nil)
+                    } else {
+                        let error = NSError(domain: "ShaderCompilationError", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Shader for key \(key) failed to compile or is in an unexpected state."])
+                        completion(nil, error)
                     }
-                    // Optional: Sleep for a small amount of time to reduce active waiting
-                    usleep(1000)  // 1ms
                 }
             }
-            semaphore.wait()
-            return shader*/
             
         case .compiled(let compiledShader):
-            // The shader is compiled, return it directly
-            return compiledShader
+            completion(compiledShader, nil)
+
         }
+        
     }
 
     
@@ -177,7 +173,7 @@ internal class ShaderLibrary {
             assert(false, "Failed to load/retrieve the provided shade \(name). Please ensure your custom shader is correctly defined.")
             // Force unwrapping here because the default shaders are foundational to the package.
             // If they are absent, the entire functionality is compromised.
-            return retrieveShader(forKey: "defaultFragmentShader")!
+            return retrieveShader(forKey: "defaultFragmentShader")
         }
     }
 

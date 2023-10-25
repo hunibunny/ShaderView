@@ -14,7 +14,7 @@ import MetalKit
 @available(iOS 14.0, *)
 @available(macOS 11.0, *)
 public struct MetalSwiftUIView: View {
-    @ObservedObject var viewModel: ShaderViewModel
+    @ObservedObject var shaderViewModel = ShaderViewModel()
     let fragmentShaderName: String
     let vertexShaderName: String
     var shouldScaleByDimensions: Bool = true
@@ -40,11 +40,11 @@ public struct MetalSwiftUIView: View {
     
     public var body: some View {
         GeometryReader { geometry in
-            switch $viewModel.shaderState {
-            case .compiling:
+            switch shaderViewModel.viewState {
+            case .placeholder:
                 PlaceholderView()
                     .frame(width: geometry.size.width, height: geometry.size.height)
-            case .compiled(_):
+            case .metalView:
                 #if os(macOS)
                     MetalNSViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
                 #else
@@ -53,30 +53,6 @@ public struct MetalSwiftUIView: View {
             }
         }
     }
-    
-        /*
-         public var body: some View {
-             
-             GeometryReader { geometry in
-                 #if os(macOS)
-                     MetalNSViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
-                 #else
-                     MetalUIViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
-                 #endif
-             }
-             
-         public var body: some View {
-                MetalUIViewRepresentable(viewModel: viewModel)
-                    .onAppear {
-                        viewModel.startShader()
-                    }
-                    .onDisappear {
-                        viewModel.stopShader()
-                    }
-            }
-         */
-        
-
 }
 
 
