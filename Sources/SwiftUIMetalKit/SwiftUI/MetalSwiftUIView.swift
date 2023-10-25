@@ -10,6 +10,8 @@
 
 import SwiftUI
 import MetalKit
+import os
+
 
 @available(iOS 14.0, *)
 @available(macOS 11.0, *)
@@ -46,6 +48,7 @@ public struct MetalSwiftUIView: View {
                 PlaceholderView()
                     .frame(width: geometry.size.width, height: geometry.size.height)
             case .metalView:
+                
                 #if os(macOS)
                     MetalNSViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
                 #else
@@ -53,7 +56,13 @@ public struct MetalSwiftUIView: View {
                 #endif
             }
         }
+        .onChange(of: shaderViewModel.viewState) { newState in
+                if newState == .metalView {
+                    os_log("Switched to metalView.", type: .info)
+                }
+            }
     }
+    
 }
 
 
