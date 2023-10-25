@@ -48,20 +48,20 @@ internal class ShaderLibrary {
                                         
     
    */
-    /*
+    
     static let defaultFragmentShader: String = """
     fragment float4 defaultFragmentShader() {
         return float4(1.0, 1.0, 1.0, 1.0); // RGBA for white
     }
     """
-     */
+    /*
     static let defaultFragmentShader: String = """
     fragment float4 defaultFragmentShader(float2 textureCoordinate) {
     float4 blackToWhite = float4(textureCoordinate.x, textureCoordinate.x, textureCoordinate.x, 1.0);
     float4 blueToWhite = float4(0.0, 0.0, 1.0, 1.0) * (1.0 - textureCoordinate.y) + float4(1.0, 1.0, 1.0, 1.0) * textureCoordinate.y;
     return blackToWhite * blueToWhite;}
     """
-    
+    */
   /*
    vertex float4 basic_vertex_shader (device float3 *vertices [[ buffer (0) ]],
                                       uint vertexID [[ vertex_id ]]){
