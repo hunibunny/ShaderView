@@ -14,7 +14,7 @@ import MetalKit
 @available(iOS 14.0, *)
 @available(macOS 11.0, *)
 public struct MetalSwiftUIView: View {
-    @StateObject private var viewModel = ShaderViewModel()
+    @ObservedObject var viewModel: ShaderViewModel
     let fragmentShaderName: String
     let vertexShaderName: String
     var shouldScaleByDimensions: Bool = true
@@ -36,16 +36,35 @@ public struct MetalSwiftUIView: View {
             self.vertexShaderName = "defaultVertexShader"
         }
     }
+    
+    
     public var body: some View {
         GeometryReader { geometry in
-            #if os(macOS)
-                MetalNSViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
-            #else
-                MetalUIViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
-            #endif
+            switch $viewModel.shaderState {
+            case .compiling:
+                PlaceholderView()
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+            case .compiled(_):
+                #if os(macOS)
+                    MetalNSViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
+                #else
+                    MetalUIViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
+                #endif
+            }
         }
-        
+    }
+    
         /*
+         public var body: some View {
+             
+             GeometryReader { geometry in
+                 #if os(macOS)
+                     MetalNSViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
+                 #else
+                     MetalUIViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
+                 #endif
+             }
+             
          public var body: some View {
                 MetalUIViewRepresentable(viewModel: viewModel)
                     .onAppear {
@@ -57,7 +76,7 @@ public struct MetalSwiftUIView: View {
             }
          */
         
-    }
+
 }
 
 
