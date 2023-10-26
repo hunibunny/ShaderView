@@ -66,7 +66,7 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
         return metalElement
     }
 
-    func updateUIView(_ uiView: MetalElement, context: Context) {
+    public func updateUIView(_ uiView: MetalElement, context: Context) {
         // Update the size of the MetalElement with the latest viewSize
         uiView.frame.size = viewSize
         uiView.setNeedsDisplay() // This will trigger a redraw
