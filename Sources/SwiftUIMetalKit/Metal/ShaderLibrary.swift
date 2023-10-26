@@ -60,7 +60,7 @@ internal class ShaderLibrary {
     
     static let defaultFragmentShader: String = commonShaderSource + """
     fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]]) {
-        float2 textureCoordinate = in.position.xy / float2(1000.0, 1000.0);
+        float2 textureCoordinate = in.position.xy * 0.5 + 0.5;  // Convert [-1, 1] to [0, 1]
         float4 blackToWhite = float4(textureCoordinate.x, textureCoordinate.x, textureCoordinate.x, 1.0);
         float4 blueToWhite = float4(0.0, 0.0, 1.0, 1.0) * (1.0 - textureCoordinate.y) + float4(1.0, 1.0, 1.0, 1.0) * textureCoordinate.y;
         return blackToWhite * blueToWhite;
