@@ -129,6 +129,7 @@ internal class ShaderLibrary {
 
     
     func makeFunction(name: String) -> MTLFunction {
+        os_log("Making function for name: %{PUBLIC}@", log: OSLog.default, type: .debug, name)
         if let shaderFunction = metalLibrary.makeFunction(name: name) {
             return shaderFunction
         } else {
