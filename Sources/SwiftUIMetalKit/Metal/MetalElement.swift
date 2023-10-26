@@ -21,28 +21,29 @@ public class MetalElement: MTKView, MetalElementProtocol {
     var outputTexture: MTLTexture?
     var startTime: Date?
     var elapsedTime: Float = 0.0
-
+    var viewSize: CGSize
+    
     /*
      let vertexDescriptor = MTLVertexDescriptor()
      vertexDescriptor.attributes[0].format = .float4
      vertexDescriptor.attributes[0].offset = 0
      vertexDescriptor.attributes[0].bufferIndex = 0
      // other configurations...
-
+     
      */
     
     struct ViewportSize {
         var size: vector_float2
     }
-
     
-    init(fragmentShaderName: String, vertexShaderName: String, shouldScaleByDimensions: Bool = true) {
-        self.shouldScaleByDimensions = shouldScaleByDimensions
+    
+    init(fragmentShaderName: String, vertexShaderName: String, viewSize: CGSize) {
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
+        self.viewSize = viewSize
         guard let device = DeviceManager.shared.device else {
-                fatalError("Metal is not supported on this device")
-            }
+            fatalError("Metal is not supported on this device")
+        }
         super.init(frame: .zero, device: device)
         //setupBuffers()
         
@@ -56,7 +57,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
         else {
             fatalError("Failed to retrieve shaders")
         }
-       
+        
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
@@ -69,29 +70,29 @@ public class MetalElement: MTKView, MetalElementProtocol {
             //think if this error message here is good
         }
         //self.createOutputTexture()
-    
+        
     }
     required init(coder: NSCoder) {
+        self.viewSize = CGSize(width: 0, height: 0)  // temporary default value
         super.init(coder: coder)
-        self.drawableSize.width = 100;
-        self.drawableSize.height = 100;
+        //self.drawableSize = viewSize
         //fatalError("init(coder:) has not been implemented")
     }
     
     
     
     /*
-    func setupBuffers() {
-        let dataSize = vertices.count * MemoryLayout.size(ofValue: vertices[0])
-        vertexBuffer = DeviceManager.shared.device?.makeBuffer(bytes: vertices, length: dataSize, options: [])
-    }*/
+     func setupBuffers() {
+     let dataSize = vertices.count * MemoryLayout.size(ofValue: vertices[0])
+     vertexBuffer = DeviceManager.shared.device?.makeBuffer(bytes: vertices, length: dataSize, options: [])
+     }*/
     
     func createOutputTexture() {
         //to be deleted
         let descriptor = MTLTextureDescriptor()
         descriptor.pixelFormat = .bgra8Unorm
         descriptor.usage = [.shaderWrite, .shaderRead]
-            
+        
         outputTexture = device?.makeTexture(descriptor: descriptor)
     }
     
@@ -102,7 +103,7 @@ public class MetalElement: MTKView, MetalElementProtocol {
             print("Failed to get necessary Metal objects.")
             return
         }
-
+        
         let renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.colorAttachments[0].texture = drawable.texture
         renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
@@ -113,62 +114,66 @@ public class MetalElement: MTKView, MetalElementProtocol {
             print("Failed to create Render Command Encoder.")
             return
         }
-
+        /*
         // Create or update viewport size
         var viewportSize = ViewportSize(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
         let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
-
+        */
+        // Create or update viewport size using drawableSize
+        var viewportSize = ViewportSize(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
+        let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
+        
         renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
         renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 1)  // Use the next available index
         renderEncoder.setRenderPipelineState(renderPipelineState)
-
+        
         // Your existing fragment buffer setup
         let buffer = device?.makeBuffer(bytes: &shaderInput, length: MemoryLayout<ShaderInput>.size, options: [])
         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
-            
+        
         renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         renderEncoder.endEncoding()
-
+        
         commandBuffer.present(drawable)
         commandBuffer.commit()
     }
-
-
+    
+    
 }
 
 
 /*
  func render() {
-     guard let drawable = currentDrawable else {
-         print("No drawable")
-         return
-     }
-     
-     let renderPassDescriptor = MTLRenderPassDescriptor()
-     renderPassDescriptor.colorAttachments[0].texture = drawable.texture
-     renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
-     renderPassDescriptor.colorAttachments[0].loadAction = .clear
-     renderPassDescriptor.colorAttachments[0].storeAction = .store
-
-     let commandBuffer = DeviceManager.shared.commandQueue?.makeCommandBuffer()!
-     
-     let renderEncoder = commandBuffer!.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
-     //! is not justified here imo!!!!
-     renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-     renderEncoder.setRenderPipelineState(renderPipelineState!)
-     
-     
-     let buffer = device?.makeBuffer(bytes: &shaderInput, length: MemoryLayout<ShaderInput>.size, options: [])
-     renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
-  
-     
-     renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
-
-     renderEncoder.endEncoding()
-
-     commandBuffer!.present(drawable)
-     commandBuffer!.commit()
-     
+ guard let drawable = currentDrawable else {
+ print("No drawable")
+ return
+ }
+ 
+ let renderPassDescriptor = MTLRenderPassDescriptor()
+ renderPassDescriptor.colorAttachments[0].texture = drawable.texture
+ renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
+ renderPassDescriptor.colorAttachments[0].loadAction = .clear
+ renderPassDescriptor.colorAttachments[0].storeAction = .store
+ 
+ let commandBuffer = DeviceManager.shared.commandQueue?.makeCommandBuffer()!
+ 
+ let renderEncoder = commandBuffer!.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
+ //! is not justified here imo!!!!
+ renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+ renderEncoder.setRenderPipelineState(renderPipelineState!)
+ 
+ 
+ let buffer = device?.makeBuffer(bytes: &shaderInput, length: MemoryLayout<ShaderInput>.size, options: [])
+ renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
+ 
+ 
+ renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+ 
+ renderEncoder.endEncoding()
+ 
+ commandBuffer!.present(drawable)
+ commandBuffer!.commit()
+ 
  }
  */
 

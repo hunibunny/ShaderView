@@ -19,10 +19,8 @@ public struct MetalSwiftUIView: View {
     @ObservedObject var shaderViewModel: ShaderViewModel
     let fragmentShaderName: String
     let vertexShaderName: String
-    var shouldScaleByDimensions: Bool = true
 
-    public init(fragmentShaderName: String?, vertexShaderName: String?, shouldScaleByDimensions: Bool = false) {
-        self.shouldScaleByDimensions = shouldScaleByDimensions
+    public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil) {
         if let name = fragmentShaderName {
             self.fragmentShaderName = name
             //let shader = ShaderLibrary.shared.makeFunction(name: name)
@@ -50,9 +48,9 @@ public struct MetalSwiftUIView: View {
             case .metalView:
                 
                 #if os(macOS)
-                    MetalNSViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
+                    MetalNSViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName)
                 #else
-                    MetalUIViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
+                    MetalUIViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName)
                 #endif
             }
         }

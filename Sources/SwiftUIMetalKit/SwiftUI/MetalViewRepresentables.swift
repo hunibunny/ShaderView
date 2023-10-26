@@ -17,31 +17,31 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
     let viewSize: CGSize
     let fragmentShaderName: String
     let vertexShaderName: String
-    let shouldScaleByDimensions: Bool
 
     
     
-    public init(viewSize: CGSize, fragmentShaderName: String, vertexShaderName: String, shouldScaleByDimensions: Bool) {
+    public init(viewSize: CGSize, fragmentShaderName: String, vertexShaderName: String) {
         self.viewSize = viewSize
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
-        self.shouldScaleByDimensions = shouldScaleByDimensions
       
     }
 
     //will not work untill this one /mobile one gets called automatically or manually, need to decide which one iwant to do :)
     public func makeNSView(context: Context) -> NSViewType {
-        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
+        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, viewSize: viewSize)
+        
        // metalElement.viewWidth = Int(viewSize.width) //this is dumb isnt it?
        // metalElement.viewHeight = Int(viewSize.height)
         //metalElement.commonInit() idk if this is needed or not :)
         return metalElement
     }
 
-    public func updateNSView(_ nsView: NSViewType, context: Context) {
-       //dont know if this will be needed :)
-    
-    }
+    public func updateNSView(_ nsView: MetalElement, context: Context) {
+         // Update the size of the MetalElement with the latest viewSize
+         nsView.frame.size = viewSize
+         nsView.needsDisplay = true // This will request a redraw
+     }
  
 }
 #else
@@ -49,18 +49,16 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
     let viewSize: CGSize
     let fragmentShaderName: String
     let vertexShaderName: String
-    let shouldScaleByDimensions: Bool
     public typealias UIViewType = MetalElement
     
-    public init(viewSize: CGSize, fragmentShaderName: String,  vertexShaderName: String, shouldScaleByDimensions: Bool) {
+    public init(viewSize: CGSize, fragmentShaderName: String,  vertexShaderName: String) {
         self.viewSize = viewSize
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
-        self.shouldScaleByDimensions = shouldScaleByDimensions
     }
 
     public func makeUIView(context: Context) -> UIViewType {
-        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shouldScaleByDimensions: shouldScaleByDimensions)
+        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, viewSize: viewSize)
       //  metalElement.viewWidth = Int(viewSize.width)
        // metalElement.viewHeight = Int(viewSize.height)
        // metalElement.shouldScaleByDimensions = shouldScaleByDimensions
@@ -68,13 +66,10 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
         return metalElement
     }
 
-    public func updateUIView(_ uiView: MetalElement, context: Context) {
-        /*
-        if viewModel.isRunning {
-            uiView.startShader()
-        } else {
-            uiView.stopShader()
-        }*/
+    func updateUIView(_ uiView: MetalElement, context: Context) {
+        // Update the size of the MetalElement with the latest viewSize
+        uiView.frame.size = viewSize
+        uiView.setNeedsDisplay() // This will trigger a redraw
     }
  
 }

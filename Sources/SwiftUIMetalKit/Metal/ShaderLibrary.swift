@@ -11,7 +11,7 @@ import os.log
 import Combine
 
 
-typealias ShaderRetrievalCompletion = (MTLFunction?, Error?) -> Void
+//typealias ShaderRetrievalCompletion = (MTLFunction?, Error?) -> Void
 
 
 // Manages storage, retrieval, and usage of compiled shaders.
@@ -119,6 +119,7 @@ internal class ShaderLibrary {
 
         switch shaderState {
         case .compiled(let compiledShader):
+            os_log("Retrieved shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
             return compiledShader
         case .compiling, .error:
             return nil
