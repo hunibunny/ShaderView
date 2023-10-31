@@ -62,7 +62,7 @@ public struct MetalSwiftUIView: View {
                 }
             }
         .frame(minWidth: 100, minHeight: 100) // provide a minimum size
-        .background(Color.red) // add a background color to visually debug
+        .background(Color.blue) // add a background color to visually debug
     }
     
 }
