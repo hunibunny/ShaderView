@@ -10,7 +10,7 @@ import MetalKit
 
 
 
-public class MetalElement: MTKView, MetalElementProtocol {
+public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     var vertexShaderName: String?
     var fragmentShaderName: String = "Default name :D (maybe throw error here?)"
     var vertexBuffer: MTLBuffer?
@@ -75,10 +75,23 @@ public class MetalElement: MTKView, MetalElementProtocol {
     required init(coder: NSCoder) {
         self.viewSize = CGSize(width: 0, height: 0)  // temporary default value
         super.init(coder: coder)
+        self.delegate = self
+        self.drawableSize = viewSize
+        self.isPaused = false         // ensure the MTKView updates
+        self.enableSetNeedsDisplay = false   // we will control the rendering loop
+        
         //self.drawableSize = viewSize
         //fatalError("init(coder:) has not been implemented")
     }
     
+    public func draw(in view: MTKView) {
+        self.render()
+    }
+
+    //TODO: add needed stuff here
+    public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        
+    }
     
     
     /*
