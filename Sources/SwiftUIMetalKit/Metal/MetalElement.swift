@@ -139,6 +139,15 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         */
         // Create or update viewport size using drawableSize
         var viewportSize = ViewportSize(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
+        
+        
+        guard self.drawableSize.width > 0, self.drawableSize.height > 0 else {
+             fatalError("Drawable size 0 ")
+            //defenietly very good error handling
+         }
+         // Continue with buffer creation
+
+         
         let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
         
         renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)

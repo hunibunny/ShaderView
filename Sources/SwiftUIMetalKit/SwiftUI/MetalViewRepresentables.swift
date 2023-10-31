@@ -33,8 +33,7 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
         metalElement.viewSize = viewSize
         metalElement.drawableSize = viewSize
         metalElement.delegate = metalElement
-
-
+        
        // metalElement.viewWidth = Int(viewSize.width) //this is dumb isnt it?
        // metalElement.viewHeight = Int(viewSize.height)
         //metalElement.commonInit() idk if this is needed or not :)
