@@ -31,7 +31,7 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
     public func makeNSView(context: Context) -> NSViewType {
         let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, viewSize: viewSize)
         metalElement.delegate = metalElement
-        
+        assert(metalElement.pp!.colorAttachments[0].pixelFormat == metalElement.colorPixelFormat, "Pixel formats do not match!")
     
 
        // metalElement.viewWidth = Int(viewSize.width) //this is dumb isnt it?
@@ -63,7 +63,7 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
     public func makeUIView(context: Context) -> UIViewType {
         let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, viewSize: viewSize)
         metalElement.delegate = metalElement
-        assert(pipelineDescriptor.colorAttachments[0].pixelFormat == metalElement.colorPixelFormat, "Pixel formats do not match!")
+        assert(metalElement.pp!.colorAttachments[0].pixelFormat == metalElement.colorPixelFormat, "Pixel formats do not match!")
       //  metalElement.viewWidth = Int(viewSize.width)
        // metalElement.viewHeight = Int(viewSize.height)
        // metalElement.shouldScaleByDimensions = shouldScaleByDimensions

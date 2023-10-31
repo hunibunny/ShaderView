@@ -22,7 +22,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     var startTime: Date?
     var elapsedTime: Float = 0.0
     var viewSize: CGSize
-    
+    var pp: MTLRenderPipelineDescriptor?
     /*
      let vertexDescriptor = MTLVertexDescriptor()
      vertexDescriptor.attributes[0].format = .float4
@@ -69,6 +69,8 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
             fatalError("Failed to create pipeline state, error: \(error)")
             //think if this error message here is good
         }
+        
+        pp = pipelineDescriptor
         //self.createOutputTexture()
         
     }
@@ -124,6 +126,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
 
         renderPassDescriptor.colorAttachments[0].loadAction = .clear
         renderPassDescriptor.colorAttachments[0].storeAction = .store
+        
         
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
             print("Failed to create Render Command Encoder.")
