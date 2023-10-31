@@ -30,7 +30,8 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
     //will not work untill this one /mobile one gets called automatically or manually, need to decide which one iwant to do :)
     public func makeNSView(context: Context) -> NSViewType {
         let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, viewSize: viewSize)
-        
+        metalElement.delegate = metalElement
+
        // metalElement.viewWidth = Int(viewSize.width) //this is dumb isnt it?
        // metalElement.viewHeight = Int(viewSize.height)
         //metalElement.commonInit() idk if this is needed or not :)
@@ -59,6 +60,7 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
 
     public func makeUIView(context: Context) -> UIViewType {
         let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, viewSize: viewSize)
+        metalElement.delegate = metalElement
       //  metalElement.viewWidth = Int(viewSize.width)
        // metalElement.viewHeight = Int(viewSize.height)
        // metalElement.shouldScaleByDimensions = shouldScaleByDimensions

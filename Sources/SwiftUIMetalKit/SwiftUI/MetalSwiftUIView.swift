@@ -49,8 +49,10 @@ public struct MetalSwiftUIView: View {
                 
                 #if os(macOS)
                     MetalNSViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName)
+                    .id(UUID())
                 #else
                     MetalUIViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName)
+                    .id(UUID())
                 #endif
             }
         }
@@ -59,6 +61,8 @@ public struct MetalSwiftUIView: View {
                     os_log("Switched to metalView.", type: .info)
                 }
             }
+        .frame(minWidth: 100, minHeight: 100) // provide a minimum size
+        .background(Color.red) // add a background color to visually debug
     }
     
 }
