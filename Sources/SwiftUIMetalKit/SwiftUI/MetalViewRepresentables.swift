@@ -31,6 +31,7 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
     public func makeNSView(context: Context) -> NSViewType {
         let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName)
         metalElement.viewSize = viewSize
+        metalElement.drawableSize = viewSize
         metalElement.delegate = metalElement
 
 
@@ -64,6 +65,7 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
         let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName)
         metalElement.delegate = metalElement
         metalElement.viewSize = viewSize
+        metalElement.drawableSize = viewSize
        
         
       //  metalElement.viewWidth = Int(viewSize.width)
