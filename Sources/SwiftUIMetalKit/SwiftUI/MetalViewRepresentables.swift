@@ -29,10 +29,10 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
 
     //will not work untill this one /mobile one gets called automatically or manually, need to decide which one iwant to do :)
     public func makeNSView(context: Context) -> NSViewType {
-        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, viewSize: viewSize)
+        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName)
+        metalElement.viewSize = viewSize
         metalElement.delegate = metalElement
-        assert(metalElement.pp!.colorAttachments[0].pixelFormat == metalElement.colorPixelFormat, "Pixel formats do not match!")
-    
+
 
        // metalElement.viewWidth = Int(viewSize.width) //this is dumb isnt it?
        // metalElement.viewHeight = Int(viewSize.height)
@@ -61,9 +61,11 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
     }
 
     public func makeUIView(context: Context) -> UIViewType {
-        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, viewSize: viewSize)
+        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName)
         metalElement.delegate = metalElement
-        assert(metalElement.pp!.colorAttachments[0].pixelFormat == metalElement.colorPixelFormat, "Pixel formats do not match!")
+        metalElement.viewSize = viewSize
+       
+        
       //  metalElement.viewWidth = Int(viewSize.width)
        // metalElement.viewHeight = Int(viewSize.height)
        // metalElement.shouldScaleByDimensions = shouldScaleByDimensions

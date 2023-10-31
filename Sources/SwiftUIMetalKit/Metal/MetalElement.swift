@@ -22,7 +22,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     var startTime: Date?
     var elapsedTime: Float = 0.0
     var viewSize: CGSize
-    var pp: MTLRenderPipelineDescriptor?
+
     /*
      let vertexDescriptor = MTLVertexDescriptor()
      vertexDescriptor.attributes[0].format = .float4
@@ -37,10 +37,10 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     }
     
     
-    init(fragmentShaderName: String, vertexShaderName: String, viewSize: CGSize) {
+    init(fragmentShaderName: String, vertexShaderName: String) {
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
-        self.viewSize = viewSize
+        self.viewSize = CGSize(width: 100, height: 100) //deafult for here
         guard let device = DeviceManager.shared.device else {
             fatalError("Metal is not supported on this device")
         }
@@ -70,12 +70,12 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
             //think if this error message here is good
         }
         
-        pp = pipelineDescriptor
+    
         //self.createOutputTexture()
         
     }
     required init(coder: NSCoder) {
-        self.viewSize = CGSize(width: 0, height: 0)  // temporary default value
+        self.viewSize = CGSize(width: 100, height: 100)  // temporary default value
         super.init(coder: coder)
         self.delegate = self
         self.drawableSize = viewSize
