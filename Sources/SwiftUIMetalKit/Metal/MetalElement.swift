@@ -96,12 +96,12 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         
     }
     
-    
-    /*
-     func setupBuffers() {
-     let dataSize = vertices.count * MemoryLayout.size(ofValue: vertices[0])
-     vertexBuffer = DeviceManager.shared.device?.makeBuffer(bytes: vertices, length: dataSize, options: [])
-     }*/
+    public override var drawableSize: CGSize {
+            didSet {
+                needsDisplay = true
+            }
+        }
+
     
     func createOutputTexture() {
         //to be deleted
@@ -139,8 +139,9 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
         */
         // Create or update viewport size using drawableSize
-        var viewportSize = ViewportSize(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
         
+        var viewportSize = ViewportSize(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
+
         
         guard self.drawableSize.width > 0, self.drawableSize.height > 0 else {
              fatalError("Drawable size 0 ")
@@ -148,34 +149,14 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
          }
          // Continue with buffer creation
         
-         
-        let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
+        let bufferSize = 4 * 1024 // 4KB in bytes
+        let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: bufferSize, options: [])
         
         renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
         renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 1)  // Use the next available index
         renderEncoder.setRenderPipelineState(renderPipelineState)
         
         
-        /*TODO: add this or similiar
-         let sizeOfShaderInput = MemoryLayout<ShaderInput>.size
-
-         var buffer: MTLBuffer?
-         if sizeOfShaderInput == 0 {
-             // Use an alternative buffer, maybe a placeholder value
-             let placeholder: Int = 0
-             buffer = device?.makeBuffer(bytes: &placeholder, length: MemoryLayout<Int>.size, options: [])
-         } else {
-             buffer = device?.makeBuffer(bytes: &shaderInput, length: sizeOfShaderInput, options: [])
-         }
-
-         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
-
-         */
-        
-        
-        // Your existing fragment buffer setup
-        //let buffer = device?.makeBuffer(length: bufferSize, options: [])
-        let bufferSize = 4 * 1024 // 4KB in bytes
         let buffer = device?.makeBuffer(bytes: &shaderInput, length:  bufferSize, options: [])
         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
         
@@ -188,41 +169,5 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     
     
 }
-
-
-/*
- func render() {
- guard let drawable = currentDrawable else {
- print("No drawable")
- return
- }
- 
- let renderPassDescriptor = MTLRenderPassDescriptor()
- renderPassDescriptor.colorAttachments[0].texture = drawable.texture
- renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
- renderPassDescriptor.colorAttachments[0].loadAction = .clear
- renderPassDescriptor.colorAttachments[0].storeAction = .store
- 
- let commandBuffer = DeviceManager.shared.commandQueue?.makeCommandBuffer()!
- 
- let renderEncoder = commandBuffer!.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
- //! is not justified here imo!!!!
- renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
- renderEncoder.setRenderPipelineState(renderPipelineState!)
- 
- 
- let buffer = device?.makeBuffer(bytes: &shaderInput, length: MemoryLayout<ShaderInput>.size, options: [])
- renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
- 
- 
- renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
- 
- renderEncoder.endEncoding()
- 
- commandBuffer!.present(drawable)
- commandBuffer!.commit()
- 
- }
- */
 
 
