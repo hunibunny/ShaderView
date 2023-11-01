@@ -88,10 +88,15 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     }
     
     public override var drawableSize: CGSize {
-            didSet {
-                needsDisplay = true
-            }
+        didSet {
+        #if os(macOS)
+            needsDisplay = true
+        #else
+            setNeedsDisplay()
+        #endif
+            
         }
+    }
 
     
     func createOutputTexture() {
