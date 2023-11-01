@@ -146,7 +146,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
             //defenietly very good error handling
          }
          // Continue with buffer creation
-
+        
          
         let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
         
@@ -154,8 +154,28 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 1)  // Use the next available index
         renderEncoder.setRenderPipelineState(renderPipelineState)
         
+        
+        /*TODO: add this
+         let sizeOfShaderInput = MemoryLayout<ShaderInput>.size
+
+         var buffer: MTLBuffer?
+         if sizeOfShaderInput == 0 {
+             // Use an alternative buffer, maybe a placeholder value
+             let placeholder: Int = 0
+             buffer = device?.makeBuffer(bytes: &placeholder, length: MemoryLayout<Int>.size, options: [])
+         } else {
+             buffer = device?.makeBuffer(bytes: &shaderInput, length: sizeOfShaderInput, options: [])
+         }
+
+         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
+
+         */
+        
+        
         // Your existing fragment buffer setup
-        let buffer = device?.makeBuffer(bytes: &shaderInput, length: MemoryLayout<ShaderInput>.size, options: [])
+        //let buffer = device?.makeBuffer(length: bufferSize, options: [])
+        let bufferSize = 4 * 1024 // 4KB in bytes
+        let buffer = device?.makeBuffer(bytes: &shaderInput, length:  bufferSize, options: [])
         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
         
         renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
