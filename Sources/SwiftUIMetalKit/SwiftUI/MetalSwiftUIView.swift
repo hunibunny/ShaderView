@@ -23,15 +23,11 @@ public struct MetalSwiftUIView: View {
     public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil) {
         if let name = fragmentShaderName {
             self.fragmentShaderName = name
-            //let shader = ShaderLibrary.shared.makeFunction(name: name)
-            //ShaderLibrary.shared.store(shader: shader, forKey: name)
         } else {
             self.fragmentShaderName = "defaultFragmentShader"
         }
         if let name = vertexShaderName {
             self.vertexShaderName = name
-            //let shader = ShaderLibrary.shared.makeFunction(name: name)
-            //ShaderLibrary.shared.store(shader: shader, forKey: name)
         } else {
             self.vertexShaderName = "defaultVertexShader"
         }
@@ -68,9 +64,4 @@ public struct MetalSwiftUIView: View {
 }
 
 
-//for more control over stopping and starting shader if thought it will be needed
-/*
- Custom Bindings: Allow users to pass in bindings to your view, which can be updated based on shader lifecycle events. This is useful for two-way communication.
 
- Delegate Pattern: Although SwiftUI largely moves away from delegation in favor of more reactive patterns, you can still use a delegate approach if it fits better with your architecture.
- */

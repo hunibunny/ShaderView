@@ -8,6 +8,7 @@
 import Foundation
 import Metal
 
+//TODO: check if device should be optional or not since i kinda really need it always :)
 class DeviceManager {
     static let shared = DeviceManager()
     let device: MTLDevice?
@@ -19,5 +20,4 @@ class DeviceManager {
         assert(self.commandQueue != nil, "Failed to create a command queue. Ensure device is properly initialized and available.")
     }
     
-    // Other utility functions related to Metal could go here...
 }

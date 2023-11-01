@@ -8,7 +8,7 @@
 import MetalKit
 
 
-
+//TODO: add shader input so it actually matters <3 and combine it with size
 
 public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     var vertexShaderName: String = ""
@@ -23,10 +23,6 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     var elapsedTime: Float = 0.0
     var viewSize: CGSize = CGSize(width: 100, height: 100) //default temporary value
     
-    
-    struct ViewportSize {
-        var size: vector_float2
-    }
     
     init(fragmentShaderName: String, vertexShaderName: String) {
         self.fragmentShaderName = fragmentShaderName
@@ -140,14 +136,14 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
          }
          // Continue with buffer creation
         
-        let bufferSize = 4 * 1024 // 4KB in bytes
-        let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: bufferSize, options: [])
+       
+        let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
         
         renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
         renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 1)  // Use the next available index
         renderEncoder.setRenderPipelineState(renderPipelineState)
         
-        
+        let bufferSize = 4 * 1024 // 4KB in bytes
         let buffer = device?.makeBuffer(bytes: &shaderInput, length:  bufferSize, options: [])
         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
         

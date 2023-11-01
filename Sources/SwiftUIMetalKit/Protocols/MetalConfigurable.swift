@@ -8,6 +8,8 @@
 
 import Metal
 
+//TODO: is this really necessary
+
 internal protocol ShaderConfigurable {
     var vertexShaderName: String { get set }
     var fragmentShaderName: String { get set }

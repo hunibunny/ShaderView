@@ -10,8 +10,6 @@ import SwiftUI
 #if os(macOS)
 @available(macOS 11.0, *)
 public struct MetalNSViewRepresentable: NSViewRepresentable {
-    //@StateObject private var viewModel = ShaderViewModel()
-
     public typealias NSViewType = MetalElement
     
     let drawableSize: CGSize
@@ -27,7 +25,6 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
       
     }
 
-    //will not work untill this one /mobile one gets called automatically or manually, need to decide which one iwant to do :)
     public func makeNSView(context: Context) -> NSViewType {
         let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName)
         metalElement.delegate = metalElement
@@ -64,7 +61,6 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
     }
 
     public func updateUIView(_ uiView: MetalElement, context: Context) {
-        // Update the size of the MetalElement with the latest viewSize
         uiView.frame.size = drawableSize
         uiView.drawableSize = drawableSize
         uiView.setNeedsDisplay() // This will trigger a redraw

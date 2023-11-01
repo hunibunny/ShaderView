@@ -11,11 +11,6 @@ import os.log
 import Combine
 
 
-//typealias ShaderRetrievalCompletion = (MTLFunction?, Error?) -> Void
-
-
-// Manages storage, retrieval, and usage of compiled shaders.
-//todo: check why default shaders don't compile :)
 internal class ShaderLibrary {
     static let shared = ShaderLibrary()
    
@@ -23,9 +18,7 @@ internal class ShaderLibrary {
     private let metalLibrary: MTLLibrary
     let device: MTLDevice = DeviceManager.shared.device! //if its nil it already would have crashed
     
-    private let shaderCompiler: ShaderCompiler  // Or whatever device you need
-        
-   
+    private let shaderCompiler: ShaderCompiler
     
     private var shaderCache: [String: ShaderState] = [:]
     let shaderStateSubject = PassthroughSubject<(name: String, state: ShaderState), Never>() // Subject to publish shader state changes.
@@ -102,7 +95,7 @@ internal class ShaderLibrary {
                     switch error {
                     case .functionCreationFailed(let errorMessage):
                         fatalError("Failed to compile and store shader for key \(key): \(errorMessage)")
-                        // Remember to replace `fatalError` with appropriate error handling for production 
+                        //TODO: fatalerror probably not appropriate here
                     }
                 }
             }
@@ -113,7 +106,6 @@ internal class ShaderLibrary {
         os_log("Storing shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
         shaderCache[key] = shader
         shaderStateSubject.send((name: key, state: shaderCache[key]!))
-        //shaderStateSubject.send((name: name, state: .compiled))
     }
 
     

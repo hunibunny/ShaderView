@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol ShaderInputProtocol {
-    // Define some optional properties or methods if needed.
+   //TODO: add size here 
 }
