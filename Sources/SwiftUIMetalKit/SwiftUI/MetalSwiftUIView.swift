@@ -48,10 +48,10 @@ public struct MetalSwiftUIView: View {
             case .metalView:
                 
                 #if os(macOS)
-                    MetalNSViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName)
+                MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName)
                     .id(UUID())
                 #else
-                    MetalUIViewRepresentable(viewSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName)
+                    MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName)
                     .id(UUID())
                 #endif
             }

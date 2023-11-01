@@ -9,7 +9,7 @@
 import Metal
 
 internal protocol ShaderConfigurable {
-    var vertexShaderName: String? { get set }
+    var vertexShaderName: String { get set }
     var fragmentShaderName: String { get set }
     var shaderInput: ShaderInput? { get set }
 }

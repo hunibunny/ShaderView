@@ -11,8 +11,8 @@ import MetalKit
 
 
 public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
-    var vertexShaderName: String?
-    var fragmentShaderName: String = "Default name :D (maybe throw error here?)"
+    var vertexShaderName: String = ""
+    var fragmentShaderName: String = ""
     var vertexBuffer: MTLBuffer?
     var shouldScaleByDimensions: Bool = true
     var shaderInput: ShaderInput?
@@ -21,36 +21,40 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     var outputTexture: MTLTexture?
     var startTime: Date?
     var elapsedTime: Float = 0.0
-    var viewSize: CGSize
-
-    /*
-     let vertexDescriptor = MTLVertexDescriptor()
-     vertexDescriptor.attributes[0].format = .float4
-     vertexDescriptor.attributes[0].offset = 0
-     vertexDescriptor.attributes[0].bufferIndex = 0
-     // other configurations...
-     
-     */
+    var viewSize: CGSize = CGSize(width: 100, height: 100) //default temporary value
+    
     
     struct ViewportSize {
         var size: vector_float2
     }
     
-    
     init(fragmentShaderName: String, vertexShaderName: String) {
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
-        self.viewSize = CGSize(width: 100, height: 100) //deafult for here
+        super.init(frame: .zero, device: DeviceManager.shared.device)
+            
+        setupMetal()
+    }
+ 
+    
+    required init(coder: NSCoder) {
+        super.init(coder: coder)
+        self.delegate = self
+        self.drawableSize = viewSize
+        self.isPaused = false
+        self.enableSetNeedsDisplay = false
+        setupMetal()
+    }
+        
+    
+    
+    private func setupMetal() {
+        // Ensure that a Metal-compatible device is available
         guard let device = DeviceManager.shared.device else {
             fatalError("Metal is not supported on this device")
         }
-        super.init(frame: .zero, device: device)
-        //setupBuffers()
         
-        
-        print(vertexShaderName, fragmentShaderName)
-        //assert(vertexShaderName == "defaultVertexShader")
-        //assert(fragmentShaderName == "defaultFragmentShader")
+        // Retrieve shaders
         guard
             let vertexFunction = ShaderLibrary.shared.retrieveShader(forKey: vertexShaderName),
             let fragmentFunction = ShaderLibrary.shared.retrieveShader(forKey: fragmentShaderName)
@@ -58,6 +62,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
             fatalError("Failed to retrieve shaders")
         }
         
+        // Set up the render pipeline
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
@@ -68,24 +73,10 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
             self.renderPipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
         } catch let error {
             fatalError("Failed to create pipeline state, error: \(error)")
-            //think if this error message here is good
         }
-        
-    
-        //self.createOutputTexture()
-        
     }
-    required init(coder: NSCoder) {
-        self.viewSize = CGSize(width: 100, height: 100)  // temporary default value
-        super.init(coder: coder)
-        self.delegate = self
-        self.drawableSize = viewSize
-        self.isPaused = false         // ensure the MTKView updates
-        self.enableSetNeedsDisplay = false   // we will control the rendering loop
+
         
-        //self.drawableSize = viewSize
-        //fatalError("init(coder:) has not been implemented")
-    }
     
     public func draw(in view: MTKView) {
         self.render()
@@ -133,12 +124,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
             print("Failed to create Render Command Encoder.")
             return
         }
-        /*
-        // Create or update viewport size
-        var viewportSize = ViewportSize(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
-        let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
-        */
-        // Create or update viewport size using drawableSize
+        
         
         var viewportSize = ViewportSize(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
 
