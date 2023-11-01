@@ -62,6 +62,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        pipelineDescriptor.colorAttachments[0].isBlendingEnabled = false
         
         do {
             self.renderPipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
@@ -155,7 +156,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         renderEncoder.setRenderPipelineState(renderPipelineState)
         
         
-        /*TODO: add this
+        /*TODO: add this or similiar
          let sizeOfShaderInput = MemoryLayout<ShaderInput>.size
 
          var buffer: MTLBuffer?
