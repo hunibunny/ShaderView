@@ -63,14 +63,27 @@ internal class ShaderLibrary {
      */
     static let defaultFragmentShader: String = commonShaderSource + """
     fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]]) {
-         float2 textureCoordinate = in.position.xy * 0.5 + 0.5;  // Convert [-1, 1] to [0, 1]
-         float4 blackToWhite = float4(textureCoordinate.x, textureCoordinate.x, textureCoordinate.x, 1.0);
-         float4 blueToWhite = float4(0.0, 0.0, 1.0, 1.0) * (1.0 - textureCoordinate.y) + float4(1.0, 1.0, 1.0, 1.0) * textureCoordinate.y;
-         return in.screenCoord.x > 0 && in.screenCoord.y > 0 ? float4(1, 1, 0, 1) : float4(0, 0, 0, 1);
-         //return blackToWhite * blueToWhite;
-     }
+        // Check which quadrant the pixel is in and color accordingly
+        if (in.screenCoord.x > 0 && in.screenCoord.y > 0) {
+            return float4(1, 1, 0, 1); // Yellow for top-right quadrant
+        } else if (in.screenCoord.x < 0 && in.screenCoord.y > 0) {
+            return float4(0, 1, 0, 1); // Green for top-left quadrant
+        } else if (in.screenCoord.x < 0 && in.screenCoord.y < 0) {
+            return float4(0, 0, 1, 1); // Blue for bottom-left quadrant
+        } else {
+            return float4(1, 0, 0, 1); // Red for bottom-right quadrant
+        }
+    }
     """
-     
+     /*
+      fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]]) {
+      
+           float2 textureCoordinate = in.position.xy * 0.5 + 0.5;  // Convert [-1, 1] to [0, 1]
+           float4 blackToWhite = float4(textureCoordinate.x, textureCoordinate.x, textureCoordinate.x, 1.0);
+           float4 blueToWhite = float4(0.0, 0.0, 1.0, 1.0) * (1.0 - textureCoordinate.y) + float4(1.0, 1.0, 1.0, 1.0) * textureCoordinate.y;
+           return blackToWhite * blueToWhite;
+       }
+      */
  
     private init() {
         guard let library = device.makeDefaultLibrary() else {
