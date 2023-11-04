@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import os.log
 
 #if os(macOS)
 @available(macOS 11.0, *)
@@ -28,6 +29,7 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
 
     public func makeNSView(context: Context) -> NSViewType {
         let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
+        os_log("Drawable size - width: %f, height: %f", log: OSLog.default, type: .info, drawableSize.width, drawableSize.height)
         metalElement.delegate = metalElement
         metalElement.drawableSize = drawableSize
         return metalElement
@@ -58,6 +60,7 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
 
     public func makeUIView(context: Context) -> UIViewType {
         let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
+        os_log("Drawable size - width: %f, height: %f", log: OSLog.default, type: .info, drawableSize.width, drawableSize.height)
         metalElement.delegate = metalElement
         metalElement.drawableSize = drawableSize
         return metalElement
