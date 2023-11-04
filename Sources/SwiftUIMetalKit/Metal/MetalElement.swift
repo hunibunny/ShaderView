@@ -24,9 +24,10 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     var viewSize: CGSize = CGSize(width: 100, height: 100) //default temporary value
     
     
-    init(fragmentShaderName: String, vertexShaderName: String) {
+    init(fragmentShaderName: String, vertexShaderName: String, shaderInput: ShaderInput?) {
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
+        self.shaderInput = shaderInput
         super.init(frame: .zero, device: DeviceManager.shared.device)
             
         setupMetal()
@@ -72,7 +73,6 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         }
     }
 
-        
     
     public func draw(in view: MTKView) {
         self.render()
@@ -136,14 +136,16 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
          }
          // Continue with buffer creation
         
+        
        
         let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
         
-        renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-        renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 1)  // Use the next available index
+        //commented this out since it doesnt seem to be used and swapped the positions of the buffers
+        //renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+        renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)  // Use the next available index
         renderEncoder.setRenderPipelineState(renderPipelineState)
         
-        let bufferSize = 4 * 1024 // 4KB in bytes
+        let bufferSize = 4 * 1024 // 4KB in bytes should be more than enough for any 2d shader use
         let buffer = device?.makeBuffer(bytes: &shaderInput, length:  bufferSize, options: [])
         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
         

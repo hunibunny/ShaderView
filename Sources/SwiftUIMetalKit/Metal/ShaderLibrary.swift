@@ -36,7 +36,8 @@ internal class ShaderLibrary {
     
     // default shaders in the case user doesnt provide anything and is just trying out stuff
     static let defaultVertexShader: String = commonShaderSource + """
-    vertex VertexOutput defaultVertexShader(uint vertexID [[vertex_id]], constant ViewportSize &viewport [[buffer(1)]]) {
+    vertex VertexOutput defaultVertexShader(uint vertexID [[vertex_id]],
+                                           constant ViewportSize &viewport [[buffer(0)]]) {
         float2 positions[4] = {
             float2(-1.0, -1.0),
             float2(1.0, -1.0),
@@ -50,7 +51,7 @@ internal class ShaderLibrary {
         return out;
     }
     """
-    
+    //changed to [[buffer(0)]] from [[buffer(1)]]
     /*
     static let defaultFragmentShader: String = commonShaderSource + """
     fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]]) {

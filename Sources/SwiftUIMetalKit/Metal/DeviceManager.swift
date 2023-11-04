@@ -13,11 +13,13 @@ class DeviceManager {
     static let shared = DeviceManager()
     let device: MTLDevice?
     let commandQueue: MTLCommandQueue?
+    let renderPassDescriptor = MTLRenderPassDescriptor()
 
     private init() {
         device = MTLCreateSystemDefaultDevice()
         commandQueue = device!.makeCommandQueue()//the device is there, if its not there rip, i need to put better error message here
         assert(self.commandQueue != nil, "Failed to create a command queue. Ensure device is properly initialized and available.")
+        
     }
-    
+
 }

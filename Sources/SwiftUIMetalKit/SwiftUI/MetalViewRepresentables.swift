@@ -15,18 +15,19 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
     let drawableSize: CGSize
     let fragmentShaderName: String
     let vertexShaderName: String
-
+    let shaderInput: ShaderInput?
     
     
-    public init(drawableSize: CGSize, fragmentShaderName: String, vertexShaderName: String) {
+    public init(drawableSize: CGSize, fragmentShaderName: String, vertexShaderName: String, shaderInput: ShaderInput?) {
         self.drawableSize = drawableSize
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
+        self.shaderInput = shaderInput
       
     }
 
     public func makeNSView(context: Context) -> NSViewType {
-        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName)
+        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
         metalElement.delegate = metalElement
         metalElement.drawableSize = drawableSize
         return metalElement
@@ -46,15 +47,17 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
     let fragmentShaderName: String
     let vertexShaderName: String
     public typealias UIViewType = MetalElement
+    let shaderInput: ShaderInput?
     
-    public init(drawableSize: CGSize, fragmentShaderName: String,  vertexShaderName: String) {
+    public init(drawableSize: CGSize, fragmentShaderName: String,  vertexShaderName: String, shaderInput: ShaderInput?) {
         self.drawableSize = drawableSize
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
+        self.shaderInput = shaderInput
     }
 
     public func makeUIView(context: Context) -> UIViewType {
-        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName)
+        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
         metalElement.delegate = metalElement
         metalElement.drawableSize = drawableSize
         return metalElement

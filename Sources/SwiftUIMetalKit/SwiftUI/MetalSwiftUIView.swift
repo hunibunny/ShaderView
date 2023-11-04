@@ -19,8 +19,9 @@ public struct MetalSwiftUIView: View {
     @ObservedObject var shaderViewModel: ShaderViewModel
     let fragmentShaderName: String
     let vertexShaderName: String
+    let shaderInput: ShaderInput?
 
-    public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil) {
+    public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, shaderInput: ShaderInput? = nil) {
         if let name = fragmentShaderName {
             self.fragmentShaderName = name
         } else {
@@ -32,6 +33,7 @@ public struct MetalSwiftUIView: View {
             self.vertexShaderName = "defaultVertexShader"
         }
         self.shaderViewModel = ShaderViewModel(vertexShaderName: self.vertexShaderName, fragmentShaderName: self.fragmentShaderName)
+        self.shaderInput = shaderInput
     }
     
     
@@ -44,10 +46,10 @@ public struct MetalSwiftUIView: View {
             case .metalView:
                 
                 #if os(macOS)
-                MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName)
+                MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
                     .id(UUID())
                 #else
-                    MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName)
+                MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName, shaderInput: shaderInput)
                     .id(UUID())
                 #endif
             }
