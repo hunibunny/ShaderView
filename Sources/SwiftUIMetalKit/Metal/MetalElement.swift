@@ -130,8 +130,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
        
         let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
         
-        //commented this out since it doesnt seem to be used and swapped the positions of the buffers
-        //renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+        //TODO: decide on how the buffer order in input is so its consistent for both shaders
         renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)  // Use the next available index
         renderEncoder.setRenderPipelineState(renderPipelineState)
         

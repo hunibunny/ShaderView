@@ -8,7 +8,7 @@
 import Foundation
 
 enum ShaderError: Error {
-    case shaderNotFound
-    case shaderStillCompiling
-    case shaderCompilationError
+    case shaderNotFound(String)
+    case shaderCompilationError(String)
+    case otherError(String)
 }

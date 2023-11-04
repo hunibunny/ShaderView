@@ -128,19 +128,33 @@ internal class ShaderLibrary {
     func retrieveShader(forKey key: String) -> MTLFunction? {
         os_log("Retrieving shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
         
-        guard let shaderState = shaderCache[key] else {
-            os_log("Shader for key %{PUBLIC}@ not found!", log: OSLog.default, type: .error, key)
-            return nil
-        }
-
-        switch shaderState {
-        case .compiled(let compiledShader):
-            os_log("Retrieved shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
-            return compiledShader
-        case .compiling, .error:
-            return nil
+        // First, check if the shader is in the cache.
+        if let shaderState = shaderCache[key] {
+            switch shaderState {
+            case .compiled(let compiledShader):
+                return compiledShader
+            case .compiling:
+                //TODO: should i wait for it here or not? not a current problem since this will never be called if shaders arent compiled, but in the future if i provide compilation during runtime this  will become a problem
+                os_log("Shader for key %{PUBLIC}@ is still compiling.", log: OSLog.default, type: .info, key)
+                return nil
+            case .error:
+                // If there was an error, the shader is not available.
+                os_log("Shader for key %{PUBLIC}@ had an error during compilation.", log: OSLog.default, type: .error, key)
+                return nil
+            }
+        } else {
+            // If the shader is not in the cache, attempt to create it using makeFunction.
+            os_log("Shader for key %{PUBLIC}@ not found in cache! Attempting to create it.", log: OSLog.default, type: .info, key)
+            if let function = metalLibrary.makeFunction(name: key) {
+                shaderCache[key] = .compiled(function)
+                return function
+            } else {
+                os_log("Failed to make shader function for key %{PUBLIC}@.", log: OSLog.default, type: .error, key)
+                return nil
+            }
         }
     }
+
 
 
     

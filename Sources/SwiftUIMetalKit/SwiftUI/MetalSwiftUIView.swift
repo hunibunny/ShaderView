@@ -20,20 +20,28 @@ public struct MetalSwiftUIView: View {
     let fragmentShaderName: String
     let vertexShaderName: String
     let shaderInput: ShaderInput?
+    var usingDefaultShaders: Bool = true
 
     public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, shaderInput: ShaderInput? = nil) {
         if let name = fragmentShaderName {
             self.fragmentShaderName = name
+            usingDefaultShaders = false
         } else {
             self.fragmentShaderName = "defaultFragmentShader"
+            
         }
+        
         if let name = vertexShaderName {
             self.vertexShaderName = name
         } else {
             self.vertexShaderName = "defaultVertexShader"
+            usingDefaultShaders = true
         }
         self.shaderViewModel = ShaderViewModel(vertexShaderName: self.vertexShaderName, fragmentShaderName: self.fragmentShaderName)
         self.shaderInput = shaderInput
+        if(!usingDefaultShaders){
+            shaderViewModel.viewState = .metalView;
+        }
     }
     
     
