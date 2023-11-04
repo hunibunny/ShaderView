@@ -18,7 +18,6 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     var shaderInput: ShaderInput?
     var commandQueue: MTLCommandQueue!
     var renderPipelineState: MTLRenderPipelineState?
-    var outputTexture: MTLTexture?
     var startTime: Date?
     var elapsedTime: Float = 0.0
     var viewSize: CGSize = CGSize(width: 100, height: 100) //default temporary value
@@ -94,16 +93,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         }
     }
 
-    
-    func createOutputTexture() {
-        //to be deleted
-        let descriptor = MTLTextureDescriptor()
-        descriptor.pixelFormat = .bgra8Unorm
-        descriptor.usage = [.shaderWrite, .shaderRead]
-        
-        outputTexture = device?.makeTexture(descriptor: descriptor)
-    }
-    
+
     func render() {
         guard let drawable = currentDrawable,
               let commandBuffer = DeviceManager.shared.commandQueue?.makeCommandBuffer(),

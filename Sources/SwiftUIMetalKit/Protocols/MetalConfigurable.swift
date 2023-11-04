@@ -21,16 +21,11 @@ internal protocol RenderingConfigurable {
     func render()
 }
 
-internal protocol TextureConfigurable {
-    var outputTexture: MTLTexture? { get set }
-    func createOutputTexture()
-}
-
 internal protocol ViewConfigurable {
     var commandQueue: MTLCommandQueue! { get set }
 }
 
 // If a class needs all of the functionalities:
-internal typealias MetalConfigurable = ShaderConfigurable & RenderingConfigurable & TextureConfigurable & ViewConfigurable
+internal typealias MetalConfigurable = ShaderConfigurable & RenderingConfigurable & ViewConfigurable
 
 
