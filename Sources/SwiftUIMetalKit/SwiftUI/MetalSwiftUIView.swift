@@ -55,10 +55,10 @@ public struct MetalSwiftUIView: View {
                 
                 #if os(macOS)
                 MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
-                    .id(UUID())
+                    //.id(UUID())
                 #else
                 MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName, shaderInput: shaderInput)
-                    .id(UUID())
+                    //.id(UUID())
                 #endif
             }
         }

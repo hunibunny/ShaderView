@@ -40,14 +40,6 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         setupMetal()
     }
     
-    // Make sure to update drawableSize before rendering starts
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-        // Update the drawable size here if necessary, or ensure that it's already set.
-    }
-
-        
-    
     
     private func setupMetal() {
         // Ensure that a Metal-compatible device is available
