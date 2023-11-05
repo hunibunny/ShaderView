@@ -20,8 +20,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     var renderPipelineState: MTLRenderPipelineState?
     var startTime: Date?
     var elapsedTime: Float = 0.0
-    var viewSize: CGSize = CGSize(width: 100, height: 100) //default temporary value
-    
+
     
     init(fragmentShaderName: String, vertexShaderName: String, shaderInput: ShaderInput?) {
         self.fragmentShaderName = fragmentShaderName
@@ -36,11 +35,17 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
     required init(coder: NSCoder) {
         super.init(coder: coder)
         self.delegate = self
-        self.drawableSize = viewSize
         self.isPaused = false
         self.enableSetNeedsDisplay = false
         setupMetal()
     }
+    
+    // Make sure to update drawableSize before rendering starts
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        // Update the drawable size here if necessary, or ensure that it's already set.
+    }
+
         
     
     
@@ -117,18 +122,17 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         }
         
         
+        //var viewportSize = ViewportSize(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
         var viewportSize = ViewportSize(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
-
         
         guard self.drawableSize.width > 0, self.drawableSize.height > 0 else {
              fatalError("Drawable size 0 ")
             //defenietly very good error handling
          }
-         // Continue with buffer creation
+            
         
-        
-       
         let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
+
         
         //TODO: decide on how the buffer order in input is so its consistent for both shaders
         renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)  // Use the next available index
