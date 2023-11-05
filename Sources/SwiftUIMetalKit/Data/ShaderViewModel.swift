@@ -16,6 +16,7 @@ class ShaderViewModel: ObservableObject {
     var fragmentShaderName: String
     private var vertexShaderCompiled = false
     private var fragmentShaderCompiled = false
+    private var transitionedToMetalView = false
 //consider moving fragmentshadername and vertexshadername here completely, now they r saved in both
     
     init(vertexShaderName: String, fragmentShaderName: String) {
@@ -42,6 +43,7 @@ class ShaderViewModel: ObservableObject {
         // If both shaders are compiled, update the view state.
         if vertexShaderCompiled && fragmentShaderCompiled {
             viewState = .metalView
+            transitionedToMetalView = true
             shaderSubscription?.cancel()  // Stop listening to further updates
             shaderSubscription = nil
         }

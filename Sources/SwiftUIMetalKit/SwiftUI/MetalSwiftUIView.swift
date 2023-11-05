@@ -27,12 +27,12 @@ public struct MetalSwiftUIView: View {
             self.fragmentShaderName = name
             usingDefaultShaders = false
         } else {
-            self.fragmentShaderName = "defaultFragmentShader"
-            
+            self.fragmentShaderName = "defaultFragmentShader"   
         }
-        
+
         if let name = vertexShaderName {
             self.vertexShaderName = name
+            
         } else {
             self.vertexShaderName = "defaultVertexShader"
             usingDefaultShaders = true
