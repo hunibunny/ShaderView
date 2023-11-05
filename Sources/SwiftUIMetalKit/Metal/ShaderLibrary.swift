@@ -63,15 +63,12 @@ internal class ShaderLibrary {
      */
     static let defaultFragmentShader: String = commonShaderSource + """
     fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]], constant ViewportSize &viewport [[buffer(0)]]) {
-        if (viewport.size > 0) {
-            return float4(0, 1, 0, 1);
-        }
         // Check which quadrant the pixel is in and color accordingly
-        if (in.screenCoord.x > 0 && in.screenCoord.y > 0) {
+        if (viewport.size.x > 0 && viewport.size.y > 0) {
             return float4(1, 1, 0, 1); // Yellow for top-right quadrant
-        } else if (in.screenCoord.x < 0 && in.screenCoord.y > 0) {
+        } else if (viewport.size.x < 0 && viewport.size.y > 0) {
             return float4(0, 1, 0, 1); // Green for top-left quadrant
-        } else if (in.screenCoord.x < 0 && in.screenCoord.y < 0) {
+        } else if (viewport.size.x < 0 && viewport.size.y < 0) {
             return float4(0, 0, 1, 1); // Blue for bottom-left quadrant
         } else {
             return float4(1, 0, 0, 1); // Red for bottom-right quadrant
