@@ -22,22 +22,27 @@ internal class ShaderLibrary {
     
     private var shaderCache: [String: ShaderState] = [:]
     let shaderStateSubject = PassthroughSubject<(name: String, state: ShaderState), Never>() // Subject to publish shader state changes.
+
+    static let vertexShaderOutputStruct: String = """
+        struct VertexOutput {
+            float4 position [[position]];
+            float2 screenCoord;
+            float2 viewPortSize;
+        };
+        """
     
-    static let commonShaderSource: String = """
-    struct ViewportSize {
-        float2 size;
-    };
-    struct VertexOutput {
-        float4 position [[position]];
-        float2 screenCoord;
+    static let shaderInputStruct: String = """
+    struct ShaderInput {
+        float time;
     };
     """
-
+    
+    static let commonShaderSource: String = vertexShaderOutputStruct + shaderInputStruct
+    
     
     // default shaders in the case user doesnt provide anything and is just trying out stuff
     static let defaultVertexShader: String = commonShaderSource + """
-    vertex VertexOutput defaultVertexShader(uint vertexID [[vertex_id]],
-                                           constant ViewportSize &viewport [[buffer(0)]]) {
+    vertex VertexOutput defaultVertexShader(uint vertexID [[vertex_id]]) {
         float2 positions[4] = {
             float2(-1.0, -1.0),
             float2(1.0, -1.0),
@@ -47,7 +52,8 @@ internal class ShaderLibrary {
         
         VertexOutput out;
         out.position = float4(positions[vertexID], 0.0, 1.0);
-        out.screenCoord = positions[vertexID] * 0.5 * viewport.size;  // Convert from clip space [-1, 1] to screen space.
+        out.screenCoord = positions[vertexID] * 0.5 * viewport.size;
+        out.areaSize = viewport.size; // Set the area size here
         return out;
     }
     """
@@ -62,13 +68,13 @@ internal class ShaderLibrary {
 
      */
     static let defaultFragmentShader: String = commonShaderSource + """
-    fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]], constant ViewportSize &viewport [[buffer(1)]]) {
+    fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]], constant ShaderInput &shaderInput [[buffer(0)]]) {
         // Check which quadrant the pixel is in and color accordingly
-        if (viewport.size.x > 0 && viewport.size.y > 0) {
+        if (in.viewportSize.x > 0 && in.viewportSize.y > 0) {
             return float4(1, 1, 0, 1); // Yellow for top-right quadrant
-        } else if (viewport.size.x < 0 && viewport.size.y > 0) {
+        } else if (in.viewportSize.x < 0 && in.viewportSize.y > 0) {
             return float4(0, 1, 0, 1); // Green for top-left quadrant
-        } else if (viewport.size.x < 0 && viewport.size.y < 0) {
+        } else if (in.viewportSize.x < 0 && in.viewportSize.y < 0) {
             return float4(0, 0, 1, 1); // Blue for bottom-left quadrant
         } else {
             return float4(1, 0, 0, 1); // Red for bottom-right quadrant
