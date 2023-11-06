@@ -22,27 +22,34 @@ internal class ShaderLibrary {
     
     private var shaderCache: [String: ShaderState] = [:]
     let shaderStateSubject = PassthroughSubject<(name: String, state: ShaderState), Never>() // Subject to publish shader state changes.
-
+    
+    static let viewportSizeStruct: String = """
+        struct ViewportSize {
+            float2 size;
+        };
+        """
+    
     static let vertexShaderOutputStruct: String = """
         struct VertexOutput {
             float4 position [[position]];
             float2 screenCoord;
-            float2 viewPortSize;
         };
         """
     
     static let shaderInputStruct: String = """
-    struct ShaderInput {
+    struct shaderInput {
         float time;
     };
     """
     
-    static let commonShaderSource: String = vertexShaderOutputStruct + shaderInputStruct
+   
+    static let vertexShaderSource: String = viewportSizeStruct + vertexShaderOutputStruct
+    static let fragmentShaderSource: String = viewportSizeStruct + shaderInputStruct
     
-    
-    // default shaders in the case user doesnt provide anything and is just trying out stuff
-    static let defaultVertexShader: String = commonShaderSource + """
-    vertex VertexOutput defaultVertexShader(uint vertexID [[vertex_id]]) {
+    //default shaders <3
+    static let defaultVertexShader: String = vertexShaderSource + """
+    vertex VertexOutput defaultVertexShader(uint vertexID [[vertex_id]],
+                                               constant ViewportSize &viewport [[buffer(0)]]) {
         float2 positions[4] = {
             float2(-1.0, -1.0),
             float2(1.0, -1.0),
@@ -53,43 +60,28 @@ internal class ShaderLibrary {
         VertexOutput out;
         out.position = float4(positions[vertexID], 0.0, 1.0);
         out.screenCoord = positions[vertexID] * 0.5 * viewport.size;
-        out.areaSize = viewport.size; // Set the area size here
         return out;
     }
     """
-    //changed to [[buffer(0)]] from [[buffer(1)]]
-    /*
-    static let defaultFragmentShader: String = commonShaderSource + """
-    fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]]) {
-        return float4(1.0, 0.0, 0.0, 1.0);  // solid red
-    }
-    
-    """
 
-     */
-    static let defaultFragmentShader: String = commonShaderSource + """
-    fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]], constant ShaderInput &shaderInput [[buffer(0)]]) {
+     
+    static let defaultFragmentShader: String = fragmentShaderSource + """
+    fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]],
+                                               constant ViewportSize &viewport [[buffer(0)]],
+                                                constant ShaderInput &shaderInput [[buffer(1)]]) {
         // Check which quadrant the pixel is in and color accordingly
-        if (in.viewportSize.x > 0 && in.viewportSize.y > 0) {
+        if (viewport.size.x > 0 && viewport.size.y > 0) {
             return float4(1, 1, 0, 1); // Yellow for top-right quadrant
-        } else if (in.viewportSize.x < 0 && in.viewportSize.y > 0) {
+        } else if (viewport.size.x < 0 && viewport.size.y > 0) {
             return float4(0, 1, 0, 1); // Green for top-left quadrant
-        } else if (in.viewportSize.x < 0 && in.viewportSize.y < 0) {
+        } else if (viewport.size.x < 0 && viewport.size.y < 0) {
             return float4(0, 0, 1, 1); // Blue for bottom-left quadrant
         } else {
             return float4(1, 0, 0, 1); // Red for bottom-right quadrant
         }
     }
     """
-     /*
-      fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]]) {
-      
-           float2 textureCoordinate = in.position.xy * 0.5 + 0.5;  // Convert [-1, 1] to [0, 1]
-           float4 blackToWhite = float4(textureCoordinate.x, textureCoordinate.x, textureCoordinate.x, 1.0);
-           float4 blueToWhite = float4(0.0, 0.0, 1.0, 1.0) * (1.0 - textureCoordinate.y) + float4(1.0, 1.0, 1.0, 1.0) * textureCoordinate.y;
-           return blackToWhite * blueToWhite;
-       }
-      */
+
  
     private init() {
         guard let library = device.makeDefaultLibrary() else {
