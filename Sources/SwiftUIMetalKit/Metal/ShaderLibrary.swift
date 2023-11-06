@@ -37,17 +37,17 @@ internal class ShaderLibrary {
         """
     
     static let shaderInputStruct: String = """
-    struct shaderInput {
+    struct ShaderInput {
         float time;
     };
     """
     
-   
-    static let vertexShaderSource: String = viewportSizeStruct + vertexShaderOutputStruct
-    static let fragmentShaderSource: String = viewportSizeStruct + shaderInputStruct
+    static let commonShaderSource: String = viewportSizeStruct + vertexShaderOutputStruct + shaderInputStruct
+    //static let vertexShaderSource: String = viewportSizeStruct + vertexShaderOutputStruct
+    //static let fragmentShaderSource: String = viewportSizeStruct + shaderInputStruct
     
     //default shaders <3
-    static let defaultVertexShader: String = vertexShaderSource + """
+    static let defaultVertexShader: String = commonShaderSource + """
     vertex VertexOutput defaultVertexShader(uint vertexID [[vertex_id]],
                                                constant ViewportSize &viewport [[buffer(0)]]) {
         float2 positions[4] = {
@@ -65,7 +65,7 @@ internal class ShaderLibrary {
     """
 
      
-    static let defaultFragmentShader: String = fragmentShaderSource + """
+    static let defaultFragmentShader: String = commonShaderSource + """
     fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]],
                                                constant ViewportSize &viewport [[buffer(0)]],
                                                 constant ShaderInput &shaderInput [[buffer(1)]]) {
