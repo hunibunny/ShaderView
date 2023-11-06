@@ -99,6 +99,8 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
             return
         }
         
+        print("drawableSize currently \(self.drawableSize)")
+        
         let renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.colorAttachments[0].texture = drawable.texture
         //renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
