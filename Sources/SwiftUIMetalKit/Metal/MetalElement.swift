@@ -126,7 +126,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
             
         
         let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
-
+    
         
         //TODO: decide on how the buffer order in input is so its consistent for both shaders
         renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)  // Use the next available index
@@ -135,6 +135,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         let bufferSize = 4 * 1024 // 4KB in bytes should be more than enough for any 2d shader use
         let buffer = device?.makeBuffer(bytes: &shaderInput, length:  bufferSize, options: [])
         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 0)
+        renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 1)
         
         renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         renderEncoder.endEncoding()
