@@ -8,18 +8,51 @@
 import Foundation
 import Metal
 
-//TODO: check if device should be optional or not since i kinda really need it always :)
+// The DeviceManager class is designed as a singleton to manage and provide shared access to MTLDevice and related objects
 class DeviceManager {
     static let shared = DeviceManager()
-    let device: MTLDevice?
-    let commandQueue: MTLCommandQueue?
-    let renderPassDescriptor = MTLRenderPassDescriptor()
-
+    
+    private(set) var initializationError: Error?
+    private(set) var device: MTLDevice?
+    private(set) var commandQueue: MTLCommandQueue?
+    
     private init() {
         device = MTLCreateSystemDefaultDevice()
-        commandQueue = device!.makeCommandQueue()//the device is there, if its not there rip, i need to put better error message here
-        assert(self.commandQueue != nil, "Failed to create a command queue. Ensure device is properly initialized and available.")
+        if device == nil {
+            initializationError = MetalInitializationError.noDevice
+        }
+        
+        if let device = device {
+            commandQueue = device.makeCommandQueue()
+            if commandQueue == nil {
+                initializationError = MetalInitializationError.noCommandQueue
+            }
+        }
+    }
+    
+    func verifyInitialization() throws -> (device: MTLDevice, commandQueue: MTLCommandQueue) {
+        if let error = initializationError {
+            throw error
+        }
+        if let device = device, let commandQueue = commandQueue {
+            return (device, commandQueue)
+        } else {
+            throw MetalInitializationError.noDevice // Or a more appropriate error
+        }
         
     }
-
+    
+    // Provides a safe way to access the command queue
+        func getCommandQueue() throws -> MTLCommandQueue {
+            if let commandQueue = self.commandQueue {
+                return commandQueue
+            } else if let error = self.initializationError {
+                throw error
+            } else {
+                throw MetalInitializationError.noCommandQueue
+            }
+        }
 }
+
+//let commandQueue = try DeviceManager.shared.getCommandQueue()
+

@@ -11,12 +11,21 @@ import os.log
 
 
 class ShaderCompiler {
-    let device: MTLDevice = DeviceManager.shared.device!
-    let library: MTLLibrary
+    private let device: MTLDevice
+    private let library: MTLLibrary
     
-    init(library: MTLLibrary) {
-        self.library = library
+    init?() {
+        guard let sharedDevice = DeviceManager.shared.device else {
+            print("MTLDevice could not be obtained from DeviceManager.")
+            return nil
+        }
+        self.device = sharedDevice
         
+        guard let newLibrary = sharedDevice.makeDefaultLibrary() else {
+            print("Failed to create the default MTLLibrary.")
+            return nil
+        }
+        self.library = newLibrary
     }
     
     func compileShaderAsync(_ source: String, key: String, completion: @escaping (Result<MTLFunction, ShaderCompilationError>) -> Void) {

@@ -17,7 +17,7 @@ class ShaderViewModel: ObservableObject {
     private var vertexShaderCompiled = false
     private var fragmentShaderCompiled = false
     private var transitionedToMetalView = false
-//consider moving fragmentshadername and vertexshadername here completely, now they r saved in both
+
     
     init(vertexShaderName: String, fragmentShaderName: String) {
         self.vertexShaderName = vertexShaderName
@@ -28,7 +28,6 @@ class ShaderViewModel: ObservableObject {
             self?.handleShaderStateUpdate(forKey: key, state: state)
         }
 
-        // Store the subscription to manage it later.
         shaderSubscription?.store(in: &cancellables)
     }
 

@@ -16,7 +16,7 @@ internal class ShaderLibrary {
    
     
     private let metalLibrary: MTLLibrary
-    let device: MTLDevice = DeviceManager.shared.device! //if its nil it already would have crashed
+    private var device: MTLDevice?
     
     private let shaderCompiler: ShaderCompiler
     
@@ -83,16 +83,27 @@ internal class ShaderLibrary {
     """
 
  
-    private init() {
-        guard let library = device.makeDefaultLibrary() else {
-                    fatalError("Failed to initialize Metal library")
+    private init?() {
+            do {
+                // Verify that the DeviceManager is properly initialized
+                let resources = try DeviceManager.shared.verifyInitialization()
+                guard let library = resources.device.makeDefaultLibrary() else {
+                    // If we can't get the default library, we can't proceed
+                    return nil
+                }
+                self.metalLibrary = library
+                self.shaderCompiler = ShaderCompiler(library: library)
+                
+                // Assuming you have a function to compile and store shaders
+                compileFromStringAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertexShader")
+                compileFromStringAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragmentShader")
+
+            } catch {
+                // Here, you would handle the error, perhaps logging it or setting an error state
+                // Since this is an initializer, we can't throw; instead, we return nil
+                return nil
+            }
         }
-        self.metalLibrary = library
-        self.shaderCompiler = ShaderCompiler(library: library)
-        compileFromStringAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertexShader")
-        compileFromStringAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragmentShader")
-        
-    }
     
 
     private func compileFromStringAndStore(shaderSource: String, forKey key: String) {
