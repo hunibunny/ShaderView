@@ -80,9 +80,10 @@ public struct MetalSwiftUIView: View {
         .onChange(of: shaderViewModel.viewState) { newState in
             if newState == .metalView {
                 shadersLoaded = true
-                os_log("Switched to metalView.", type: .info)
+                //os_log("Switched to metalView.", type: .info)
             }
         }
+        //TODO: remobe these
         .frame(minWidth: 100, minHeight: 100) // provide a minimum size
         .background(Color.blue) // add a background color to visually debug
     }

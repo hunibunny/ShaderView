@@ -119,9 +119,9 @@ internal class ShaderLibrary {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let shaderFunction):
-                    os_log("Attempting to store shader with a key %@", log: OSLog.default, type: .debug, key)
+                    //os_log("Attempting to store shader with a key %@", log: OSLog.default, type: .debug, key)
                     self?.store(shader: .compiled(shaderFunction), forKey: key)
-                    os_log("Succesfully stored the shader with a key %@", log: OSLog.default, type: .debug, key)
+                    //os_log("Succesfully stored the shader with a key %@", log: OSLog.default, type: .debug, key)
                 case .failure(let error):
                     switch error {
                     case .functionCreationFailed(let errorMessage):
@@ -134,7 +134,7 @@ internal class ShaderLibrary {
     }
     
     func store(shader: ShaderState, forKey key: String) {
-        os_log("Storing shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
+        //os_log("Storing shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
         shaderCache[key] = shader
         shaderStateSubject.send((name: key, state: shaderCache[key]!))
     }
@@ -142,7 +142,7 @@ internal class ShaderLibrary {
     
     
     func retrieveShader(forKey key: String) -> MTLFunction? {
-        os_log("Retrieving shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
+        //os_log("Retrieving shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
         
         // First, check if the shader is in the cache.
         if let shaderState = shaderCache[key] {
@@ -151,7 +151,7 @@ internal class ShaderLibrary {
                 return compiledShader
             case .compiling:
                 //TODO: should i wait for it here or not? not a current problem since this will never be called if shaders arent compiled, but in the future if i provide compilation during runtime this  will become a problem
-                os_log("Shader for key %{PUBLIC}@ is still compiling.", log: OSLog.default, type: .info, key)
+                //os_log("Shader for key %{PUBLIC}@ is still compiling.", log: OSLog.default, type: .info, key)
                 return nil
             case .error:
                 // If there was an error, the shader is not available.
@@ -160,7 +160,7 @@ internal class ShaderLibrary {
             }
         } else {
             // If the shader is not in the cache, attempt to create it using makeFunction.
-            os_log("Shader for key %{PUBLIC}@ not found in cache! Attempting to create it.", log: OSLog.default, type: .info, key)
+            //os_log("Shader for key %{PUBLIC}@ not found in cache! Attempting to create it.", log: OSLog.default, type: .info, key)
             if let function = shaderCompiler!.makeFunction(name: key){
                 shaderCache[key] = .compiled(function)
                 return function
@@ -175,7 +175,7 @@ internal class ShaderLibrary {
     
     
     func makeFunction(name: String) -> MTLFunction {
-        os_log("Making function for name: %{PUBLIC}@", log: OSLog.default, type: .debug, name)
+        //os_log("Making function for name: %{PUBLIC}@", log: OSLog.default, type: .debug, name)
         if let shaderFunction = shaderCompiler!.makeFunction(name: name){
             return shaderFunction
         } else {

@@ -50,5 +50,3 @@ class DeviceManager {
         }
 }
 
-//let commandQueue = try DeviceManager.shared.getCommandQueue()
-

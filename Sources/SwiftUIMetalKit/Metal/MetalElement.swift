@@ -8,9 +8,9 @@
 import MetalKit
 
 
-//TODO: add shader input so it actually matters <3 and combine it with size
+//TODO: add time management so shaders can track time
 
-public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
+public class MetalElement: MTKView, MTKViewDelegate {
     var vertexShaderName: String = ""
     var fragmentShaderName: String = ""
     var vertexBuffer: MTLBuffer?
@@ -74,7 +74,7 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         self.render()
     }
 
-    //TODO: add needed stuff here
+    //TODO: add needed stuff here if any
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         
     }
@@ -116,23 +116,19 @@ public class MetalElement: MTKView, MetalElementProtocol, MTKViewDelegate {
         }
         
         
-        //var viewportSize = ViewportSize(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
+
         var viewportSize = ViewportSize(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
         
-        guard self.drawableSize.width > 0, self.drawableSize.height > 0 else {
-             fatalError("Drawable size 0 ")
-            //defenietly very good error handling
-         }
-            
+        //TODO: consider adding debug message for size or other stuff
         
         let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<ViewportSize>.size, options: [])
     
         
-        //TODO: decide on how the buffer order in input is so its consistent for both shaders
+        //TODO: first buffer viewportbuffer second other stuff like variables
         renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)  // Use the next available index
         renderEncoder.setRenderPipelineState(renderPipelineState)
         
-        let bufferSize = 4 * 1024 // 4KB in bytes should be more than enough for any 2d shader use
+        let bufferSize = 4 * 1024 // 4KB in bytes should be more than enough for any 2d shader use, consider reducing
         let buffer = device?.makeBuffer(bytes: &shaderInput, length:  bufferSize, options: [])
         renderEncoder.setFragmentBuffer(viewportBuffer, offset: 0, index: 0)
         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 1)
