@@ -101,8 +101,15 @@ internal class ShaderLibrary {
     
     //TODO: reconsider this name lol
     private func performFallback(){
-        //here i need to somehow deal with metal not being ok aka getting all the metalswiftuiviews to usefallbackviews
-        //
+        shaderStateSubject.send((name: "error", state: .error))
+    }
+
+    
+    //TODO: finnish this
+    func areDefaultShadersCompiled() -> Bool {
+            // Check if the default shaders are compiled and return the result.
+            // This could be as simple as checking for the presence of certain keys in a dictionary.
+        return true
     }
     
     

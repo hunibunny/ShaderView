@@ -10,4 +10,5 @@ import Foundation
 enum ViewState {
     case placeholder
     case metalView
+    case error
 }

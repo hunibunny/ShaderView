@@ -32,18 +32,25 @@ class ShaderViewModel: ObservableObject {
     }
 
     private func handleShaderStateUpdate(forKey key: String, state: ShaderState) {
-        // Check which shader has been compiled and update the status accordingly.
-        if key == vertexShaderName, case .compiled(_) = state {
-            vertexShaderCompiled = true
-        } else if key == fragmentShaderName, case .compiled(_) = state {
-            fragmentShaderCompiled = true
-        }
+        switch state {
+        case .compiled(_):
+            if key == vertexShaderName {
+                vertexShaderCompiled = true
+            } else if key == fragmentShaderName {
+                fragmentShaderCompiled = true
+            }
 
-        // If both shaders are compiled, update the view state.
-        if vertexShaderCompiled && fragmentShaderCompiled {
-            viewState = .metalView
-            transitionedToMetalView = true
-            shaderSubscription?.cancel()  // Stop listening to further updates
+            if vertexShaderCompiled && fragmentShaderCompiled {
+                viewState = .metalView
+            }
+        case .error:
+            viewState = .error
+        default:
+            break
+        }
+        
+        if viewState == .error || (vertexShaderCompiled && fragmentShaderCompiled) {
+            shaderSubscription?.cancel()
             shaderSubscription = nil
         }
     }
