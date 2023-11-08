@@ -15,28 +15,33 @@ class ShaderCompiler {
     private let library: MTLLibrary
     
     init?() {
-        guard let sharedDevice = DeviceManager.shared.device else {
-            print("MTLDevice could not be obtained from DeviceManager.")
-            return nil
+            guard let sharedDevice = DeviceManager.shared.device else {
+                Logger.error("MTLDevice could not be obtained from DeviceManager.")
+                return nil
+            }
+            self.device = sharedDevice
+            
+            guard let newLibrary = sharedDevice.makeDefaultLibrary() else {
+                Logger.error("Failed to create the default MTLLibrary.")
+                return nil
+            }
+            self.library = newLibrary
         }
-        self.device = sharedDevice
-        
-        guard let newLibrary = sharedDevice.makeDefaultLibrary() else {
-            print("Failed to create the default MTLLibrary.")
-            return nil
+    
+    var isSuccessfullyInitialized: Bool {
+            // Perform any additional checks if necessary
+            return true
         }
-        self.library = newLibrary
-    }
     
     func compileShaderAsync(_ source: String, key: String, completion: @escaping (Result<MTLFunction, ShaderCompilationError>) -> Void) {
         
         // Print the entire shader source code
-        print("Shader source code for key \(key):\n\(source)")
+        //print("Shader source code for key \(key):\n\(source)")
         
-        print("compile started")
+        //print("compile started")
         
         DispatchQueue.global().async {
-            os_log("Attempting to create shader with key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
+            //os_log("Attempting to create shader with key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
             do {
                 let shaderLibrary = try self.device.makeLibrary(source: source, options: nil)
                 guard let shaderFunction = shaderLibrary.makeFunction(name: key) else {
@@ -44,13 +49,17 @@ class ShaderCompiler {
                     completion(.failure(.functionCreationFailed("Failed to create shader function with key: \(key)")))
                     return
                 }
-                os_log("Successfully created a shader with key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
+                //os_log("Successfully created a shader with key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
                 completion(.success(shaderFunction))
             } catch let error {
                 os_log("Failed to create shader library for key: %{PUBLIC}@ due to error: %{PUBLIC}@", log: OSLog.default, type: .error, key, error.localizedDescription)
                 completion(.failure(.functionCreationFailed("Failed to create shader library for key: \(key) due to error: \(error.localizedDescription)")))
             }
         }
+    }
+    
+    func makeFunction(name: String) -> MTLFunction?{
+        return library.makeFunction(name: name)
     }
 }
 

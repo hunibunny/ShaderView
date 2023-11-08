@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol ShaderInputProtocol {
-   //TODO: add size here 
+   //TODO: add time here 
 }

@@ -17,32 +17,28 @@ class DeviceManager {
     private(set) var commandQueue: MTLCommandQueue?
     
     private init() {
-        device = MTLCreateSystemDefaultDevice()
-        if device == nil {
-            initializationError = MetalInitializationError.noDevice
-        }
-        
-        if let device = device {
-            commandQueue = device.makeCommandQueue()
-            if commandQueue == nil {
-                initializationError = MetalInitializationError.noCommandQueue
-            }
-        }
+           device = MTLCreateSystemDefaultDevice()
+           if device == nil {
+               Logger.error("MTLDevice could not be created.")
+               initializationError = MetalInitializationError.noDevice
+           }
+           
+           if let device = device {
+               commandQueue = device.makeCommandQueue()
+               if commandQueue == nil {
+                   Logger.error("MTLCommandQueue could not be created.")
+                   initializationError = MetalInitializationError.noCommandQueue
+               }
+           }
+       }
+    
+    
+    var isSuccessfullyInitialized: Bool {
+        return device != nil && commandQueue != nil
     }
     
-    func verifyInitialization() throws -> (device: MTLDevice, commandQueue: MTLCommandQueue) {
-        if let error = initializationError {
-            throw error
-        }
-        if let device = device, let commandQueue = commandQueue {
-            return (device, commandQueue)
-        } else {
-            throw MetalInitializationError.noDevice // Or a more appropriate error
-        }
-        
-    }
     
-    // Provides a safe way to access the command queue
+    // TODO: check if this Provides a safe way to access the command queue or is unnecessary
         func getCommandQueue() throws -> MTLCommandQueue {
             if let commandQueue = self.commandQueue {
                 return commandQueue

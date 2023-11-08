@@ -13,12 +13,10 @@ import Combine
 
 internal class ShaderLibrary {
     static let shared = ShaderLibrary()
-   
     
-    private let metalLibrary: MTLLibrary
     private var device: MTLDevice?
     
-    private let shaderCompiler: ShaderCompiler
+    private let shaderCompiler: ShaderCompiler?
     
     private var shaderCache: [String: ShaderState] = [:]
     let shaderStateSubject = PassthroughSubject<(name: String, state: ShaderState), Never>() // Subject to publish shader state changes.
@@ -63,8 +61,8 @@ internal class ShaderLibrary {
         return out;
     }
     """
-
-     
+    
+    
     static let defaultFragmentShader: String = commonShaderSource + """
     fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]],
                                                constant ViewportSize &viewport [[buffer(0)]],
@@ -81,34 +79,36 @@ internal class ShaderLibrary {
         }
     }
     """
-
- 
-    private init?() {
-            do {
-                // Verify that the DeviceManager is properly initialized
-                let resources = try DeviceManager.shared.verifyInitialization()
-                guard let library = resources.device.makeDefaultLibrary() else {
-                    // If we can't get the default library, we can't proceed
-                    return nil
-                }
-                self.metalLibrary = library
-                self.shaderCompiler = ShaderCompiler(library: library)
-                
-                // Assuming you have a function to compile and store shaders
-                compileFromStringAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertexShader")
-                compileFromStringAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragmentShader")
-
-            } catch {
-                // Here, you would handle the error, perhaps logging it or setting an error state
-                // Since this is an initializer, we can't throw; instead, we return nil
-                return nil
-            }
-        }
     
-
+    
+    private init() {
+        self.device = DeviceManager.shared.device
+                
+        if DeviceManager.shared.isSuccessfullyInitialized {
+                self.shaderCompiler = ShaderCompiler()
+                if shaderCompiler == nil || !shaderCompiler!.isSuccessfullyInitialized {
+                    performFallback()
+                }
+            } else {
+                self.shaderCompiler = nil
+                performFallback()
+            }
+    
+        compileFromStringAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertexShader")
+        compileFromStringAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragmentShader")
+  
+    }
+    
+    //TODO: reconsider this name lol
+    private func performFallback(){
+        //here i need to somehow deal with metal not being ok aka getting all the metalswiftuiviews to usefallbackviews
+        //
+    }
+    
+    
     private func compileFromStringAndStore(shaderSource: String, forKey key: String) {
         self.store(shader: .compiling, forKey: key)
-        shaderCompiler.compileShaderAsync(shaderSource, key: key) { [weak self] (result) in
+        shaderCompiler!.compileShaderAsync(shaderSource, key: key) { [weak self] (result) in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let shaderFunction):
@@ -131,7 +131,7 @@ internal class ShaderLibrary {
         shaderCache[key] = shader
         shaderStateSubject.send((name: key, state: shaderCache[key]!))
     }
-
+    
     
     
     func retrieveShader(forKey key: String) -> MTLFunction? {
@@ -154,7 +154,7 @@ internal class ShaderLibrary {
         } else {
             // If the shader is not in the cache, attempt to create it using makeFunction.
             os_log("Shader for key %{PUBLIC}@ not found in cache! Attempting to create it.", log: OSLog.default, type: .info, key)
-            if let function = metalLibrary.makeFunction(name: key) {
+            if let function = shaderCompiler!.makeFunction(name: key){
                 shaderCache[key] = .compiled(function)
                 return function
             } else {
@@ -163,13 +163,13 @@ internal class ShaderLibrary {
             }
         }
     }
-
-
-
+    
+    
+    
     
     func makeFunction(name: String) -> MTLFunction {
         os_log("Making function for name: %{PUBLIC}@", log: OSLog.default, type: .debug, name)
-        if let shaderFunction = metalLibrary.makeFunction(name: name) {
+        if let shaderFunction = shaderCompiler!.makeFunction(name: name){
             return shaderFunction
         } else {
             assert(false, "Failed to load/retrieve the provided shade \(name). Please ensure your custom shader is correctly defined.")
@@ -178,6 +178,11 @@ internal class ShaderLibrary {
             return retrieveShader(forKey: "defaultFragmentShader")!
         }
     }
-
+    
+    private func fallbackGraphicsSetup(){
+        
+        
+    }
+    
 }
 

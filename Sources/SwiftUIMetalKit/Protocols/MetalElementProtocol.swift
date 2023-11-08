@@ -16,3 +16,4 @@ typealias MetalCompatibleView = UIView
 #endif
 
 protocol MetalElementProtocol: MetalCompatibleView, MetalConfigurable {}
+    
