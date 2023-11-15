@@ -17,7 +17,7 @@ class ShaderViewModel: ObservableObject {
     private var vertexShaderCompiled = false
     private var fragmentShaderCompiled = false
     private var transitionedToMetalView = false
-
+    
     
     init(vertexShaderName: String, fragmentShaderName: String) {
         self.vertexShaderName = vertexShaderName
@@ -29,6 +29,12 @@ class ShaderViewModel: ObservableObject {
         }
 
         shaderSubscription?.store(in: &cancellables)
+        
+        //TODO: is this good enough accuracy or should I add more precise for checking both individually
+        if ShaderLibrary.shared.getDefaultShadersCompiled(){
+            vertexShaderCompiled = true
+            fragmentShaderCompiled = true
+        }
     }
 
     private func handleShaderStateUpdate(forKey key: String, state: ShaderState) {
@@ -43,6 +49,7 @@ class ShaderViewModel: ObservableObject {
             if vertexShaderCompiled && fragmentShaderCompiled {
                 viewState = .metalView
             }
+            
         case .error:
             viewState = .error
         default:

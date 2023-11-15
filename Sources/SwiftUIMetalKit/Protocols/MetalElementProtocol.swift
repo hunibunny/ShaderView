@@ -15,5 +15,5 @@ import UIKit
 typealias MetalCompatibleView = UIView
 #endif
 
-protocol MetalElementProtocol: MetalCompatibleView, MetalConfigurable {}
+protocol MetalElementProtocol: MetalCompatibleView {}
     

@@ -18,6 +18,8 @@ internal class ShaderLibrary {
     
     private let shaderCompiler: ShaderCompiler?
     
+    private var defaultShadersCompiled: Bool = false
+    
     private var shaderCache: [String: ShaderState] = [:]
     let shaderStateSubject = PassthroughSubject<(name: String, state: ShaderState), Never>() // Subject to publish shader state changes.
     
@@ -190,6 +192,25 @@ internal class ShaderLibrary {
         
         
     }
+    
+    private func checkAndSetDefaultShadersCompiled(){
+        if let vertexShaderState = shaderCache["defaultVertexShader"], let fragmentShaderState = shaderCache["defaultFragmentShader"] {
+            switch (vertexShaderState, fragmentShaderState) {
+            case (.compiled(_), .compiled(_)):
+                defaultShadersCompiled = true
+            default:
+                defaultShadersCompiled = false
+            }
+        }
+    }
+    
+    func getDefaultShadersCompiled()->Bool{
+        if !defaultShadersCompiled{
+            checkAndSetDefaultShadersCompiled()
+        }
+        return defaultShadersCompiled;
+    }
+    
     
 }
 
