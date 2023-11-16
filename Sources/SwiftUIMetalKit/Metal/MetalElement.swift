@@ -124,12 +124,15 @@ public class MetalElement: MTKView, MTKViewDelegate {
             return
         }
         
+        
+        
+
+        var viewport = Viewport(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
+        
         //TODO: consider adding debug message for size or other stuff
         
-        var viewportSize = vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height))
-
-     
-        let viewportBuffer = device?.makeBuffer(bytes: &viewportSize, length: MemoryLayout<SIMD2<Float>>.size, options: [])
+        let viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
+    
         
         //TODO: first buffer viewportbuffer second other stuff like variables
         renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)  // Use the next available index

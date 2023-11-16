@@ -23,8 +23,8 @@ internal class ShaderLibrary {
     private var shaderCache: [String: ShaderState] = [:]
     let shaderStateSubject = PassthroughSubject<(name: String, state: ShaderState), Never>() // Subject to publish shader state changes.
     
-    static let viewportSizeStruct: String = """
-        struct ViewportSize {
+    static let viewportStruct: String = """
+        struct Viewport {
             float2 size;
         };
         """
@@ -43,14 +43,14 @@ internal class ShaderLibrary {
     """
     
     
-    static let commonShaderSource: String = vertexShaderOutputStruct + shaderInputStruct
+    static let commonShaderSource: String = vertexShaderOutputStruct + viewportStruct + shaderInputStruct
     //static let vertexShaderSource: String = viewportSizeStruct + vertexShaderOutputStruct
     //static let fragmentShaderSource: String = viewportSizeStruct + shaderInputStruct
     
     //default shaders <3
     static let defaultVertexShader: String = commonShaderSource + """
     vertex VertexOutput defaultVertexShader(uint vertexID [[vertex_id]],
-                                               constant float2 viewportSize [[buffer(0)]]) {
+                                               constant Viewport& viewport [[buffer(0)]]) {
         float2 positions[4] = {
             float2(-1.0, -1.0),
             float2(1.0, -1.0),
@@ -70,7 +70,7 @@ internal class ShaderLibrary {
     
     static let defaultFragmentShader: String = commonShaderSource + """
     fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]],
-                                               constant float2 viewportSize [[buffer(0)]],
+                                               constant Viewport& viewport [[buffer(0)]],
                                                 constant ShaderInput &shaderInput [[buffer(1)]]) {
         // Check which quadrant the pixel is in and color accordingly
         if (viewport.size.x > 0 && viewport.size.y > 0) {
