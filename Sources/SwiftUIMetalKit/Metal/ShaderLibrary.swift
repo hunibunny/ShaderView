@@ -42,14 +42,15 @@ internal class ShaderLibrary {
     };
     """
     
-    static let commonShaderSource: String = viewportSizeStruct + vertexShaderOutputStruct + shaderInputStruct
+    
+    static let commonShaderSource: String = vertexShaderOutputStruct + shaderInputStruct
     //static let vertexShaderSource: String = viewportSizeStruct + vertexShaderOutputStruct
     //static let fragmentShaderSource: String = viewportSizeStruct + shaderInputStruct
     
     //default shaders <3
     static let defaultVertexShader: String = commonShaderSource + """
     vertex VertexOutput defaultVertexShader(uint vertexID [[vertex_id]],
-                                               constant ViewportSize &viewport [[buffer(0)]]) {
+                                               constant float2 viewportSize [[buffer(0)]]) {
         float2 positions[4] = {
             float2(-1.0, -1.0),
             float2(1.0, -1.0),
@@ -59,7 +60,9 @@ internal class ShaderLibrary {
         
         VertexOutput out;
         out.position = float4(positions[vertexID], 0.0, 1.0);
-        out.screenCoord = positions[vertexID] * 0.5 * viewport.size;
+        //out.screenCoord = positions[vertexID] * 0.5 * viewport.size;
+        // Map NDC (-1 to 1 range) to framebuffer coordinates (0 to 1 range)
+        out.screenCoord = (positions[vertexID] + 1.0) * 0.5;
         return out;
     }
     """
@@ -67,7 +70,7 @@ internal class ShaderLibrary {
     
     static let defaultFragmentShader: String = commonShaderSource + """
     fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]],
-                                               constant ViewportSize &viewport [[buffer(0)]],
+                                               constant float2 viewportSize [[buffer(0)]],
                                                 constant ShaderInput &shaderInput [[buffer(1)]]) {
         // Check which quadrant the pixel is in and color accordingly
         if (viewport.size.x > 0 && viewport.size.y > 0) {
