@@ -61,7 +61,7 @@ public class MetalElement: MTKView, MTKViewDelegate {
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-        pipelineDescriptor.colorAttachments[0].isBlendingEnabled = false
+        pipelineDescriptor.colorAttachments[0].isBlendingEnabled = true
         
         do {
             self.renderPipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
