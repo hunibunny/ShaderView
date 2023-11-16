@@ -83,9 +83,6 @@ public struct MetalSwiftUIView: View {
                 //os_log("Switched to metalView.", type: .info)
             }
         }
-        //TODO: remobe these
-        .frame(minWidth: 100, minHeight: 100) // provide a minimum size
-        .background(Color.blue) // add a background color to visually debug
     }
 }
 

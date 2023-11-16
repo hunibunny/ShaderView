@@ -34,7 +34,9 @@ class ShaderViewModel: ObservableObject {
         if ShaderLibrary.shared.getDefaultShadersCompiled(){
             vertexShaderCompiled = true
             fragmentShaderCompiled = true
+            Logger.error("DefaultShadersCompiled")
         }
+        
     }
 
     private func handleShaderStateUpdate(forKey key: String, state: ShaderState) {
