@@ -34,7 +34,7 @@ class ShaderViewModel: ObservableObject {
         if ShaderLibrary.shared.getDefaultShadersCompiled(){
             vertexShaderCompiled = true
             fragmentShaderCompiled = true
-            Logger.error("DefaultShadersCompiled")
+            viewState = .metalView
         }
         
     }
