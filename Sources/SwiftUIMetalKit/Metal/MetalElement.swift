@@ -15,24 +15,25 @@ public class MetalElement: MTKView, MTKViewDelegate {
     var fragmentShaderName: String = ""
     var vertexBuffer: MTLBuffer?
     var shouldScaleByDimensions: Bool = true
-    var shaderInput: ShaderInput?
+    var shaderInput: ShaderInput
     var commandQueue: MTLCommandQueue!
     var renderPipelineState: MTLRenderPipelineState?
-    var startTime: Date?
+    var startTime: Date = Date()  //consider defining later for more accurate start time rather than creation  time
     var elapsedTime: Float = 0.0
 
     
     init(fragmentShaderName: String, vertexShaderName: String, shaderInput: ShaderInput?) {
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
-        self.shaderInput = shaderInput
+        self.shaderInput = shaderInput ?? ShaderInput()
         super.init(frame: .zero, device: DeviceManager.shared.device)
-            
+
         setupMetal()
     }
  
     
     required init(coder: NSCoder) {
+        self.shaderInput = ShaderInput()
         super.init(coder: coder)
         self.delegate = self
         self.isPaused = false
@@ -42,12 +43,12 @@ public class MetalElement: MTKView, MTKViewDelegate {
     
     
     private func setupMetal() {
-        // Ensure that a Metal-compatible device is available
+        // TODO: if adding real time compilation for users these errors might get triggered :)
         guard let device = DeviceManager.shared.device else {
             fatalError("Metal is not supported on this device")
         }
         
-        // Retrieve shaders
+        // Same for this
         guard
             let vertexFunction = ShaderLibrary.shared.retrieveShader(forKey: vertexShaderName),
             let fragmentFunction = ShaderLibrary.shared.retrieveShader(forKey: fragmentShaderName)
@@ -100,6 +101,14 @@ public class MetalElement: MTKView, MTKViewDelegate {
         }
         
     
+        
+        let currentTime = Date()
+        self.elapsedTime = Float(currentTime.timeIntervalSince(startTime))
+        
+
+        // Update shader input
+        shaderInput.time = elapsedTime
+        
         
         let renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.colorAttachments[0].texture = drawable.texture
