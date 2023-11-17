@@ -87,8 +87,9 @@ internal class ShaderLibrary {
     
     
     private init() {
-        self.device = DeviceManager.shared.device
-                
+        //self.device = DeviceManager.shared.device
+        self.device = nil
+        
         if DeviceManager.shared.isSuccessfullyInitialized {
                 self.shaderCompiler = ShaderCompiler()
                 if shaderCompiler == nil || !shaderCompiler!.isSuccessfullyInitialized {
@@ -180,8 +181,6 @@ internal class ShaderLibrary {
     }
     
     
-    
-    
     func makeFunction(name: String) -> MTLFunction {
         //os_log("Making function for name: %{PUBLIC}@", log: OSLog.default, type: .debug, name)
         Logger.debug("Making function for name: \(name)")
@@ -194,12 +193,7 @@ internal class ShaderLibrary {
             return retrieveShader(forKey: "defaultFragmentShader")!
         }
     }
-    
-    private func fallbackGraphicsSetup(){
-        
-        //TODO: this :)
-    }
-    
+
     private func checkAndSetDefaultShadersCompiled(){
         if let vertexShaderState = shaderCache["defaultVertexShader"], let fragmentShaderState = shaderCache["defaultFragmentShader"] {
             switch (vertexShaderState, fragmentShaderState) {
