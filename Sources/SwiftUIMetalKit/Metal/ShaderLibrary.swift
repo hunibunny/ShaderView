@@ -124,14 +124,15 @@ internal class ShaderLibrary {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let shaderFunction):
-                    //os_log("Attempting to store shader with a key %@", log: OSLog.default, type: .debug, key)
+                    Logger.debug("Attempting to store shader with a key: \(key)")
                     self?.store(shader: .compiled(shaderFunction), forKey: key)
-                    //os_log("Succesfully stored the shader with a key %@", log: OSLog.default, type: .debug, key)
+                    Logger.debug("Succesfully stored shader with a key: \(key)")
                 case .failure(let error):
                     switch error {
                     case .functionCreationFailed(let errorMessage):
-                        fatalError("Failed to compile and store shader for key \(key): \(errorMessage)")
-                        //TODO: fatalerror probably not appropriate here
+                        //fatalError("Failed to compile and store shader for key \(key): \(errorMessage)")
+                        Logger.error("Failed to compile and store shader for key \(key): \(errorMessage)")
+                        self?.fallbackGraphicsSetup()
                     }
                 }
             }
@@ -140,6 +141,7 @@ internal class ShaderLibrary {
     
     func store(shader: ShaderState, forKey key: String) {
         //os_log("Storing shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
+        Logger.debug("Storing shader for key: \(key)")
         shaderCache[key] = shader
         shaderStateSubject.send((name: key, state: shaderCache[key]!))
     }
@@ -147,8 +149,7 @@ internal class ShaderLibrary {
     
     
     func retrieveShader(forKey key: String) -> MTLFunction? {
-        //os_log("Retrieving shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
-        
+        Logger.debug("Retrieving shader for key: \(key)")
         // First, check if the shader is in the cache.
         if let shaderState = shaderCache[key] {
             switch shaderState {
@@ -159,8 +160,10 @@ internal class ShaderLibrary {
                 //os_log("Shader for key %{PUBLIC}@ is still compiling.", log: OSLog.default, type: .info, key)
                 return nil
             case .error:
+                //TODO: consider fallbackbehavior
                 // If there was an error, the shader is not available.
-                os_log("Shader for key %{PUBLIC}@ had an error during compilation.", log: OSLog.default, type: .error, key)
+                Logger.error("Shader for key \(key) had an error during compilation.")
+                //os_log("Shader for key %{PUBLIC}@ had an error during compilation.", log: OSLog.default, type: .error, key)
                 return nil
             }
         } else {
@@ -181,6 +184,7 @@ internal class ShaderLibrary {
     
     func makeFunction(name: String) -> MTLFunction {
         //os_log("Making function for name: %{PUBLIC}@", log: OSLog.default, type: .debug, name)
+        Logger.debug("Making function for name: \(name)")
         if let shaderFunction = shaderCompiler!.makeFunction(name: name){
             return shaderFunction
         } else {
@@ -193,7 +197,7 @@ internal class ShaderLibrary {
     
     private func fallbackGraphicsSetup(){
         
-        
+        //TODO: this :)
     }
     
     private func checkAndSetDefaultShadersCompiled(){

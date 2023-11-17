@@ -45,6 +45,7 @@ public class MetalElement: MTKView, MTKViewDelegate {
     private func setupMetal() {
         // TODO: if adding real time compilation for users these errors might get triggered :)
         guard let device = DeviceManager.shared.device else {
+            Logger.error("Metal is not supported on this device")
             fatalError("Metal is not supported on this device")
         }
         
@@ -53,6 +54,7 @@ public class MetalElement: MTKView, MTKViewDelegate {
             let vertexFunction = ShaderLibrary.shared.retrieveShader(forKey: vertexShaderName),
             let fragmentFunction = ShaderLibrary.shared.retrieveShader(forKey: fragmentShaderName)
         else {
+            Logger.error("Metal is not supported on this device")
             fatalError("Failed to retrieve shaders")
         }
         
@@ -96,7 +98,7 @@ public class MetalElement: MTKView, MTKViewDelegate {
         guard let drawable = currentDrawable,
               let commandBuffer = DeviceManager.shared.commandQueue?.makeCommandBuffer(),
               let renderPipelineState = self.renderPipelineState else {
-            print("Failed to get necessary Metal objects.")
+            Logger.error("Failed to get necessary Metal objects for rendering")
             return
         }
         

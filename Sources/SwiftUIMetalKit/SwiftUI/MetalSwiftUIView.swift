@@ -40,6 +40,7 @@ public struct MetalSwiftUIView: View {
         }
         self.shaderViewModel = ShaderViewModel(vertexShaderName: self.vertexShaderName, fragmentShaderName: self.fragmentShaderName)
         self.shaderInput = shaderInput
+        //TODO: remove this when improving loadings and adding real time compilation for users shaders
         if(!usingDefaultShaders){
             shaderViewModel.viewState = .metalView;
         }

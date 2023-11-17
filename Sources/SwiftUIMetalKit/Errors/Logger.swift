@@ -13,4 +13,9 @@ class Logger {
     static func error(_ message: String, category: String = "Default") {
         os_log(.error, "%{public}@", message)
     }
+    
+    static func debug(_ message: String, category: String = "Default") {
+        os_log(.error, "%{public}@", message)
+    }
 }
+    
