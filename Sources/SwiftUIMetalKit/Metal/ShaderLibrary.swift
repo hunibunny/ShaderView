@@ -133,7 +133,8 @@ internal class ShaderLibrary {
                     case .functionCreationFailed(let errorMessage):
                         //fatalError("Failed to compile and store shader for key \(key): \(errorMessage)")
                         Logger.error("Failed to compile and store shader for key \(key): \(errorMessage)")
-                        self?.fallbackGraphicsSetup()
+                        //self?.fallbackGraphicsSetup()
+                        self?.performFallback()
                     }
                 }
             }
