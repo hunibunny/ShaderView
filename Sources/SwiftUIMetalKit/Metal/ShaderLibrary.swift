@@ -93,18 +93,17 @@ internal class ShaderLibrary {
         //self.device = nil
         
         if DeviceManager.shared.isSuccessfullyInitialized {
-                self.shaderCompiler = ShaderCompiler()
-                if shaderCompiler == nil || !shaderCompiler!.isSuccessfullyInitialized {
-                    performFallback()
-                }
-            } else {
-                self.shaderCompiler = nil
+            self.shaderCompiler = ShaderCompiler()
+            if shaderCompiler == nil {
                 performFallback()
+            }else{
+                compileFromStringAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertexShader")
+                compileFromStringAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragmentShader")
             }
-    
-        compileFromStringAndStore(shaderSource: ShaderLibrary.defaultVertexShader, forKey: "defaultVertexShader")
-        compileFromStringAndStore(shaderSource: ShaderLibrary.defaultFragmentShader, forKey: "defaultFragmentShader")
-  
+        } else {
+            self.shaderCompiler = nil
+            performFallback()
+        }
     }
     
     //TODO: reconsider this name lol
@@ -112,12 +111,12 @@ internal class ShaderLibrary {
         shaderStateSubject.send((name: "error", state: .error))
         metalEnabled = false
     }
-
+    
     
     //TODO: finnish this
     func areDefaultShadersCompiled() -> Bool {
-            // Check if the default shaders are compiled and return the result.
-            // This could be as simple as checking for the presence of certain keys in a dictionary.
+        // Check if the default shaders are compiled and return the result.
+        // This could be as simple as checking for the presence of certain keys in a dictionary.
         return true
     }
     
@@ -197,7 +196,7 @@ internal class ShaderLibrary {
             return retrieveShader(forKey: "defaultFragmentShader")!
         }
     }
-
+    
     private func checkAndSetDefaultShadersCompiled(){
         if let vertexShaderState = shaderCache["defaultVertexShader"], let fragmentShaderState = shaderCache["defaultFragmentShader"] {
             switch (vertexShaderState, fragmentShaderState) {
