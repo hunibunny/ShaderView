@@ -7,7 +7,7 @@
 
 import Combine
 
-//TODO: wait for only one which matters if want to improve and sometimes this doesnt swap to the shader when only vvertex shader is default
+//TODO: gets stuck on load if only 1 of the variables is default 
 class ShaderViewModel: ObservableObject {
     @Published var viewState: ViewState = .placeholder
     private var cancellables: Set<AnyCancellable> = []

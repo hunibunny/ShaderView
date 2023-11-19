@@ -136,10 +136,12 @@ public class MetalElement: MTKView, MTKViewDelegate {
         let viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
     
         
-        //TODO: first buffer viewportbuffer second other stuff like variables
+        //first buffer viewportbuffer second other stuff like variables
         renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)  // Use the next available index
         renderEncoder.setRenderPipelineState(renderPipelineState)
         
+        
+        //TODO: decide on the size, possibly make smaller
         let bufferSize = 4 * 1024 // 4KB in bytes should be more than enough for any 2d shader use, consider reducing
         let buffer = device?.makeBuffer(bytes: &shaderInput, length:  bufferSize, options: [])
         renderEncoder.setFragmentBuffer(viewportBuffer, offset: 0, index: 0)
