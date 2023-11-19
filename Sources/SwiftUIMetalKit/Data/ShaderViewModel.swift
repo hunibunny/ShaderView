@@ -23,21 +23,25 @@ class ShaderViewModel: ObservableObject {
     init(vertexShaderName: String, fragmentShaderName: String) {
         self.vertexShaderName = vertexShaderName
         self.fragmentShaderName = fragmentShaderName
-
-        shaderSubscription = ShaderLibrary.shared.shaderStateSubject.sink { [weak self] in
-            let (key, state) = $0
-            self?.handleShaderStateUpdate(forKey: key, state: state)
-        }
-
-        shaderSubscription?.store(in: &cancellables)
         
-        //TODO: is this good enough accuracy or should I add more precise for checking both individually
-        if ShaderLibrary.shared.getDefaultShadersCompiled(){
-            vertexShaderCompiled = true
-            fragmentShaderCompiled = true
-            viewState = .metalView
+        if(!ShaderLibrary.shared.metalEnabled){
+            viewState = .error
         }
-        
+        else{
+            shaderSubscription = ShaderLibrary.shared.shaderStateSubject.sink { [weak self] in
+                let (key, state) = $0
+                self?.handleShaderStateUpdate(forKey: key, state: state)
+            }
+            
+            shaderSubscription?.store(in: &cancellables)
+            
+            //TODO: is this good enough accuracy or should I add more precise for checking both individually
+            if ShaderLibrary.shared.getDefaultShadersCompiled(){
+                vertexShaderCompiled = true
+                fragmentShaderCompiled = true
+                viewState = .metalView
+            }
+        }
     }
 
     private func handleShaderStateUpdate(forKey key: String, state: ShaderState) {

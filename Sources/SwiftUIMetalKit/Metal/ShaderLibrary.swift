@@ -20,6 +20,8 @@ internal class ShaderLibrary {
     
     private var defaultShadersCompiled: Bool = false
     
+    var metalEnabled = true
+    
     private var shaderCache: [String: ShaderState] = [:]
     let shaderStateSubject = PassthroughSubject<(name: String, state: ShaderState), Never>() // Subject to publish shader state changes.
     
@@ -87,8 +89,8 @@ internal class ShaderLibrary {
     
     
     private init() {
-        //self.device = DeviceManager.shared.device
-        self.device = nil
+        self.device = DeviceManager.shared.device
+        //self.device = nil
         
         if DeviceManager.shared.isSuccessfullyInitialized {
                 self.shaderCompiler = ShaderCompiler()
@@ -108,6 +110,7 @@ internal class ShaderLibrary {
     //TODO: reconsider this name lol
     private func performFallback(){
         shaderStateSubject.send((name: "error", state: .error))
+        metalEnabled = false
     }
 
     
