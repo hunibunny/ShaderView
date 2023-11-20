@@ -7,7 +7,7 @@
 
 import Combine
 
-//TODO: gets stuck on load if only 1 of the variables is default 
+
 class ShaderViewModel: ObservableObject {
     @Published var viewState: ViewState = .placeholder
     private var cancellables: Set<AnyCancellable> = []
@@ -63,7 +63,7 @@ class ShaderViewModel: ObservableObject {
                 fragmentShaderCompiled = true
             }
 
-            if()
+            
             if vertexShaderCompiled && fragmentShaderCompiled {
                 viewState = .metalView
             }
