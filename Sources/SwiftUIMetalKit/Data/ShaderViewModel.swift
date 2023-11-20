@@ -33,6 +33,16 @@ class ShaderViewModel: ObservableObject {
                 self?.handleShaderStateUpdate(forKey: key, state: state)
             }
             
+            
+            //this can be done more gracefully but will do just fine for now :) only if adding real time compilation support for users this has to change
+            //since shaders in .metal are compiled pefore running so for now i just do this since i can assume user given shaders are compiled
+            if(vertexShaderName != "defaultVertexShader"){
+                vertexShaderCompiled = true
+            }
+            if(fragmentShaderName != "defaultFragmentShader"){
+                fragmentShaderCompiled = true
+            }
+            
             shaderSubscription?.store(in: &cancellables)
             
             //TODO: is this good enough accuracy or should I add more precise for checking both individually
@@ -53,6 +63,7 @@ class ShaderViewModel: ObservableObject {
                 fragmentShaderCompiled = true
             }
 
+            if()
             if vertexShaderCompiled && fragmentShaderCompiled {
                 viewState = .metalView
             }

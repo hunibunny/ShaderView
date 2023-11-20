@@ -21,14 +21,14 @@ enum LogLevel: Int {
 class Logger {
     private static var currentLevel: LogLevel = .error // Default log level
 
-    static func error(_ message: String, category: String = "Default") {
+    static func error(_ message: String) {
         if(currentLevel.rawValue >= 1){
             os_log(.error, "%{public}@", message)
             //os_log(.error, log: OSLog(subsystem: category, category: "Error"), "%{public}@", message)
         }
     }
     
-    static func debug(_ message: String, category: String = "Default") {
+    static func debug(_ message: String) {
         if(currentLevel.rawValue >= 2){
             os_log(.error, "%{public}@", message)
             //os_log(.debug, log: OSLog(subsystem: category, category: "Debug"), "%{public}@", message)
