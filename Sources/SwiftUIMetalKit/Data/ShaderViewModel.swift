@@ -15,8 +15,8 @@ class ShaderViewModel: ObservableObject {
     
     var vertexShaderName: String
     var fragmentShaderName: String
-    private var vertexShaderCompiled = false
-    private var fragmentShaderCompiled = false
+    private var vertexShaderReady = false
+    private var fragmentShaderReady = false
     private var transitionedToMetalView = false
     
     
@@ -33,23 +33,36 @@ class ShaderViewModel: ObservableObject {
                 self?.handleShaderStateUpdate(forKey: key, state: state)
             }
             
-            
-            //this can be done more gracefully but will do just fine for now :) only if adding real time compilation support for users this has to change
-            //since shaders in .metal are compiled pefore running so for now i just do this since i can assume user given shaders are compiled
+        
             if(vertexShaderName != "defaultVertexShader"){
-                vertexShaderCompiled = true
+                vertexShaderReady = true
             }
+            else{
+                if(ShaderLibrary.shared.isShaderCompiled(name: vertexShaderName)){
+                    vertexShaderReady = true
+                }
+                    
+            }
+            
+            
             if(fragmentShaderName != "defaultFragmentShader"){
-                fragmentShaderCompiled = true
+                fragmentShaderReady = true
+            }
+            else{
+                if(ShaderLibrary.shared.isShaderCompiled(name: fragmentShaderName)){
+                    fragmentShaderReady = true
+                }
+                    
             }
             
-            shaderSubscription?.store(in: &cancellables)
             
-            //TODO: is this good enough accuracy or should I add more precise for checking both individually
-            if ShaderLibrary.shared.getDefaultShadersCompiled(){
-                vertexShaderCompiled = true
-                fragmentShaderCompiled = true
+            if vertexShaderReady, fragmentShaderReady{
                 viewState = .metalView
+                transitionedToMetalView = true
+            }
+            else{
+                //only observe changes if some of them are needed
+                shaderSubscription?.store(in: &cancellables)
             }
         }
     }
@@ -58,13 +71,13 @@ class ShaderViewModel: ObservableObject {
         switch state {
         case .compiled(_):
             if key == vertexShaderName {
-                vertexShaderCompiled = true
+                vertexShaderReady = true
             } else if key == fragmentShaderName {
-                fragmentShaderCompiled = true
+                fragmentShaderReady = true
             }
 
             
-            if vertexShaderCompiled && fragmentShaderCompiled {
+            if vertexShaderReady && fragmentShaderReady {
                 viewState = .metalView
             }
             
@@ -75,7 +88,7 @@ class ShaderViewModel: ObservableObject {
             break
         }
         
-        if viewState == .error || (vertexShaderCompiled && fragmentShaderCompiled) {
+        if viewState == .error || (vertexShaderReady && fragmentShaderReady) {
             shaderSubscription?.cancel()
             shaderSubscription = nil
         }

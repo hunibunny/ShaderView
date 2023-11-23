@@ -11,6 +11,7 @@ import os.log
 import Combine
 
 
+//TODO: consider saving the default shadernames in here so 1 source of truth staus and no harrd coded names to be confusing me if i decide to change them. They r needed in more than 1 place now
 internal class ShaderLibrary {
     static let shared = ShaderLibrary()
     
@@ -18,8 +19,7 @@ internal class ShaderLibrary {
     
     private let shaderCompiler: ShaderCompiler?
     
-    private var defaultShadersCompiled: Bool = false
-    
+    //TODO: check if i need this or no
     var metalEnabled = true
     
     private var shaderCache: [String: ShaderState] = [:]
@@ -113,14 +113,6 @@ internal class ShaderLibrary {
     }
     
     
-    //TODO: finnish this
-    func areDefaultShadersCompiled() -> Bool {
-        // Check if the default shaders are compiled and return the result.
-        // This could be as simple as checking for the presence of certain keys in a dictionary.
-        return true
-    }
-    
-    
     private func compileFromStringAndStore(shaderSource: String, forKey key: String) {
         self.store(shader: .compiling, forKey: key)
         shaderCompiler!.compileShaderAsync(shaderSource, key: key) { [weak self] (result) in
@@ -197,24 +189,19 @@ internal class ShaderLibrary {
         }
     }
     
-    private func checkAndSetDefaultShadersCompiled(){
-        if let vertexShaderState = shaderCache["defaultVertexShader"], let fragmentShaderState = shaderCache["defaultFragmentShader"] {
-            switch (vertexShaderState, fragmentShaderState) {
-            case (.compiled(_), .compiled(_)):
-                defaultShadersCompiled = true
-            default:
-                defaultShadersCompiled = false
-            }
+    public func isShaderCompiled(name: String) -> Bool {
+        guard let shaderState = shaderCache[name] else {
+            //TODO: consider raising error. What would be more reasonable here?
+            return false
         }
-    }
-    
-    func getDefaultShadersCompiled()->Bool{
-        if !defaultShadersCompiled{
-            checkAndSetDefaultShadersCompiled()
+        if shaderState == .compiling {
+            // If the shader is currently compiling, return false
+            return false
         }
-        return defaultShadersCompiled;
+
+        return true
     }
-    
+
     
 }
 

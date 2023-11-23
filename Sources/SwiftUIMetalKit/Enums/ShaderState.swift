@@ -8,7 +8,19 @@
 import Foundation
 import Metal
 
-enum ShaderState{
+enum ShaderState: Equatable {
+    static func == (lhs: ShaderState, rhs: ShaderState) -> Bool {
+        switch (lhs, rhs) {
+        case (.compiling, .compiling), (.error, .error):
+            return true
+        case (.compiled(let lhsFunction), .compiled(let rhsFunction)):
+            //This should do since the name should be unique in my package :)
+            return lhsFunction.name == rhsFunction.name
+        default:
+            return false
+        }
+    }
+
     case compiling
     case compiled(MTLFunction)
     case error
