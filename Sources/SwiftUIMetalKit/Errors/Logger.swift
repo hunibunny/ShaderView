@@ -9,7 +9,7 @@
 import os.log
 
 
-enum LogLevel: Int {
+public enum LogLevel: Int {
     case none = 0
     case error = 1
     case debug = 2
@@ -18,7 +18,7 @@ enum LogLevel: Int {
 
 
 //TODO: improve this
-class Logger {
+public class Logger {
     private static var currentLevel: LogLevel = .error // Default log level
 
     static func error(_ message: String) {

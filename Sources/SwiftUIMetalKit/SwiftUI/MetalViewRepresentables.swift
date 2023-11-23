@@ -24,9 +24,9 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
         self.shaderInput = shaderInput
-      
+        
     }
-
+    
     public func makeNSView(context: Context) -> NSViewType {
         let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
         //os_log("Drawable size - width: %f, height: %f", log: OSLog.default, type: .info, drawableSize.width, drawableSize.height)
@@ -34,14 +34,14 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
         metalElement.drawableSize = drawableSize
         return metalElement
     }
-
+    
     public func updateNSView(_ nsView: MetalElement, context: Context) {
-         // Update the size of the MetalElement with the latest viewSize
+        // Update the size of the MetalElement with the latest viewSize
         nsView.frame.size = drawableSize
         nsView.drawableSize = drawableSize
         nsView.needsDisplay = true
-     }
- 
+    }
+    
 }
 #else
 public struct MetalUIViewRepresentable: UIViewRepresentable {
@@ -57,7 +57,7 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
         self.vertexShaderName = vertexShaderName
         self.shaderInput = shaderInput
     }
-
+    
     public func makeUIView(context: Context) -> UIViewType {
         let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
         //os_log("Drawable size - width: %f, height: %f", log: OSLog.default, type: .info, drawableSize.width, drawableSize.height)
@@ -65,12 +65,12 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
         metalElement.drawableSize = drawableSize
         return metalElement
     }
-
+    
     public func updateUIView(_ uiView: MetalElement, context: Context) {
         uiView.frame.size = drawableSize
         uiView.drawableSize = drawableSize
         uiView.setNeedsDisplay() // This will trigger a redraw
     }
- 
+    
 }
 #endif

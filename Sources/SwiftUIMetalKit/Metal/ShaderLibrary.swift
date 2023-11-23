@@ -19,7 +19,7 @@ internal class ShaderLibrary {
     
     private let shaderCompiler: ShaderCompiler?
     
-    //TODO: check if i need this or no
+    //TODO: check if i need this or no, probabyl if i enable runtime compiling for users
     var metalEnabled = true
     
     private var shaderCache: [String: ShaderState] = [:]
@@ -90,7 +90,6 @@ internal class ShaderLibrary {
     
     private init() {
         self.device = DeviceManager.shared.device
-        //self.device = nil
         
         if DeviceManager.shared.isSuccessfullyInitialized {
             self.shaderCompiler = ShaderCompiler()
@@ -135,7 +134,7 @@ internal class ShaderLibrary {
         }
     }
     
-    func store(shader: ShaderState, forKey key: String) {
+    private func store(shader: ShaderState, forKey key: String) {
         //os_log("Storing shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
         Logger.debug("Storing shader for key: \(key)")
         shaderCache[key] = shader
@@ -176,7 +175,7 @@ internal class ShaderLibrary {
     }
     
     
-    func makeFunction(name: String) -> MTLFunction {
+    private func makeFunction(name: String) -> MTLFunction {
         //os_log("Making function for name: %{PUBLIC}@", log: OSLog.default, type: .debug, name)
         Logger.debug("Making function for name: \(name)")
         if let shaderFunction = shaderCompiler!.makeFunction(name: name){
@@ -189,7 +188,7 @@ internal class ShaderLibrary {
         }
     }
     
-    public func isShaderCompiled(name: String) -> Bool {
+    func isShaderCompiled(name: String) -> Bool {
         guard let shaderState = shaderCache[name] else {
             //TODO: consider raising error. What would be more reasonable here?
             return false

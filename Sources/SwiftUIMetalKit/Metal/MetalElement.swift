@@ -1,22 +1,19 @@
 //
 //  MetalElement.swift
-//  
+//
 //
 //  Created by Pirita Minkkinen on 8/22/23.
 //
 
 import MetalKit
 
-
-//TODO: add time management so shaders can track time
-
+//TODO: public or internal?
 public class MetalElement: MTKView, MTKViewDelegate {
-    var vertexShaderName: String = ""
-    var fragmentShaderName: String = ""
-    var vertexBuffer: MTLBuffer?
-    var shouldScaleByDimensions: Bool = true
-    var shaderInput: ShaderInput
-    var commandQueue: MTLCommandQueue!
+    private var vertexShaderName: String = "" //think of making these let
+    private var fragmentShaderName: String = ""
+    private var vertexBuffer: MTLBuffer?
+    private var shaderInput: ShaderInput
+    //var commandQueue: MTLCommandQueue!
     var renderPipelineState: MTLRenderPipelineState?
     var startTime: Date = Date()  //consider defining later for more accurate start time rather than creation  time
     var elapsedTime: Float = 0.0
@@ -31,7 +28,7 @@ public class MetalElement: MTKView, MTKViewDelegate {
         setupMetal()
     }
  
-    
+    //this can be ignored for now since i dont download objects but if someone using this pacakge tries to rip
     required init(coder: NSCoder) {
         self.shaderInput = ShaderInput()
         super.init(coder: coder)
@@ -58,7 +55,7 @@ public class MetalElement: MTKView, MTKViewDelegate {
             fatalError("Failed to retrieve shaders")
         }
         
-        // Set up the render pipeline
+        // Set up the render pipeline, currently same for every shader but maybe consider making it changeable
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
@@ -94,7 +91,7 @@ public class MetalElement: MTKView, MTKViewDelegate {
     }
 
 
-    func render() {
+    private func render() {
         guard let drawable = currentDrawable,
               let commandBuffer = DeviceManager.shared.commandQueue?.makeCommandBuffer(),
               let renderPipelineState = self.renderPipelineState else {
@@ -142,7 +139,7 @@ public class MetalElement: MTKView, MTKViewDelegate {
         
         
         //TODO: decide on the size, possibly make smaller
-        let bufferSize = 4 * 1024 // 4KB in bytes should be more than enough for any 2d shader use, consider reducing
+        let bufferSize = 3 * 1024 // 4KB in bytes should be more than enough for any 2d shader use, consider reducing
         let buffer = device?.makeBuffer(bytes: &shaderInput, length:  bufferSize, options: [])
         renderEncoder.setFragmentBuffer(viewportBuffer, offset: 0, index: 0)
         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 1)
