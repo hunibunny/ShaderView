@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol ShaderInputProtocol {
-    var time: Float {get set}
+    var time: Float {get}
 }

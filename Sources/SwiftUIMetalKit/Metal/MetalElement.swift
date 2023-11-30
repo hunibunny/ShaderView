@@ -7,13 +7,12 @@
 
 import MetalKit
 
-//TODO: public or internal?
+//public for viewrepresentative
 public class MetalElement: MTKView, MTKViewDelegate {
     private var vertexShaderName: String = "" //think of making these let
     private var fragmentShaderName: String = ""
     private var vertexBuffer: MTLBuffer?
     private var shaderInput: ShaderInput
-    //var commandQueue: MTLCommandQueue!
     var renderPipelineState: MTLRenderPipelineState?
     var startTime: Date = Date()  //consider defining later for more accurate start time rather than creation  time
     var elapsedTime: Float = 0.0

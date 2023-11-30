@@ -74,16 +74,285 @@ internal class ShaderLibrary {
     fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]],
                                                constant Viewport& viewport [[buffer(0)]],
                                                 constant ShaderInput &shaderInput [[buffer(1)]]) {
-        // Check which quadrant the pixel is in and color accordingly
-        if (viewport.size.x > 0 && viewport.size.y > 0) {
-            return float4(1, 1, 0, 1); // Yellow for top-right quadrant
-        } else if (viewport.size.x < 0 && viewport.size.y > 0) {
-            return float4(0, 1, 0, 1); // Green for top-left quadrant
-        } else if (viewport.size.x < 0 && viewport.size.y < 0) {
-            return float4(0, 0, 1, 1); // Blue for bottom-left quadrant
-        } else {
-            return float4(1, 0, 0, 1); // Red for bottom-right quadrant
+        constant float pi = 3.14159265358979323846;
+
+        float2x2 Rot(float a) {
+            return float2x2(cos(a), -sin(a), sin(a), cos(a));
         }
+
+        float B(float2 p, float2 s) {
+            return max(abs(p).x - s.x, abs(p).y - s.y);
+        }
+
+        float DF(float2 a, float b) {
+            return length(a) * cos(fmod(atan2(a.y, a.x) + 6.28 / (b * 8.0), 6.28 / ((b * 8.0) * 0.5)) + (b - 1.0) * 6.28 / (b * 8.0));
+        }
+
+        // Convert degrees to radians
+        float radians(float degrees) {
+            return degrees * (pi / 180.0);
+        }
+
+
+        float random(float2 p) {
+            return fract(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453123);
+        }
+
+        float3 graphicItem0(float2 p, float3 col, float2 resolution) {
+            float d = length(p - float2(0.0, 0.12)) - 0.06;
+            float d2 = B(p, float2(0.025, 0.1));
+            d = min(d, d2);
+            d2 = length(p - float2(0.0, -0.098)) - 0.0256;
+            d = abs(min(d, d2)) - 0.007;
+            
+            d2 = length(p - float2(0.0, 0.12)) - 0.02;
+            d = min(d, d2);
+            
+            d2 = length(p - float2(0.0, 0.24)) - 0.015;
+            d = min(d, d2);
+            
+            d2 = abs(length(p - float2(0.0, 0.24)) - 0.03) - 0.002;
+            d = min(d, d2);
+            
+            col = mix(col, float3(0.8), smoothstep(0.0001, 0.0, d));
+            
+            
+            return col;
+        }
+
+        float3 graphicItem0Group(float2 p, float3 col, float2 resolution) {
+            col = graphicItem0(p, col, resolution);
+            p.x = abs(p.x) - 0.12;
+            p.y -= 0.1;
+            col = graphicItem0(p, col, resolution);
+            return col;
+        }
+
+        float3 graphicItem0Layer(float2 p, float3 col, float time, float2 resolution) {
+            p.x = abs(p.x);
+            p.y += time * 0.1;
+            p *= 2.5;
+            float2 id = floor(p);
+            float2 gr = fract(p) - 0.5;
+            
+            float n = random(id);
+            gr.x += sin(n * 2.0) * 0.25;
+            gr.y += sin(n * 2.0) * 0.3 + step(0.9, n);
+            gr *= clamp(n * 1.5, 0.85, 1.5);
+            col = graphicItem0Group(gr, col, resolution);
+            
+            return col;
+        }
+
+        float hexagon(float2 p, float animate, float time) {
+            p *= Rot(radians(-30.0 * time) * animate);
+            float size = 0.1;
+            float d = B(p, float2(size - 0.02, 0.1));
+            p.x = abs(p.x) - size;
+            p.y = abs(p.y) - size * 0.35;
+            float a = radians(-120.0);
+            d = max(-dot(p, float2(cos(a), sin(a))), d);
+            return abs(d) - 0.003;
+        }
+
+        float3 graphicItem1(float2 p, float3 col, float time, float2 resolution) {
+            float2 prevP = p;
+            float d = hexagon(p, 0.0, time);
+            p.y = abs(p.y) - 0.19;
+            float d2 = hexagon(p, 0.0, time);
+            d = min(d, d2);
+            p = prevP;
+            p.x = abs(p.x) - 0.16;
+            p.y = abs(p.y) - 0.09;
+            d2 = hexagon(p, 1.0, time);
+            d = min(d, d2);
+            col = mix(col, float3(0.7), smoothstep(0.0001, 0.0, d));
+
+            
+            return col;
+        }
+
+        float3 graphicItem2(float2 p, float3 col, float time, float2 resolution) {
+            float d = 10.0;
+            for (int i = 0; i < 3; i++) {
+                p = abs(p) - 0.01;
+                p *= Rot(radians(45.0 + (30.0 * time)));
+                p.y += 0.05;
+                p *= 1.6;
+                
+                float2 prevP = p;
+
+                p.y += 0.2;
+                p.x = abs(p.x);
+                p.x -= 0.22;
+                p *= Rot(radians(30.0));
+                d = length(p) - 0.4;
+                d = max(-(length(p - float2(0.15, 0.0)) - 0.31), d);
+
+                p = prevP;
+                p.y -= 0.4;
+                float d2 = length(p) - 0.4;
+                d2 = max(-(length(p - float2(0.0, 0.15)) - 0.31), d2);
+                d = min(d, d2);
+
+                p = prevP;
+                p.y -= 0.05;
+                d2 = abs(length(p) - 0.35) - 0.05;
+                d = abs(min(d, d2)) - 0.01;
+            }
+            
+            col = mix(col, float3(0.4), smoothstep(0.0001, 0.0, d));
+            
+            return col;
+        }
+
+        float3 graphicItem2Layer(float2 p, float3 col, float time, float2 resolution) {
+            p *= 0.9;
+            
+            p.x += 0.5;
+            p.y += time * 0.2;
+            p.y += 0.5;
+            
+            float2 id = floor(p);
+            float2 gr = fract(p) - 0.5;
+            
+            float n = random(id);
+            gr.y += sin(n * 50.0) * 0.2;
+            gr *= clamp(n * 1.0, 0.6, 1.0);
+            col = graphicItem2(gr, col, time, resolution);
+            
+            return col;
+        }
+
+        float circleAnimation(float2 p, float size, float lineWidth, float dir, float b, float time) {
+            p *= Rot(radians(20.0 * time * dir));
+            float d = abs(abs(length(p) - 0.5) - size) - lineWidth;
+            
+            p = DF(p, b);
+            p -= 0.007;
+            p *= Rot(radians(45.0));
+            float d2 = B(p, float2(0.02, 1.0));
+            
+            d = max(-d2, d);
+            return d;
+        }
+
+        float graphicItem3(float2 p) {
+            float d = B(p, float2(0.008, 0.08));
+            float d2 = B(p, float2(0.08, 0.008));
+            d = min(d, d2);
+            return d;
+        }
+
+        float3 lineGraphicsLayer(float2 p, float3 col, float time, float2 resolution) {
+            p.x = abs(p.x);
+            p.y += time * 0.08;
+            p *= 4.0;
+            
+            float2 id = floor(p);
+            float2 gr = fract(p) - 0.5;
+
+            float n = random(id);
+            gr *= Rot(radians(90.0 * step(0.5, n)));
+
+            float lineWidth = 0.008;
+            float3 lineColor = float3(0.8);
+            gr *= Rot(radians(45.0));
+            gr.x = abs(gr.x) - 0.707;
+            float d = circleAnimation(gr, 0.14, lineWidth, -1.0, 2.0, time);
+            col = mix(col, lineColor, smoothstep(0.0001, -0.01, d));
+            
+            d = abs(abs(length(gr) - 0.5) - 0.09) - lineWidth;
+            col = mix(col, lineColor, smoothstep(0.0001, -0.01, d));
+
+            d = circleAnimation(gr, 0.03, lineWidth, 1.0, 2.0, time);
+            col = mix(col, lineColor, smoothstep(0.0001, -0.01, d));
+
+            d = abs(abs(length(gr) - 0.5) - 0.19) - lineWidth;
+            col = mix(col, lineColor, smoothstep(0.0001, -0.01, d));
+            
+            return col;
+        }
+
+        float3 lineGraphicsLayer2(float2 p, float3 col, float time, float2 resolution) {
+            p.y += time * 0.08;
+            p *= 4.0;
+            p -= 0.5;
+            float2 id = floor(p);
+            float2 gr = fract(p) - 0.5;
+
+            float n = random(id);
+
+            float lineWidth = 0.008;
+            float3 lineColor = float3(0.8);
+
+            float d = circleAnimation(gr, 0.35, lineWidth, 1.0, 1.5, time) * step(0.5, n);
+            float d2 = circleAnimation(gr, 0.3, lineWidth, -1.0, 1.5, time) * step(0.5, n);
+            d = min(d, d2);
+            d2 = graphicItem3(gr) * (1.0 - step(0.5, n));
+            d = min(d, d2);
+            col = mix(col, lineColor, smoothstep(0.0001, -0.01, d));
+
+            return col;
+        }
+
+        float3 graphicItem1Layer(float2 p, float3 col, float time, float2 resolution) {
+            p.x = abs(p.x) - 0.3;
+            p.y += time * 0.15;
+            p.y += 0.2;
+            p *= 2.1;
+            float2 id = floor(p);
+            float2 gr = fract(p) - 0.5;
+            
+            float n = random(id);
+            gr.x += sin(n * 10.0) * 0.1;
+            gr.y += sin(n * 10.0) * 0.1 + step(0.9, n);
+            gr *= Rot(n * 2.0);
+            gr *= clamp(n * 2.5, 0.85, 2.5);
+            col = graphicItem1(gr, col, time, resolution);
+            
+           
+            return col;
+        }
+
+        float3 graphicItem0Layer2(float2 p, float3 col, float time, float2 resolution) {
+            p.x = abs(p.x) - 0.12;
+            p.y += time * 0.12;
+            p *= 2.0;
+            float2 id = floor(p);
+            float2 gr = fract(p) - 0.5;
+            
+            float n = random(id);
+            gr.x += sin(n * 2.0) * 0.25;
+            gr.y += sin(n * 2.0) * 0.3 + step(0.9, n);
+            gr *= clamp(n * 1.5, 0.6, 1.5);
+            col = graphicItem0(gr, col, resolution);
+            
+            return col;
+        }
+
+
+
+        fragment float4 defaultFragmentShader(VertexOutput in [[stage_in]],
+                                      constant Viewport& viewport [[buffer(0)]],
+                                      constant ShaderInput& shaderInput [[buffer(1)]]){
+         
+                float3 col = float3(0.0);
+
+              
+            col = graphicItem2Layer(in.screenCoord, col, shaderInput.time, viewport.size); //spinning transparent shapes
+            col = lineGraphicsLayer(in.screenCoord, col, shaderInput.time, viewport.size); //background
+            col = lineGraphicsLayer2(in.screenCoord, col, shaderInput.time, viewport.size); //+ on the background
+            col = graphicItem0Layer(in.screenCoord, col, shaderInput.time, viewport.size); //triple putkula
+            col = graphicItem0Layer2(in.screenCoord, col, shaderInput.time, viewport.size); //single putkula
+            col = graphicItem1Layer(in.screenCoord, col, shaderInput.time, viewport.size); //transparent non spinning
+
+               
+               return float4(col, 1.0);
+            
+        }
+
+
     }
     """
     
