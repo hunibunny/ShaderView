@@ -1,5 +1,5 @@
 //
-//  MetalSwiftUIView.swift
+//  ShaderView.swift
 //  
 //
 //  Created by Pirita Minkkinen on 8/22/23.
@@ -15,7 +15,7 @@ import os
 
 @available(iOS 14.0, *)
 @available(macOS 11.0, *)
-public struct MetalSwiftUIView: View {
+public struct ShaderView: View {
     @ObservedObject var shaderViewModel: ShaderViewModel
     let fragmentShaderName: String
     let vertexShaderName: String

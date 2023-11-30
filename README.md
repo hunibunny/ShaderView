@@ -1,4 +1,4 @@
-# SwiftUIMetalKit
+# ShaderView
 
 A description of this package.
 : This is the main file that users will see when they visit your package repository on a hosting service like GitHub. It should include:
