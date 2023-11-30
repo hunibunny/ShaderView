@@ -9,7 +9,7 @@ import SwiftUI
 import os.log
 
 #if os(macOS)
-@available(macOS 11.0, *)
+@available(macOS 11.0, *)  //TODO: consider this requirement
 public struct MetalNSViewRepresentable: NSViewRepresentable {
     public typealias NSViewType = MetalElement
     

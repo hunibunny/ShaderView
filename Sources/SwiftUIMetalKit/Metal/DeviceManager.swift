@@ -36,18 +36,6 @@ class DeviceManager {
     var isSuccessfullyInitialized: Bool {
         return device != nil && commandQueue != nil
     }
-    
-    /*
-    // TODO: check if this Provides a safe way to access the command queue or is unnecessary
-        func getCommandQueue() throws -> MTLCommandQueue {
-            if let commandQueue = self.commandQueue {
-                return commandQueue
-            } else if let error = self.initializationError {
-                throw error
-            } else {
-                throw MetalInitializationError.noCommandQueue
-            }
-        }
-     */
+  
 }
 

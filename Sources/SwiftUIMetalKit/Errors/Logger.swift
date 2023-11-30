@@ -20,20 +20,25 @@ public enum LogLevel: Int {
 //TODO: improve this
 public class Logger {
     private static var currentLevel: LogLevel = .error // Default log level
-
+    
+    private static func shouldLog(_ level: LogLevel) -> Bool {
+        return currentLevel.rawValue >= level.rawValue
+    }
+    
+    static func debug(_ message: String) {
+        if shouldLog(.debug) {
+            os_log(.debug, "%{public}@", message)
+        }}
+    
+    
     static func error(_ message: String) {
-        if(currentLevel.rawValue >= 1){
+        if shouldLog(.error){
             os_log(.error, "%{public}@", message)
             //os_log(.error, log: OSLog(subsystem: category, category: "Error"), "%{public}@", message)
         }
     }
     
-    static func debug(_ message: String) {
-        if(currentLevel.rawValue >= 2){
-            os_log(.error, "%{public}@", message)
-            //os_log(.debug, log: OSLog(subsystem: category, category: "Debug"), "%{public}@", message)
-        }
-    }
+    
     
     // os_log(.info, log: OSLog(subsystem: category, category: "Info"), "%{public}@", message)
     
@@ -41,4 +46,4 @@ public class Logger {
         currentLevel = level
     }
 }
-    
+

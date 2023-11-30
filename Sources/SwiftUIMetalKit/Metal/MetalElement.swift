@@ -127,7 +127,7 @@ public class MetalElement: MTKView, MTKViewDelegate {
 
         var viewport = Viewport(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
         
-        //TODO: consider adding debug message for size or other stuff
+       
         
         let viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
     
