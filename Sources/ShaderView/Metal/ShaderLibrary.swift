@@ -47,16 +47,16 @@ internal class ShaderLibrary {
     static let functions: String = """
             constant float pi = 3.14159265358979323846;
 
-            float2x2 Rot(float a) {
-                return float2x2(cos(a), -sin(a), sin(a), cos(a));
+            metal::float2x2 Rot(float a) {
+                return metal::float2x2(metal::cos(a), -metal::sin(a), metal::sin(a), metal::cos(a));
             }
 
             float B(float2 p, float2 s) {
-                return max(abs(p).x - s.x, abs(p).y - s.y);
+                return metal::max(abs(p).x - s.x, abs(p).y - s.y);
             }
 
             float DF(float2 a, float b) {
-                return length(a) * cos(fmod(atan2(a.y, a.x) + 6.28 / (b * 8.0), 6.28 / ((b * 8.0) * 0.5)) + (b - 1.0) * 6.28 / (b * 8.0));
+                return metal::length(a) * metal::cos(fmod(atan2(a.y, a.x) + 6.28 / (b * 8.0), 6.28 / ((b * 8.0) * 0.5)) + (b - 1.0) * 6.28 / (b * 8.0));
             }
 
             // Convert degrees to radians
@@ -66,26 +66,26 @@ internal class ShaderLibrary {
 
 
             float random(float2 p) {
-                return fract(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453123);
+                return fract(metal::sin(metal::dot(p, float2(12.9898, 78.233))) * 43758.5453123);
             }
 
             float3 graphicItem0(float2 p, float3 col, float2 resolution) {
-                float d = length(p - float2(0.0, 0.12)) - 0.06;
+                float d = metal::length(p - float2(0.0, 0.12)) - 0.06;
                 float d2 = B(p, float2(0.025, 0.1));
-                d = min(d, d2);
-                d2 = length(p - float2(0.0, -0.098)) - 0.0256;
-                d = abs(min(d, d2)) - 0.007;
+                d = metal::min(d, d2);
+                d2 = metal::length(p - float2(0.0, -0.098)) - 0.0256;
+                d = abs(metal::min(d, d2)) - 0.007;
                 
-                d2 = length(p - float2(0.0, 0.12)) - 0.02;
-                d = min(d, d2);
+                d2 = metal::length(p - float2(0.0, 0.12)) - 0.02;
+                d = metal::min(d, d2);
                 
-                d2 = length(p - float2(0.0, 0.24)) - 0.015;
-                d = min(d, d2);
+                d2 = metal::length(p - float2(0.0, 0.24)) - 0.015;
+                d = metal::min(d, d2);
                 
-                d2 = abs(length(p - float2(0.0, 0.24)) - 0.03) - 0.002;
-                d = min(d, d2);
+                d2 = abs(metal::length(p - float2(0.0, 0.24)) - 0.03) - 0.002;
+                d = metal::min(d, d2);
                 
-                col = mix(col, float3(0.8), smoothstep(0.0001, 0.0, d));
+                col = mix(col, float3(0.8), metal::smoothstep(0.0001, 0.0, d));
                 
                 
                 return col;
@@ -107,9 +107,9 @@ internal class ShaderLibrary {
                 float2 gr = fract(p) - 0.5;
                 
                 float n = random(id);
-                gr.x += sin(n * 2.0) * 0.25;
-                gr.y += sin(n * 2.0) * 0.3 + step(0.9, n);
-                gr *= clamp(n * 1.5, 0.85, 1.5);
+                gr.x += metal::sin(n * 2.0) * 0.25;
+                gr.y += metal::sin(n * 2.0) * 0.3 + step(0.9, n);
+                gr *= metal::clamp(n * 1.5, 0.85, 1.5);
                 col = graphicItem0Group(gr, col, resolution);
                 
                 return col;
@@ -122,7 +122,7 @@ internal class ShaderLibrary {
                 p.x = abs(p.x) - size;
                 p.y = abs(p.y) - size * 0.35;
                 float a = radians(-120.0);
-                d = max(-dot(p, float2(cos(a), sin(a))), d);
+                d = metal::max(-metal::dot(p, float2(metal::cos(a), metal::sin(a))), d);
                 return abs(d) - 0.003;
             }
 
@@ -131,13 +131,13 @@ internal class ShaderLibrary {
                 float d = hexagon(p, 0.0, time);
                 p.y = abs(p.y) - 0.19;
                 float d2 = hexagon(p, 0.0, time);
-                d = min(d, d2);
+                d = metal::min(d, d2);
                 p = prevP;
                 p.x = abs(p.x) - 0.16;
                 p.y = abs(p.y) - 0.09;
                 d2 = hexagon(p, 1.0, time);
-                d = min(d, d2);
-                col = mix(col, float3(0.7), smoothstep(0.0001, 0.0, d));
+                d = metal::min(d, d2);
+                col = mix(col, float3(0.7), metal::smoothstep(0.0001, 0.0, d));
 
                 
                 return col;
@@ -157,22 +157,22 @@ internal class ShaderLibrary {
                     p.x = abs(p.x);
                     p.x -= 0.22;
                     p *= Rot(radians(30.0));
-                    d = length(p) - 0.4;
-                    d = max(-(length(p - float2(0.15, 0.0)) - 0.31), d);
+                    d = metal::length(p) - 0.4;
+                    d = metal::max(-(metal::length(p - float2(0.15, 0.0)) - 0.31), d);
 
                     p = prevP;
                     p.y -= 0.4;
-                    float d2 = length(p) - 0.4;
-                    d2 = max(-(length(p - float2(0.0, 0.15)) - 0.31), d2);
-                    d = min(d, d2);
+                    float d2 = metal::length(p) - 0.4;
+                    d2 = metal::max(-(metal::length(p - float2(0.0, 0.15)) - 0.31), d2);
+                    d = metal::min(d, d2);
 
                     p = prevP;
                     p.y -= 0.05;
-                    d2 = abs(length(p) - 0.35) - 0.05;
-                    d = abs(min(d, d2)) - 0.01;
+                    d2 = abs(metal::length(p) - 0.35) - 0.05;
+                    d = abs(metal::min(d, d2)) - 0.01;
                 }
                 
-                col = mix(col, float3(0.4), smoothstep(0.0001, 0.0, d));
+                col = mix(col, float3(0.4), metal::smoothstep(0.0001, 0.0, d));
                 
                 return col;
             }
@@ -188,8 +188,8 @@ internal class ShaderLibrary {
                 float2 gr = fract(p) - 0.5;
                 
                 float n = random(id);
-                gr.y += sin(n * 50.0) * 0.2;
-                gr *= clamp(n * 1.0, 0.6, 1.0);
+                gr.y += metal::sin(n * 50.0) * 0.2;
+                gr *= metal::clamp(n * 1.0, 0.6, 1.0);
                 col = graphicItem2(gr, col, time, resolution);
                 
                 return col;
@@ -197,21 +197,21 @@ internal class ShaderLibrary {
 
             float circleAnimation(float2 p, float size, float lineWidth, float dir, float b, float time) {
                 p *= Rot(radians(20.0 * time * dir));
-                float d = abs(abs(length(p) - 0.5) - size) - lineWidth;
+                float d = abs(abs(metal::length(p) - 0.5) - size) - lineWidth;
                 
                 p = DF(p, b);
                 p -= 0.007;
                 p *= Rot(radians(45.0));
                 float d2 = B(p, float2(0.02, 1.0));
                 
-                d = max(-d2, d);
+                d = metal::max(-d2, d);
                 return d;
             }
 
             float graphicItem3(float2 p) {
                 float d = B(p, float2(0.008, 0.08));
                 float d2 = B(p, float2(0.08, 0.008));
-                d = min(d, d2);
+                d = metal::min(d, d2);
                 return d;
             }
 
@@ -224,23 +224,23 @@ internal class ShaderLibrary {
                 float2 gr = fract(p) - 0.5;
 
                 float n = random(id);
-                gr *= Rot(radians(90.0 * step(0.5, n)));
+                gr *= Rot(radians(90.0 * metal::step(0.5, n)));
 
                 float lineWidth = 0.008;
                 float3 lineColor = float3(0.8);
                 gr *= Rot(radians(45.0));
                 gr.x = abs(gr.x) - 0.707;
                 float d = circleAnimation(gr, 0.14, lineWidth, -1.0, 2.0, time);
-                col = mix(col, lineColor, smoothstep(0.0001, -0.01, d));
+                col = mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
                 
-                d = abs(abs(length(gr) - 0.5) - 0.09) - lineWidth;
-                col = mix(col, lineColor, smoothstep(0.0001, -0.01, d));
+                d = abs(abs(metal::length(gr) - 0.5) - 0.09) - lineWidth;
+                col = mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
 
                 d = circleAnimation(gr, 0.03, lineWidth, 1.0, 2.0, time);
-                col = mix(col, lineColor, smoothstep(0.0001, -0.01, d));
+                col = mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
 
-                d = abs(abs(length(gr) - 0.5) - 0.19) - lineWidth;
-                col = mix(col, lineColor, smoothstep(0.0001, -0.01, d));
+                d = abs(abs(metal::length(gr) - 0.5) - 0.19) - lineWidth;
+                col = mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
                 
                 return col;
             }
@@ -257,12 +257,12 @@ internal class ShaderLibrary {
                 float lineWidth = 0.008;
                 float3 lineColor = float3(0.8);
 
-                float d = circleAnimation(gr, 0.35, lineWidth, 1.0, 1.5, time) * step(0.5, n);
-                float d2 = circleAnimation(gr, 0.3, lineWidth, -1.0, 1.5, time) * step(0.5, n);
-                d = min(d, d2);
-                d2 = graphicItem3(gr) * (1.0 - step(0.5, n));
-                d = min(d, d2);
-                col = mix(col, lineColor, smoothstep(0.0001, -0.01, d));
+                float d = circleAnimation(gr, 0.35, lineWidth, 1.0, 1.5, time) * metal::step(0.5, n);
+                float d2 = circleAnimation(gr, 0.3, lineWidth, -1.0, 1.5, time) * metal::step(0.5, n);
+                d = metal::min(d, d2);
+                d2 = graphicItem3(gr) * (1.0 - metal::step(0.5, n));
+                d = metal::min(d, d2);
+                col = mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
 
                 return col;
             }
@@ -276,10 +276,10 @@ internal class ShaderLibrary {
                 float2 gr = fract(p) - 0.5;
                 
                 float n = random(id);
-                gr.x += sin(n * 10.0) * 0.1;
-                gr.y += sin(n * 10.0) * 0.1 + step(0.9, n);
+                gr.x += metal::sin(n * 10.0) * 0.1;
+                gr.y += metal::sin(n * 10.0) * 0.1 + metal::step(0.9, n);
                 gr *= Rot(n * 2.0);
-                gr *= clamp(n * 2.5, 0.85, 2.5);
+                gr *= metal::clamp(n * 2.5, 0.85, 2.5);
                 col = graphicItem1(gr, col, time, resolution);
                 
                
@@ -294,9 +294,9 @@ internal class ShaderLibrary {
                 float2 gr = fract(p) - 0.5;
                 
                 float n = random(id);
-                gr.x += sin(n * 2.0) * 0.25;
-                gr.y += sin(n * 2.0) * 0.3 + step(0.9, n);
-                gr *= clamp(n * 1.5, 0.6, 1.5);
+                gr.x += metal::sin(n * 2.0) * 0.25;
+                gr.y += metal::sin(n * 2.0) * 0.3 + metal::step(0.9, n);
+                gr *= metal::clamp(n * 1.5, 0.6, 1.5);
                 col = graphicItem0(gr, col, resolution);
                 
                 return col;
