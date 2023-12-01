@@ -8,20 +8,21 @@
 import MetalKit
 
 //public for viewrepresentative
-public class MetalElement: MTKView, MTKViewDelegate {
+//TODO:  reconsider this name
+public class MetalElement<Input: ShaderInputProtocol>: MTKView, MTKViewDelegate {
     private var vertexShaderName: String = "" //think of making these let
     private var fragmentShaderName: String = ""
     private var vertexBuffer: MTLBuffer?
-    private var shaderInput: ShaderInput
+    private var shaderInput: Input
     var renderPipelineState: MTLRenderPipelineState?
     var startTime: Date = Date()  //consider defining later for more accurate start time rather than creation  time
     var elapsedTime: Float = 0.0
 
     
-    init(fragmentShaderName: String, vertexShaderName: String, shaderInput: ShaderInput?) {
+    init(fragmentShaderName: String, vertexShaderName: String, shaderInput: Input) {
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
-        self.shaderInput = shaderInput ?? ShaderInput()
+        self.shaderInput = shaderInput
         super.init(frame: .zero, device: DeviceManager.shared.device)
 
         setupMetal()
@@ -29,7 +30,7 @@ public class MetalElement: MTKView, MTKViewDelegate {
  
     //this can be ignored for now since i dont download objects but if someone using this pacakge tries to rip
     required init(coder: NSCoder) {
-        self.shaderInput = ShaderInput()
+        self.shaderInput = ShaderInput() as! Input
         super.init(coder: coder)
         self.delegate = self
         self.isPaused = false

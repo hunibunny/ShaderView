@@ -9,5 +9,9 @@
 import SwiftUI
 
 public struct ShaderInput: ShaderInputProtocol{
-    public internal(set) var time: Float = 0.0
+    public var time: Float = 0.0
+    
+    public static func createDefault() -> ShaderInput {
+            return ShaderInput()
+    }
 }

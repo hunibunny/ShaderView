@@ -11,18 +11,7 @@ import XCTest
 
 class MetalSwiftUIViewTests: XCTestCase {
 
-    var view: ShaderView!
-
-    override func setUp() {
-        super.setUp()
-        view = ShaderView()
-        // Perform any additional setup if needed
-    }
-
-    override func tearDown() {
-        view = nil
-        super.tearDown()
-    }
+   
 
     func testInitialState() {
         // Test the initial state of the view

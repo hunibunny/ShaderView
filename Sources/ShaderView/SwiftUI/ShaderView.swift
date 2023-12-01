@@ -15,17 +15,17 @@ import os
 
 @available(iOS 14.0, *)
 @available(macOS 11.0, *)
-public struct ShaderView: View {
+public struct ShaderView<Input: ShaderInputProtocol>: View {
     @ObservedObject var shaderViewModel: ShaderViewModel
     let fragmentShaderName: String
     let vertexShaderName: String
-    let shaderInput: ShaderInput?
+    let shaderInput: Input?
     var usingDefaultShaders: Bool = true
     @State var shadersLoaded: Bool = false
     let fallbackView: AnyView
     let placeholderView: AnyView
     
-    public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, fallbackView: AnyView? = nil, placeholderView: AnyView? = nil, shaderInput: ShaderInput? = nil) {
+    public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, fallbackView: AnyView? = nil, placeholderView: AnyView? = nil, shaderInput: Input? = nil) {
         self.fallbackView = fallbackView ?? AnyView(FallbackView())
         self.placeholderView = placeholderView ?? AnyView(PlaceholderView())
         
@@ -44,13 +44,17 @@ public struct ShaderView: View {
             usingDefaultShaders = true
         }
         self.shaderViewModel = ShaderViewModel(vertexShaderName: self.vertexShaderName, fragmentShaderName: self.fragmentShaderName)
+        
+      
         self.shaderInput = shaderInput
+        
         //TODO: remove this when improving loadings and adding real time compilation for users shaders
         if(!usingDefaultShaders){
             shaderViewModel.viewState = .metalView;
         }
         
     }
+  
     
     
     public var body: some View {
@@ -58,9 +62,10 @@ public struct ShaderView: View {
             if shadersLoaded { // Check if shaders have already been loaded
                 // Display the Metal view since shaders have been loaded
 #if os(macOS)
-                MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
+                
+                MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.createDefault())
 #else
-                MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
+                MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.createDefault())
 #endif
             }
             else{
@@ -71,10 +76,10 @@ public struct ShaderView: View {
                 case .metalView:
                     
 #if os(macOS)
-                    MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
+                    MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.createDefault())
                     //.id(UUID())
 #else
-                    MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName, shaderInput: shaderInput)
+                    MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName, shaderInput: shaderInput ??  Input.createDefault())
                     //.id(UUID())
 #endif
                     

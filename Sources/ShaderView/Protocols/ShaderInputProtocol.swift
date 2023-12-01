@@ -8,5 +8,6 @@
 import Foundation
 
 public protocol ShaderInputProtocol {
-    var time: Float {get}
+    var time: Float {get set}
+    static func createDefault() -> Self
 }
