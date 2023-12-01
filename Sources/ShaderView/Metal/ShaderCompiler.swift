@@ -54,6 +54,7 @@ class ShaderCompiler {
                     } catch let error as NSError {
                         print("Error compiling Metal library: \(error)")
                             // Directly print the error information
+                        /*
                         print("Description: \(error.localizedDescription)")
 
                         if let failureReason = error.localizedFailureReason {
@@ -65,6 +66,7 @@ class ShaderCompiler {
                         if let underlyingError = error.userInfo[NSUnderlyingErrorKey] {
                             print("Underlying Error: \(underlyingError)")
                         }
+                         */
                         //Logger.error("Failed to create shader with key: \(key) due to error with creating library from string")
                         completion(.failure(.functionCreationFailed("Failed to create shader with key: \(key) due to error with creating library from string")))
                     }

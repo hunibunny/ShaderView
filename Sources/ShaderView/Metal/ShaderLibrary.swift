@@ -52,11 +52,11 @@ internal class ShaderLibrary {
             }
 
             float B(float2 p, float2 s) {
-                return metal::max(metal::abs(p).x - s.x), metal::abs(p).y - s.y));
+                return metal::max(metal::abs(p).x - s.x, metal::abs(p).y - s.y))    );
             }
 
             float DF(float2 a, float b) {
-                return metal::length(a) * metal::cos(fmod(metal::atan(2.0(a.y, a.x) + 6.28 / (b * 8.0)), 6.28 / ((b * 8.0) * 0.5)) + (b - 1.0) * 6.28 / (b * 8.0));
+                return metal::length(a) * metal::cos(fmod(metal::atan2((a.y, a.x) + 6.28 / (b * 8.0)), 6.28 / ((b * 8.0) * 0.5)) + (b - 1.0) * 6.28 / (b * 8.0));
             }
 
             // Convert degrees to radians
@@ -74,7 +74,7 @@ internal class ShaderLibrary {
                 float d2 = B(p, float2(0.025, 0.1));
                 d = metal::min(d, d2);
                 d2 = metal::length(p - float2(0.0, -0.098)) - 0.0256;
-                d = metal::abs(metal::min(d, d2)) - 0.007);
+                d = metal::abs(metal::min(d, d2)) - 0.007;
                 
                 d2 = metal::length(p - float2(0.0, 0.12)) - 0.02;
                 d = metal::min(d, d2);
@@ -82,7 +82,7 @@ internal class ShaderLibrary {
                 d2 = metal::length(p - float2(0.0, 0.24)) - 0.015;
                 d = metal::min(d, d2);
                 
-                d2 = metal::abs(metal::length(p - float2(0.0, 0.24)) - 0.03) - 0.002);
+                d2 = metal::abs(metal::length(p - float2(0.0, 0.24)) - 0.03) - 0.002;
                 d = metal::min(d, d2);
                 
                 col = metal::mix(col, float3(0.8), metal::smoothstep(0.0001, 0.0, d));
@@ -240,7 +240,7 @@ internal class ShaderLibrary {
                 col = metal::mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
 
                 d = metal::abs(metal::abs(metal::length(gr) - 0.5) - 0.19) - lineWidth;
-                col = metal::metal::mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
+                col = metal::mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
                 
                 return col;
             }
