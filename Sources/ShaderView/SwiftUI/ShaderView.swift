@@ -22,8 +22,13 @@ public struct ShaderView: View {
     let shaderInput: ShaderInput?
     var usingDefaultShaders: Bool = true
     @State var shadersLoaded: Bool = false
+    let fallbackView: AnyView
+    let placeholderView: AnyView
     
-    public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, shaderInput: ShaderInput? = nil) {
+    public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, fallbackView: AnyView? = nil, placeholderView: AnyView? = nil, shaderInput: ShaderInput? = nil) {
+        self.fallbackView = fallbackView ?? AnyView(FallbackView())
+        self.placeholderView = placeholderView ?? AnyView(PlaceholderView())
+        
         if let name = fragmentShaderName {
             self.fragmentShaderName = name
             usingDefaultShaders = false
@@ -44,6 +49,7 @@ public struct ShaderView: View {
         if(!usingDefaultShaders){
             shaderViewModel.viewState = .metalView;
         }
+        
     }
     
     
@@ -60,7 +66,7 @@ public struct ShaderView: View {
             else{
                 switch shaderViewModel.viewState {
                 case .placeholder:
-                    PlaceholderView()
+                    placeholderView
                         .frame(width: geometry.size.width, height: geometry.size.height)
                 case .metalView:
                     
@@ -73,7 +79,7 @@ public struct ShaderView: View {
 #endif
                     
                 case .error:
-                    FallBackView()
+                    fallbackView
                         .frame(width: geometry.size.width, height: geometry.size.height)
                 }}
         }
