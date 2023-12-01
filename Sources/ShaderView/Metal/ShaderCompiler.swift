@@ -51,7 +51,20 @@ class ShaderCompiler {
                         let compileOptions = MTLCompileOptions()
                         compileOptions.fastMathEnabled = false
                         shaderLibrary = try self.device.makeLibrary(source: source, options: compileOptions)
-                    } catch {
+                    } catch let error as NSError {
+                        print("Error compiling Metal library: \(error)")
+                            // Directly print the error information
+                        print("Description: \(error.localizedDescription)")
+
+                        if let failureReason = error.localizedFailureReason {
+                            print("Failure Reason: \(failureReason)")
+                        }
+                        if let recoverySuggestion = error.localizedRecoverySuggestion {
+                            print("Recovery Suggestion: \(recoverySuggestion)")
+                        }
+                        if let underlyingError = error.userInfo[NSUnderlyingErrorKey] {
+                            print("Underlying Error: \(underlyingError)")
+                        }
                         //Logger.error("Failed to create shader with key: \(key) due to error with creating library from string")
                         completion(.failure(.functionCreationFailed("Failed to create shader with key: \(key) due to error with creating library from string")))
                     }
