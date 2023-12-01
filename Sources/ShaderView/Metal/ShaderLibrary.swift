@@ -56,7 +56,7 @@ internal class ShaderLibrary {
             }
 
             float DF(float2 a, float b) {
-                return metal::length(a) * metal::cos(fmod(metal::atan2(a.y, a.x) + 6.28 / (b * 8.0), 6.28 / ((b * 8.0) * 0.5)) + (b - 1.0) * 6.28 / (b * 8.0));
+                return metal::length(a) * metal::cos(metal::fmod(metal::atan2(a.y, a.x) + 6.28 / (b * 8.0), 6.28 / ((b * 8.0) * 0.5)) + (b - 1.0) * 6.28 / (b * 8.0));
             }
 
             // Convert degrees to radians

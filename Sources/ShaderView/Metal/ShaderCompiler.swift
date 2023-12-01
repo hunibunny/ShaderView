@@ -52,7 +52,7 @@ class ShaderCompiler {
                         compileOptions.fastMathEnabled = false
                         shaderLibrary = try self.device.makeLibrary(source: source, options: compileOptions)
                     } catch let error as NSError {
-                        print("Error compiling Metal library: \(error)")
+                        Logger.error("Error compiling Metal library: \(error)")
                             // Directly print the error information
                         /*
                         print("Description: \(error.localizedDescription)")
