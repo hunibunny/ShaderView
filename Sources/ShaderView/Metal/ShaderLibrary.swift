@@ -85,7 +85,7 @@ internal class ShaderLibrary {
                 d2 = abs(metal::length(p - float2(0.0, 0.24)) - 0.03) - 0.002;
                 d = metal::min(d, d2);
                 
-                col = mix(col, float3(0.8), metal::smoothstep(0.0001, 0.0, d));
+                col = metal::mix(col, float3(0.8), metal::smoothstep(0.0001, 0.0, d));
                 
                 
                 return col;
@@ -137,7 +137,7 @@ internal class ShaderLibrary {
                 p.y = abs(p.y) - 0.09;
                 d2 = hexagon(p, 1.0, time);
                 d = metal::min(d, d2);
-                col = mix(col, float3(0.7), metal::smoothstep(0.0001, 0.0, d));
+                col = metal::mix(col, float3(0.7), metal::smoothstep(0.0001, 0.0, d));
 
                 
                 return col;
@@ -172,7 +172,7 @@ internal class ShaderLibrary {
                     d = abs(metal::min(d, d2)) - 0.01;
                 }
                 
-                col = mix(col, float3(0.4), metal::smoothstep(0.0001, 0.0, d));
+                col = metal::mix(col, float3(0.4), metal::smoothstep(0.0001, 0.0, d));
                 
                 return col;
             }
@@ -231,16 +231,16 @@ internal class ShaderLibrary {
                 gr *= Rot(radians(45.0));
                 gr.x = abs(gr.x) - 0.707;
                 float d = circleAnimation(gr, 0.14, lineWidth, -1.0, 2.0, time);
-                col = mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
+                col = metal::mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
                 
                 d = abs(abs(metal::length(gr) - 0.5) - 0.09) - lineWidth;
-                col = mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
+                col = metal::mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
 
                 d = circleAnimation(gr, 0.03, lineWidth, 1.0, 2.0, time);
-                col = mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
+                col = metal::mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
 
                 d = abs(abs(metal::length(gr) - 0.5) - 0.19) - lineWidth;
-                col = mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
+                col = metal::metal::mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
                 
                 return col;
             }
@@ -262,7 +262,7 @@ internal class ShaderLibrary {
                 d = metal::min(d, d2);
                 d2 = graphicItem3(gr) * (1.0 - metal::step(0.5, n));
                 d = metal::min(d, d2);
-                col = mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
+                col = metal::mix(col, lineColor, metal::smoothstep(0.0001, -0.01, d));
 
                 return col;
             }
