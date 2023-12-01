@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+
+///not thread safe
 public struct ShaderInput: ShaderInputProtocol{
     public var time: Float = 0.0
     
