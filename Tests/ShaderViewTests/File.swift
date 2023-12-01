@@ -7,15 +7,15 @@
 
 import Foundation
 import XCTest
-@testable import SwiftUIMetalKit
+@testable import ShaderView
 
 class MetalSwiftUIViewTests: XCTestCase {
 
-    var view: MetalSwiftUIView!
+    var view: ShaderView!
 
     override func setUp() {
         super.setUp()
-        view = MetalSwiftUIView()
+        view = ShaderView()
         // Perform any additional setup if needed
     }
 
