@@ -48,10 +48,12 @@ class ShaderCompiler {
                 var shaderLibrary: MTLLibrary?
                 DispatchQueue.main.sync {
                     do {
-                        shaderLibrary = try self.device.makeLibrary(source: source, options: nil)
+                        let compileOptions = MTLCompileOptions()
+                        compileOptions.fastMathEnabled = false
+                        shaderLibrary = try self.device.makeLibrary(source: source, options: compileOptions)
                     } catch {
-                        Logger.error("Failed to create shader with key: \(key) due to error woth creating library from string")
-                        completion(.failure(.functionCreationFailed("Failed to create shader with key: \(key) due to error woth creating library from string")))
+                        //Logger.error("Failed to create shader with key: \(key) due to error with creating library from string")
+                        completion(.failure(.functionCreationFailed("Failed to create shader with key: \(key) due to error with creating library from string")))
                     }
                 }
                 
