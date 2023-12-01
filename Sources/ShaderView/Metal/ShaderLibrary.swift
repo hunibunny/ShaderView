@@ -52,11 +52,11 @@ internal class ShaderLibrary {
             }
 
             float B(float2 p, float2 s) {
-                return metal::max(metal::abs(p).x - s.x, metal::abs(p).y - s.y))    );
+                return metal::max(metal::abs(p).x - s.x, metal::abs(p).y - s.y);
             }
 
             float DF(float2 a, float b) {
-                return metal::length(a) * metal::cos(fmod(metal::atan2((a.y, a.x) + 6.28 / (b * 8.0)), 6.28 / ((b * 8.0) * 0.5)) + (b - 1.0) * 6.28 / (b * 8.0));
+                return metal::length(a) * metal::cos(fmod(metal::atan2(a.y, a.x) + 6.28 / (b * 8.0), 6.28 / ((b * 8.0) * 0.5)) + (b - 1.0) * 6.28 / (b * 8.0));
             }
 
             // Convert degrees to radians
