@@ -25,3 +25,5 @@ enum ShaderState: Equatable {
     case compiled(MTLFunction)
     case error
 }
+
+

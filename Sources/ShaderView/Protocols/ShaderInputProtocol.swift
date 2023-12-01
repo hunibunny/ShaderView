@@ -7,7 +7,10 @@
 
 import Foundation
 
+
+///Anything conforming to this protocol can be passed to ShaderView
 public protocol ShaderInputProtocol {
     var time: Float {get set}
-    static func createDefault() -> Self
+    init()
+    //static func createDefault() -> Self
 }

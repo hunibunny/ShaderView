@@ -8,6 +8,9 @@
 import SwiftUI
 import os.log
 
+///Handles communication between ShaderView and MetalElement.
+///
+///- Note: This can be used alone to display shaders, but it does not safely handle a situation where any required process related to displaying anything in metal, including errors in shaders, runtime compilation or errors of device initialization.
 #if os(macOS)
 @available(macOS 11.0, *)  //TODO: consider this requirement
 public struct MetalNSViewRepresentable<Input: ShaderInputProtocol>: NSViewRepresentable {
@@ -18,7 +21,7 @@ public struct MetalNSViewRepresentable<Input: ShaderInputProtocol>: NSViewRepres
     let vertexShaderName: String
     let shaderInput: Input
     
-    
+
     public init(drawableSize: CGSize, fragmentShaderName: String, vertexShaderName: String, shaderInput: Input) {
         self.drawableSize = drawableSize
         self.fragmentShaderName = fragmentShaderName
@@ -43,7 +46,11 @@ public struct MetalNSViewRepresentable<Input: ShaderInputProtocol>: NSViewRepres
     }
     
 }
+
 #else
+///Handles communication between ShaderView and MetalElement.
+///
+///- Note: This can be used alone to display shaders, but it does not safely handle a situation where any required process related to displaying anything in metal, including errors in shaders, runtime compilation or errors of device initialization.
 public struct MetalUIViewRepresentable<Input: ShaderInputProtocol>: UIViewRepresentable {
     let drawableSize: CGSize
     let fragmentShaderName: String

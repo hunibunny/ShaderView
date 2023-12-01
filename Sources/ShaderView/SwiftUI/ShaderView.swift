@@ -12,7 +12,7 @@ import SwiftUI
 import MetalKit
 import os
 
-
+///Displays shaders in SwiftUI
 @available(iOS 14.0, *)
 @available(macOS 11.0, *)
 public struct ShaderView<Input: ShaderInputProtocol>: View {
@@ -48,6 +48,10 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
       
         self.shaderInput = shaderInput
         
+        if shaderInput == nil {
+            Logger.debug("Default instance of type \(Input.self) will be created")
+        }
+
         //TODO: remove this when improving loadings and adding real time compilation for users shaders
         if(!usingDefaultShaders){
             shaderViewModel.viewState = .metalView;
@@ -63,7 +67,7 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
                 // Display the Metal view since shaders have been loaded
 #if os(macOS)
                 
-                MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.createDefault())
+                MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input)
 #else
                 MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.createDefault())
 #endif

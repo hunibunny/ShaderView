@@ -9,6 +9,7 @@
 import os.log
 
 
+///Is used to set the loglevel of the Logger class
 public enum LogLevel: Int {
     case none = 0
     case error = 1
@@ -18,6 +19,7 @@ public enum LogLevel: Int {
 
 
 //TODO: improve this
+///Logger for the package.
 public class Logger {
     private static var currentLevel: LogLevel = .error // Default log level
     
@@ -42,6 +44,7 @@ public class Logger {
     
     // os_log(.info, log: OSLog(subsystem: category, category: "Info"), "%{public}@", message)
     
+    ///Can be used to set the Log level of the ShaderView pakcage
     public static func setLogLevel(level: LogLevel){
         currentLevel = level
     }

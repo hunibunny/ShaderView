@@ -9,6 +9,9 @@ import MetalKit
 
 //public for viewrepresentative
 //TODO:  reconsider this name
+///Class responsible for rendering metal
+///
+///- Note: This class is not ment to be working alone, and I strongly discourage trying to use it for anything else than what the package uses it for at the current state.
 public class MetalElement<Input: ShaderInputProtocol>: MTKView, MTKViewDelegate {
     private var vertexShaderName: String = "" //think of making these let
     private var fragmentShaderName: String = ""
@@ -69,16 +72,18 @@ public class MetalElement<Input: ShaderInputProtocol>: MTKView, MTKViewDelegate 
         }
     }
 
-    
+    ///Responsible for the shader, runs every frame
     public func draw(in view: MTKView) {
         self.render()
     }
 
     //TODO: add needed stuff here if any
+    ///Required class, does nothing at the momnet
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         
     }
     
+    ///Overrides drawableSize to work on both macOS and iOS
     public override var drawableSize: CGSize {
         didSet {
         #if os(macOS)
