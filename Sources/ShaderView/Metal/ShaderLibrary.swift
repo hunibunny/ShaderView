@@ -52,7 +52,7 @@ internal class ShaderLibrary {
             }
 
             float B(float2 p, float2 s) {
-                return metal::max(metal::abs((p).x - s.x, metal::abs((p).y - s.y);
+                return metal::max(metal::abs((p).x - s.x), metal::abs((p).y - s.y));
             }
 
             float DF(float2 a, float b) {
