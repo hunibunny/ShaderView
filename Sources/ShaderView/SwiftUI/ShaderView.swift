@@ -67,9 +67,9 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
                 // Display the Metal view since shaders have been loaded
 #if os(macOS)
                 
-                MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input)
+                MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.init())
 #else
-                MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.createDefault())
+                MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.init())
 #endif
             }
             else{
@@ -80,10 +80,10 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
                 case .metalView:
                     
 #if os(macOS)
-                    MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.createDefault())
+                    MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.init())
                     //.id(UUID())
 #else
-                    MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName,vertexShaderName: vertexShaderName, shaderInput: shaderInput ??  Input.createDefault())
+                    MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.init())
                     //.id(UUID())
 #endif
                     
