@@ -60,6 +60,7 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
         // Log a debug message if shader input is not provided.
         if shaderInput == nil {
             ShaderViewLogger.debug("Default instance of type \(Input.self) will be created")
+           
         }
 
         // TODO: This is fine until adding loading and add real-time compilation for user shaders.
@@ -77,9 +78,9 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
                 // Display the Metal view since shaders have been loaded
 #if os(macOS)
                 
-                MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.init())
+                MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? ShaderInput() as! Input)
 #else
-                MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.init())
+                MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? ShaderInput() as! Input)
 #endif
             }
             else{
@@ -90,10 +91,10 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
                 case .metalView:
                     
 #if os(macOS)
-                    MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.init())
+                    MetalNSViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? ShaderInput() as! Input)
                     //.id(UUID())
 #else
-                    MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? Input.init())
+                    MetalUIViewRepresentable(drawableSize: geometry.size, fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput ?? ShaderInput() as! Input)
                     //.id(UUID())
 #endif
                     
