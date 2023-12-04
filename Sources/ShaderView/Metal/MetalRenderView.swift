@@ -15,14 +15,14 @@ import Combine
 ///
 /// - Note: This class is intended for use as part of the package and may not be suitable for standalone use.
 ///         It relies on other components in the package for full functionality.
-public class MetalRenderView: MTKView, MTKViewDelegate {
+class MetalRenderView: MTKView, MTKViewDelegate {
     @ObservedObject var shaderViewModel: ShaderViewModel
     private var shaderInputSubscription: AnyCancellable?
     
     private var vertexShaderName: String = "" //think of making these let
     private var fragmentShaderName: String = ""
     private var shaderInput: ShaderInputProtocol
-    private var isTimeCountingActive: Bool = true
+    //private var isTimeCountingActive: Bool = true
     
     var startTime: Date = Date()
     var elapsedTime: Float = 0.0
@@ -40,7 +40,7 @@ public class MetalRenderView: MTKView, MTKViewDelegate {
         self.fragmentShaderName = shaderViewModel.fragmentShaderName
         self.vertexShaderName = shaderViewModel.vertexShaderName
         self.shaderInput = shaderViewModel.shaderInput
-        self.isTimeCountingActive = shaderViewModel.isTimeCountingActive
+        //self.isTimeCountingActive = shaderViewModel.isTimeCountingActive
         super.init(frame: .zero, device: DeviceManager.shared.device)
         
         print(self.shaderInput.self)
@@ -76,11 +76,11 @@ public class MetalRenderView: MTKView, MTKViewDelegate {
     
     
     /// Configures the render pipeline with specified vertex and fragment shaders.
-       /// - Parameters:
-       ///   - device: The Metal device used to create the pipeline.
-       ///   - vertexFunction: The vertex shader function.
-       ///   - fragmentFunction: The fragment shader function.
-       /// - Note: This method currently sets a uniform pipeline for all shaders, but can be extended for more flexibility.
+    /// - Parameters:
+    ///   - device: The Metal device used to create the pipeline.
+    ///   - vertexFunction: The vertex shader function.
+    ///   - fragmentFunction: The fragment shader function.
+    /// - Note: This method currently sets a uniform pipeline for all shaders, but can be extended for more flexibility.
     private func setupRenderPipeline(device: MTLDevice, vertexFunction: MTLFunction, fragmentFunction: MTLFunction){
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction
@@ -109,8 +109,8 @@ public class MetalRenderView: MTKView, MTKViewDelegate {
     
     
     /// Updates `shaderInput` in response to changes, preserving certain properties like time.
-        /// - Parameters:
-        ///   - newShaderInput: The updated shader input received from `ShaderViewModel`.
+    /// - Parameters:
+    ///   - newShaderInput: The updated shader input received from `ShaderViewModel`.
     private func updateShaderInput(_ newShaderInput: ShaderInputProtocol) {
         // Update shaderInput and any other relevant properties
         let currentTime = shaderInput.time
@@ -122,18 +122,18 @@ public class MetalRenderView: MTKView, MTKViewDelegate {
     
     /// Renders content for each frame.
     /// - Parameter view: The `MTKView` responsible for displaying the content.
-    public func draw(in view: MTKView) {
+    func draw(in view: MTKView) {
         self.render()
     }
     
     
     /// Responds to changes in the view's drawable size.
-    public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         
     }
     
     /// Overrides `drawableSize` to trigger a redraw correctly on both macOS and iOS.
-    public override var drawableSize: CGSize {
+    override var drawableSize: CGSize {
         didSet {
 #if os(macOS)
             needsDisplay = true
@@ -153,11 +153,11 @@ public class MetalRenderView: MTKView, MTKViewDelegate {
             return
         }
         
-        if(isTimeCountingActive){
-            let currentTime = Date()
-            self.elapsedTime = Float(currentTime.timeIntervalSince(startTime))
-            shaderInput.time = elapsedTime
-        }
+        //if(isTimeCountingActive){
+        let currentTime = Date()
+        self.elapsedTime = Float(currentTime.timeIntervalSince(startTime))
+        shaderInput.time = elapsedTime
+        //}
         
         let renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.colorAttachments[0].texture = drawable.texture

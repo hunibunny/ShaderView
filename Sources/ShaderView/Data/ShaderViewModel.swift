@@ -8,12 +8,12 @@
 import Combine
 
 
-public class ShaderViewModel: ObservableObject {
+class ShaderViewModel: ObservableObject {
     @Published var shaderInput: ShaderInputProtocol
     @Published var fragmentShaderName: String
     @Published var vertexShaderName: String
     
-    @Published var isTimeCountingActive: Bool = true
+    //@Published var isTimeCountingActive: Bool = true
     
     @Published var viewState: ViewState = .placeholder
     private var cancellables: Set<AnyCancellable> = []
@@ -38,7 +38,7 @@ public class ShaderViewModel: ObservableObject {
                 self?.handleShaderStateUpdate(forKey: key, state: state)
             }
             
-        
+            
             if(vertexShaderName != "defaultVertexShader"){
                 vertexShaderReady = true
             }
@@ -46,7 +46,7 @@ public class ShaderViewModel: ObservableObject {
                 if(ShaderLibrary.shared.isShaderCompiled(name: vertexShaderName)){
                     vertexShaderReady = true
                 }
-                    
+                
             }
             
             
@@ -57,7 +57,7 @@ public class ShaderViewModel: ObservableObject {
                 if(ShaderLibrary.shared.isShaderCompiled(name: fragmentShaderName)){
                     fragmentShaderReady = true
                 }
-                    
+                
             }
             
             
@@ -71,7 +71,7 @@ public class ShaderViewModel: ObservableObject {
             }
         }
     }
-
+    
     private func handleShaderStateUpdate(forKey key: String, state: ShaderState) {
         switch state {
         case .compiled(_):
@@ -80,7 +80,7 @@ public class ShaderViewModel: ObservableObject {
             } else if key == fragmentShaderName {
                 fragmentShaderReady = true
             }
-
+            
             
             if vertexShaderReady && fragmentShaderReady {
                 viewState = .metalView
@@ -98,7 +98,7 @@ public class ShaderViewModel: ObservableObject {
             shaderSubscription = nil
         }
     }
-
+    
     deinit {
         // Cancel any subscribers when the view model is de-initialized to avoid memory leaks.
         cancellables.forEach { $0.cancel() }
