@@ -122,10 +122,12 @@ public class MetalRenderView<Input: ShaderInputProtocol>: MTKView, MTKViewDelega
         let currentTime = Date()
         self.elapsedTime = Float(currentTime.timeIntervalSince(startTime))
         
+        print(elapsedTime)
 
         // Update shader input
         shaderInput.time = elapsedTime
         
+        print(time)
         
         let renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.colorAttachments[0].texture = drawable.texture
