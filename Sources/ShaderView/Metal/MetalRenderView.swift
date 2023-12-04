@@ -125,10 +125,15 @@ public class MetalRenderView: MTKView, MTKViewDelegate {
         
 
         // Update shader inputs time
-        if var timeUpdatingInput = shaderInput as? ShaderInputProtocol {
-            timeUpdatingInput.time = elapsedTime
-            //i can stop asking for time in the protocol if i wanna really easily but i think its needed almost alaways so ill let it be for now
+        if var timeUpdating = shaderInput as? ShaderInputProtocol {
+            timeUpdating.time = elapsedTime
+            // If shaderInput is a class instance, this updates the original shaderInput's time.
+            // If shaderInput is a struct, this only updates timeUpdating's time.
         }
+        else{
+            print(shaderInput.self)
+        }
+
     
         
         let renderPassDescriptor = MTLRenderPassDescriptor()
