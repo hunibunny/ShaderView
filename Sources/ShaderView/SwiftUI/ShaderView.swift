@@ -14,15 +14,15 @@ import MetalKit
 
 /// `ShaderView` is a SwiftUI view that renders shaders using Metal. It supports custom vertex and fragment shaders.
 /// It provides a fallback and placeholder view for different states of shader loading.
-public struct ShaderView<Input: ShaderInputProtocol>: View {
+public struct ShaderView: View {
     @ObservedObject var shaderViewModel: ShaderViewModel
     let fragmentShaderName: String
     let vertexShaderName: String
-    let shaderInput: Input?
     var usingDefaultShaders: Bool = true
     @State var shadersLoaded: Bool = false
     let fallbackView: AnyView
     let placeholderView: AnyView
+    let shaderInput: ShaderInputProtocol
     
     /// Initializes a new instance of `ShaderView`.
        /// - Parameters:
@@ -31,9 +31,10 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
        ///   - fallbackView: A view to show in case of an error.
        ///   - placeholderView: A view to display while shaders are loading.
        ///   - shaderInput: The input for the shader. If nil, a default instance is created.
-    public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, fallbackView: AnyView? = nil, placeholderView: AnyView? = nil, shaderInput: Input? = nil) {
+    public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, fallbackView: AnyView? = nil, placeholderView: AnyView? = nil, shaderInput: ShaderInputProtocol? = ShaderInput()) {
         self.fallbackView = fallbackView ?? AnyView(FallbackView())
         self.placeholderView = placeholderView ?? AnyView(PlaceholderView())
+        self.shaderInput = shaderInput!
         
         // Setup shader names and determine if default shaders are used.
         if let name = fragmentShaderName {
@@ -54,16 +55,13 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
         // Initialize the shader view model with the shader names.
         self.shaderViewModel = ShaderViewModel(vertexShaderName: self.vertexShaderName, fragmentShaderName: self.fragmentShaderName)
         
-      
-        self.shaderInput = shaderInput
         
         // Log a debug message if shader input is not provided.
         if shaderInput == nil {
-            ShaderViewLogger.debug("Default instance of type \(Input.self) will be created")
+            ShaderViewLogger.debug("Default instance of ShaderInput will be created")
            
         }
         
-        print(Input.self)
 
         // TODO: This is fine until adding loading and add real-time compilation for user shaders.
         if(!usingDefaultShaders){

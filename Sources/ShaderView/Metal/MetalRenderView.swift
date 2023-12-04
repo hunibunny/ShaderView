@@ -17,7 +17,7 @@ public class MetalRenderView: MTKView, MTKViewDelegate {
     private var vertexShaderName: String = "" //think of making these let
     private var fragmentShaderName: String = ""
     private var vertexBuffer: MTLBuffer?
-    private var shaderInput: Any
+    private var shaderInput: ShaderInputProtocol
     var renderPipelineState: MTLRenderPipelineState?
     var startTime: Date = Date()  //consider defining later for more accurate start time rather than creation  time
     var elapsedTime: Float = 0.0
@@ -27,7 +27,7 @@ public class MetalRenderView: MTKView, MTKViewDelegate {
        ///   - fragmentShaderName: The name of the fragment shader to use.
        ///   - vertexShaderName: The name of the vertex shader to use.
        ///   - shaderInput: The input data for the shader.
-    init(fragmentShaderName: String, vertexShaderName: String, shaderInput: Any) {
+    init(fragmentShaderName: String, vertexShaderName: String, shaderInput: ShaderInputProtocol) {
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
         self.shaderInput = shaderInput
@@ -124,16 +124,7 @@ public class MetalRenderView: MTKView, MTKViewDelegate {
         self.elapsedTime = Float(currentTime.timeIntervalSince(startTime))
         
 
-        // Update shader inputs time
-        if var timeUpdating = shaderInput as? ShaderInputProtocol {
-            timeUpdating.time = elapsedTime
-            // If shaderInput is a class instance, this updates the original shaderInput's time.
-            // If shaderInput is a struct, this only updates timeUpdating's time.
-        }
-        else{
-            print(shaderInput.self)
-        }
-
+        shaderInput.time = elapsedTime
     
         
         let renderPassDescriptor = MTLRenderPassDescriptor()

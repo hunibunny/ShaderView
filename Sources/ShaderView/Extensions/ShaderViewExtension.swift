@@ -7,6 +7,7 @@
 
 import Foundation
 
+/*
 
 /// Extension for `ShaderView` to provide a convenience initializer for the default shader input.
 public extension ShaderView where Input == ShaderInput {
@@ -21,3 +22,4 @@ public extension ShaderView where Input == ShaderInput {
 // Usage Examples:
 // let defaultShaderView = ShaderView() // Initializes with DefaultShaderInput
 // let customShaderView = ShaderView<CustomShaderInput>() // Initializes with CustomShaderInput
+*/

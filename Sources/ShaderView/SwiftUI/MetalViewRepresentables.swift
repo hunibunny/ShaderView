@@ -21,7 +21,7 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
     let drawableSize: CGSize
     let fragmentShaderName: String
     let vertexShaderName: String
-    let shaderInput: Any  //ShaderView has ensured that it conforms to shaderInputProtocol so we dont need to do that here
+    let shaderInput: ShaderInputProtocol
     
     
 
@@ -31,11 +31,11 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
         ///   - fragmentShaderName: The name of the fragment shader.
         ///   - vertexShaderName: The name of the vertex shader.
         ///   - shaderInput: The input data for the shader.
-    public init(drawableSize: CGSize, fragmentShaderName: String, vertexShaderName: String, shaderInput: Any? = ShaderInput()) {
+    public init(drawableSize: CGSize, fragmentShaderName: String, vertexShaderName: String, shaderInput: ShaderInputProtocol) {
         self.drawableSize = drawableSize
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
-        self.shaderInput = shaderInput!
+        self.shaderInput = shaderInput
         print(self.shaderInput.self)
         
     }
@@ -64,7 +64,7 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
     let fragmentShaderName: String
     let vertexShaderName: String
     public typealias UIViewType = MetalRenderView
-    let shaderInput: Any  //ShaderView has ensured that it conforms to shaderInputProtocol so we dont need to do that here
+    let shaderInput: ShaderInputProtocol
     
     /// Initializes a new `MetalUIViewRepresentable` instance for iOS.
        /// - Parameters:
@@ -72,11 +72,11 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
        ///   - fragmentShaderName: The name of the fragment shader.
        ///   - vertexShaderName: The name of the vertex shader.
        ///   - shaderInput: The input data for the shader.
-    public init(drawableSize: CGSize, fragmentShaderName: String,  vertexShaderName: String,  shaderInput: Any? = ShaderInput()) {
+    public init(drawableSize: CGSize, fragmentShaderName: String,  vertexShaderName: String,  shaderInput: ShaderInputProtocol) {
         self.drawableSize = drawableSize
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
-        self.shaderInput = shaderInput!
+        self.shaderInput = shaderInput
         print(self.shaderInput.self)
     }
     
