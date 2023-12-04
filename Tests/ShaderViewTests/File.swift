@@ -1,30 +1,22 @@
-//
-//  File.swift
-//  
-//
-//  Created by Pirita Minkkinen on 11/19/23.
-//
+    //
+    //  File.swift
+    //
+    //
+    //  Created by Pirita Minkkinen on 11/19/23.
+    //
 
-import Foundation
-import XCTest
-@testable import ShaderView
+    import Foundation
+    import XCTest
+    @testable import ShaderView
 
-class MetalSwiftUIViewTests: XCTestCase {
+    class MetalSwiftUIViewTests: XCTestCase {
 
-   
+       let shaderView = ShaderView()
+        let customShaderInput = ShaderInput()
+        
+        func testShaderViewInit() {
+            XCTAssertNotNil(shaderView, "ShaderView should be able to initialize.")
+        }
+     
 
-    func testInitialState() {
-        // Test the initial state of the view
-        // For example, check if certain properties are initialized correctly
-        //XCTAssertNotNil(view.someProperty, "someProperty should be initialized")
     }
-
-    func testBehaviorUnderConditions() {
-        // Simulate certain conditions and test the behavior of the view
-        // For example, change a property and check if the view reacts as expected
-       // view.someProperty = newValue
-        //XCTAssertEqual(view.someProperty, newValue, "someProperty should be updated")
-    }
-
-    // Add more tests as needed to cover different aspects of the MetalSwiftUIView
-}

@@ -9,7 +9,7 @@ import Foundation
 
 
 /// Extension for `ShaderView` to provide a convenience initializer for the default shader input.
-extension ShaderView where Input == ShaderInput {
+public extension ShaderView where Input == ShaderInput {
     
     /// Initializes a `ShaderView` with a default instance of `ShaderInput`.
     /// This initializer simplifies the creation of a `ShaderView` when using the default shader input type.
