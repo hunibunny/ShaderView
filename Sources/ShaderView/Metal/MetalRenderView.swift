@@ -13,11 +13,11 @@ import MetalKit
 ///
 /// - Note: This class is intended for use as part of the package and may not be suitable for standalone use.
 ///         It relies on other components in the package for full functionality.
-public class MetalRenderView<Input: ShaderInputProtocol>: MTKView, MTKViewDelegate {
+public class MetalRenderView: MTKView, MTKViewDelegate {
     private var vertexShaderName: String = "" //think of making these let
     private var fragmentShaderName: String = ""
     private var vertexBuffer: MTLBuffer?
-    private var shaderInput: Input
+    private var shaderInput: Any
     var renderPipelineState: MTLRenderPipelineState?
     var startTime: Date = Date()  //consider defining later for more accurate start time rather than creation  time
     var elapsedTime: Float = 0.0
@@ -27,12 +27,13 @@ public class MetalRenderView<Input: ShaderInputProtocol>: MTKView, MTKViewDelega
        ///   - fragmentShaderName: The name of the fragment shader to use.
        ///   - vertexShaderName: The name of the vertex shader to use.
        ///   - shaderInput: The input data for the shader.
-    init(fragmentShaderName: String, vertexShaderName: String, shaderInput: Input) {
+    init(fragmentShaderName: String, vertexShaderName: String, shaderInput: Any) {
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
         self.shaderInput = shaderInput
         super.init(frame: .zero, device: DeviceManager.shared.device)
 
+        print(self.shaderInput.self)
         setupMetal()
     }
  
@@ -123,10 +124,12 @@ public class MetalRenderView<Input: ShaderInputProtocol>: MTKView, MTKViewDelega
         self.elapsedTime = Float(currentTime.timeIntervalSince(startTime))
         
 
-        // Update shader input
-        shaderInput.time = elapsedTime
-        
-       
+        // Update shader inputs time
+        if var timeUpdatingInput = shaderInput as? ShaderInputProtocol {
+            timeUpdatingInput.time = elapsedTime
+            //i can stop asking for time in the protocol if i wanna really easily but i think its needed almost alaways so ill let it be for now
+        }
+    
         
         let renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.colorAttachments[0].texture = drawable.texture

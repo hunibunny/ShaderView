@@ -62,6 +62,8 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
             ShaderViewLogger.debug("Default instance of type \(Input.self) will be created")
            
         }
+        
+        print(Input.self)
 
         // TODO: This is fine until adding loading and add real-time compilation for user shaders.
         if(!usingDefaultShaders){
