@@ -53,10 +53,11 @@ struct MetalNSViewRepresentable: NSViewRepresentable {
 #else
 /// `MetalUIViewRepresentable` is the iOS equivalent of `MetalNSViewRepresentable`.
 struct MetalUIViewRepresentable: UIViewRepresentable {
+    typealias UIViewType = MetalRenderView
+    
     let drawableSize: CGSize
     let shaderViewModel: ShaderViewModel
-    typealias UIViewType = MetalRenderView
-    let shaderInput: ShaderInputProtocol
+    
     
     /// Initializes a `MetalUIViewRepresentable` for iOS, setting up the necessary environment for Metal rendering.
     /// - Parameters:
