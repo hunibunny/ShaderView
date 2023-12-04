@@ -71,7 +71,7 @@ struct MetalUIViewRepresentable: UIViewRepresentable {
     /// Creates and configures a `MetalRenderView` for Metal rendering within a SwiftUI view hierarchy on iOS.
     /// - Returns: A configured instance of `MetalRenderView`.
     func makeUIView(context: Context) -> UIViewType {
-        let metalRenderView = MetalRenderView(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
+        let metalRenderView = MetalRenderView(shaderViewModel: shaderViewModel)
         metalRenderView.delegate = metalRenderView
         metalRenderView.drawableSize = drawableSize
         return metalRenderView
