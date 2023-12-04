@@ -127,7 +127,8 @@ public class MetalRenderView<Input: ShaderInputProtocol>: MTKView, MTKViewDelega
         // Update shader input
         shaderInput.time = elapsedTime
         
-        print(time)
+        dump(time)
+        fatalError("only for debug lol")
         
         let renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.colorAttachments[0].texture = drawable.texture
