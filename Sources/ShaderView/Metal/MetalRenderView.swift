@@ -1,18 +1,19 @@
 //
-//  MetalElement.swift
-//
+//  MetalRenderView.swift
+//A view for rendering graphics using Metal's shader and rendering capabilities.
 //
 //  Created by Pirita Minkkinen on 8/22/23.
 //
 
 import MetalKit
 
-//public for viewrepresentative
-//TODO:  reconsider this name
-///Class responsible for rendering metal
+
+/// `MetalRenderView` is a subclass of `MTKView` and conforms to `MTKViewDelegate`.
+/// It is designed to integrate Metal's rendering capabilities into a SwiftUI environment.
 ///
-///- Note: This class is not ment to be working alone, and I strongly discourage trying to use it for anything else than what the package uses it for at the current state.
-public class MetalElement<Input: ShaderInputProtocol>: MTKView, MTKViewDelegate {
+/// - Note: This class is intended for use as part of the package and may not be suitable for standalone use.
+///         It relies on other components in the package for full functionality.
+public class MetalRenderView<Input: ShaderInputProtocol>: MTKView, MTKViewDelegate {
     private var vertexShaderName: String = "" //think of making these let
     private var fragmentShaderName: String = ""
     private var vertexBuffer: MTLBuffer?
@@ -21,7 +22,11 @@ public class MetalElement<Input: ShaderInputProtocol>: MTKView, MTKViewDelegate 
     var startTime: Date = Date()  //consider defining later for more accurate start time rather than creation  time
     var elapsedTime: Float = 0.0
 
-    
+    /// Initializes a `MetalRenderView` with specified shaders and input.
+       /// - Parameters:
+       ///   - fragmentShaderName: The name of the fragment shader to use.
+       ///   - vertexShaderName: The name of the vertex shader to use.
+       ///   - shaderInput: The input data for the shader.
     init(fragmentShaderName: String, vertexShaderName: String, shaderInput: Input) {
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
@@ -31,21 +36,23 @@ public class MetalElement<Input: ShaderInputProtocol>: MTKView, MTKViewDelegate 
         setupMetal()
     }
  
-    //this can be ignored for now since i dont download objects but if someone using this pacakge tries to rip
+    /// Required initializer for decoding. Not intended for direct use.
     required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+        /*
         self.shaderInput = ShaderInput() as! Input
         super.init(coder: coder)
         self.delegate = self
         self.isPaused = false
         self.enableSetNeedsDisplay = false
-        setupMetal()
+        setupMetal()*/
     }
     
-    
+    /// Sets up the Metal environment, including the render pipeline state.
     private func setupMetal() {
-        // TODO: if adding real time compilation for users these errors might get triggered :)
+        // TODO: if adding real time compilation for users these errors might get triggered
         guard let device = DeviceManager.shared.device else {
-            Logger.error("Metal is not supported on this device")
+            ShaderViewLogger.error("Metal is not supported on this device")
             fatalError("Metal is not supported on this device")
         }
         
@@ -54,11 +61,17 @@ public class MetalElement<Input: ShaderInputProtocol>: MTKView, MTKViewDelegate 
             let vertexFunction = ShaderLibrary.shared.retrieveShader(forKey: vertexShaderName),
             let fragmentFunction = ShaderLibrary.shared.retrieveShader(forKey: fragmentShaderName)
         else {
-            Logger.error("Metal is not supported on this device")
+            ShaderViewLogger.error("Metal is not supported on this device")
             fatalError("Failed to retrieve shaders")
         }
         
         // Set up the render pipeline, currently same for every shader but maybe consider making it changeable
+        setupRenderPipeline(device: device, vertexFunction: vertexFunction, fragmentFunction: fragmentFunction)
+    }
+    
+    
+    /// Configures the render pipeline with the specified vertex and fragment shaders.
+    private func setupRenderPipeline(device: MTLDevice, vertexFunction: MTLFunction, fragmentFunction: MTLFunction){
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
@@ -72,18 +85,20 @@ public class MetalElement<Input: ShaderInputProtocol>: MTKView, MTKViewDelegate 
         }
     }
 
-    ///Responsible for the shader, runs every frame
+    
+    /// Renders content for each frame.
+    /// - Parameter view: The `MTKView` responsible for displaying the content.
     public func draw(in view: MTKView) {
         self.render()
     }
 
-    //TODO: add needed stuff here if any
-    ///Required class, does nothing at the momnet
+    
+    /// Responds to changes in the view's drawable size.
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         
     }
     
-    ///Overrides drawableSize to work on both macOS and iOS
+    /// Overrides `drawableSize` to trigger a redraw correctly on both macOS and iOS.
     public override var drawableSize: CGSize {
         didSet {
         #if os(macOS)
@@ -95,16 +110,14 @@ public class MetalElement<Input: ShaderInputProtocol>: MTKView, MTKViewDelegate 
         }
     }
 
-
+    /// Executes the rendering process for the current frame.
     private func render() {
         guard let drawable = currentDrawable,
               let commandBuffer = DeviceManager.shared.commandQueue?.makeCommandBuffer(),
               let renderPipelineState = self.renderPipelineState else {
-            Logger.error("Failed to get necessary Metal objects for rendering")
+            ShaderViewLogger.error("Failed to get necessary Metal objects for rendering")
             return
         }
-        
-    
         
         let currentTime = Date()
         self.elapsedTime = Float(currentTime.timeIntervalSince(startTime))

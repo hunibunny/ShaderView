@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//  A class for managing shader inputs in Metal-based rendering.
 //
 //  Created by Pirita Minkkinen on 8/25/23.
 //
@@ -9,15 +9,14 @@
 import SwiftUI
 
 
-/// `ShaderInput` - A class to hold shader inputs.
+/// `ShaderInput`: A class designed to hold and manage inputs for shaders.
 ///
-/// - Note: This structure is not thread-safe. It should be used and modified
-///   from the same thread, preferably the main thread if it interacts with UI components.
-///   Avoid accessing or modifying it from multiple threads concurrently.
+/// It provides a `time` property to pass time-related data to shaders, which is crucial for animations or time-based effects in rendering.
+/// This class conforms to `ShaderInputProtocol` and is intended to be used with `MetalRenderView` for rendering operations.
 ///
-/// Provides a `time` property that can be used to pass time-related data to shaders.
-/// Conforms to `ShaderInputProtocol` and provides a static method to create a default instance.
-public class ShaderInput: ShaderInputProtocol{
+/// - Note: `ShaderInput` is not thread-safe. It should be used and modified from the same thread to prevent data races,
+///   preferably the main thread when interacting with UI components. Ensure it is not accessed or modified from multiple threads concurrently.
+public class ShaderInput: ShaderInputProtocol {
     ///Used to track time for shader
     public var time: Float = 0.0
 

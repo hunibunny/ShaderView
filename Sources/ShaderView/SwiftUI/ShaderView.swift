@@ -1,6 +1,7 @@
 //
 //  ShaderView.swift
-//  
+//
+//  A SwiftUI view for displaying shaders using Metal.
 //
 //  Created by Pirita Minkkinen on 8/22/23.
 //
@@ -10,11 +11,9 @@
 
 import SwiftUI
 import MetalKit
-import os
 
-///Displays shaders in SwiftUI
-@available(iOS 14.0, *)
-@available(macOS 11.0, *)
+/// `ShaderView` is a SwiftUI view that renders shaders using Metal. It supports custom vertex and fragment shaders.
+/// It provides a fallback and placeholder view for different states of shader loading.
 public struct ShaderView<Input: ShaderInputProtocol>: View {
     @ObservedObject var shaderViewModel: ShaderViewModel
     let fragmentShaderName: String
@@ -25,10 +24,18 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
     let fallbackView: AnyView
     let placeholderView: AnyView
     
+    /// Initializes a new instance of `ShaderView`.
+       /// - Parameters:
+       ///   - fragmentShaderName: The name of the fragment shader. Uses a default shader if not provided.
+       ///   - vertexShaderName: The name of the vertex shader. Uses a default shader if not provided.
+       ///   - fallbackView: A view to show in case of an error.
+       ///   - placeholderView: A view to display while shaders are loading.
+       ///   - shaderInput: The input for the shader. If nil, a default instance is created.
     public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, fallbackView: AnyView? = nil, placeholderView: AnyView? = nil, shaderInput: Input? = nil) {
         self.fallbackView = fallbackView ?? AnyView(FallbackView())
         self.placeholderView = placeholderView ?? AnyView(PlaceholderView())
         
+        // Setup shader names and determine if default shaders are used.
         if let name = fragmentShaderName {
             self.fragmentShaderName = name
             usingDefaultShaders = false
@@ -43,16 +50,19 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
             self.vertexShaderName = "defaultVertexShader"
             usingDefaultShaders = true
         }
+        
+        // Initialize the shader view model with the shader names.
         self.shaderViewModel = ShaderViewModel(vertexShaderName: self.vertexShaderName, fragmentShaderName: self.fragmentShaderName)
         
       
         self.shaderInput = shaderInput
         
+        // Log a debug message if shader input is not provided.
         if shaderInput == nil {
-            Logger.debug("Default instance of type \(Input.self) will be created")
+            ShaderViewLogger.debug("Default instance of type \(Input.self) will be created")
         }
 
-        //TODO: remove this when improving loadings and adding real time compilation for users shaders
+        // TODO: This is fine until adding loading and add real-time compilation for user shaders.
         if(!usingDefaultShaders){
             shaderViewModel.viewState = .metalView;
         }
@@ -96,7 +106,6 @@ public struct ShaderView<Input: ShaderInputProtocol>: View {
         .onChange(of: shaderViewModel.viewState) { newState in
             if newState == .metalView {
                 shadersLoaded = true
-                //os_log("Switched to metalView.", type: .info)
             }
         }
     }

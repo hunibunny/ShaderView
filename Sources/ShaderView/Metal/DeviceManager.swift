@@ -19,14 +19,14 @@ class DeviceManager {
     private init() {
            device = MTLCreateSystemDefaultDevice()
            if device == nil {
-               Logger.error("MTLDevice could not be created.")
+               ShaderViewLogger.error("MTLDevice could not be created.")
                initializationError = MetalInitializationError.noDevice
            }
            
            if let device = device {
                commandQueue = device.makeCommandQueue()
                if commandQueue == nil {
-                   Logger.error("MTLCommandQueue could not be created.")
+                   ShaderViewLogger.error("MTLCommandQueue could not be created.")
                    initializationError = MetalInitializationError.noCommandQueue
                }
            }

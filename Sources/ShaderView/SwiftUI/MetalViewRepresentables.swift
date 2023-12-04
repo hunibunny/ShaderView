@@ -1,20 +1,22 @@
 //
 //  MetalViewRepresentables.swift
 //
+//A SwiftUI representable for integrating Metal-based rendering in SwiftUI views.
 //
 //  Created by Pirita Minkkinen on 8/22/23.
 //
 
 import SwiftUI
-import os.log
 
-///Handles communication between ShaderView and MetalElement.
+
+/// `MetalNSViewRepresentable` (macOS) or `MetalUIViewRepresentable` (iOS) are SwiftUI views that facilitate the rendering of Metal content.
+/// They act as a bridge between `ShaderView` and `MetalRenderView`, handling the necessary setup and updates for Metal rendering.
 ///
-///- Note: This can be used alone to display shaders, but it does not safely handle a situation where any required process related to displaying anything in metal, including errors in shaders, runtime compilation or errors of device initialization.
+/// - Note: These representables handle the basic displaying process but do not manage errors related to shader compilation,
+///   Metal device initialization, or runtime issues. Users should handle these aspects separately.
 #if os(macOS)
-@available(macOS 11.0, *)  //TODO: consider this requirement
 public struct MetalNSViewRepresentable<Input: ShaderInputProtocol>: NSViewRepresentable {
-    public typealias NSViewType = MetalElement
+    public typealias NSViewType = MetalRenderView
     
     let drawableSize: CGSize
     let fragmentShaderName: String
@@ -22,6 +24,12 @@ public struct MetalNSViewRepresentable<Input: ShaderInputProtocol>: NSViewRepres
     let shaderInput: Input
     
 
+    /// Initializes a new `MetalNSViewRepresentable` instance for macOS.
+        /// - Parameters:
+        ///   - drawableSize: The size of the drawable area for Metal rendering.
+        ///   - fragmentShaderName: The name of the fragment shader.
+        ///   - vertexShaderName: The name of the vertex shader.
+        ///   - shaderInput: The input data for the shader.
     public init(drawableSize: CGSize, fragmentShaderName: String, vertexShaderName: String, shaderInput: Input) {
         self.drawableSize = drawableSize
         self.fragmentShaderName = fragmentShaderName
@@ -30,16 +38,16 @@ public struct MetalNSViewRepresentable<Input: ShaderInputProtocol>: NSViewRepres
         
     }
     
+    /// Creates the `MetalRenderView` view for Metal rendering in a SwiftUI context.
     public func makeNSView(context: Context) -> NSViewType<Input> {
-        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
-        //os_log("Drawable size - width: %f, height: %f", log: OSLog.default, type: .info, drawableSize.width, drawableSize.height)
-        metalElement.delegate = metalElement
-        metalElement.drawableSize = drawableSize
-        return metalElement
+        let metalRenderView = MetalRenderView(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
+        metalRenderView.delegate = metalRenderView
+        metalRenderView.drawableSize = drawableSize
+        return metalRenderView
     }
     
-    public func updateNSView(_ nsView: MetalElement<Input>, context: Context) {
-        // Update the size of the MetalElement with the latest viewSize
+    /// Updates the `MetalRenderView` view with the latest drawable size and triggers a redraw if needed.
+    public func updateNSView(_ nsView: MetalRenderView<Input>, context: Context) {
         nsView.frame.size = drawableSize
         nsView.drawableSize = drawableSize
         nsView.needsDisplay = true
@@ -48,16 +56,20 @@ public struct MetalNSViewRepresentable<Input: ShaderInputProtocol>: NSViewRepres
 }
 
 #else
-///Handles communication between ShaderView and MetalElement.
-///
-///- Note: This can be used alone to display shaders, but it does not safely handle a situation where any required process related to displaying anything in metal, including errors in shaders, runtime compilation or errors of device initialization.
+/// `MetalUIViewRepresentable` is the iOS equivalent of `MetalNSViewRepresentable`.
 public struct MetalUIViewRepresentable<Input: ShaderInputProtocol>: UIViewRepresentable {
     let drawableSize: CGSize
     let fragmentShaderName: String
     let vertexShaderName: String
-    public typealias UIViewType = MetalElement
+    public typealias UIViewType = MetalRenderView
     let shaderInput: Input
     
+    /// Initializes a new `MetalUIViewRepresentable` instance for iOS.
+       /// - Parameters:
+       ///   - drawableSize: The size of the drawable area for Metal rendering.
+       ///   - fragmentShaderName: The name of the fragment shader.
+       ///   - vertexShaderName: The name of the vertex shader.
+       ///   - shaderInput: The input data for the shader.
     public init(drawableSize: CGSize, fragmentShaderName: String,  vertexShaderName: String,  shaderInput: Input) {
         self.drawableSize = drawableSize
         self.fragmentShaderName = fragmentShaderName
@@ -65,18 +77,19 @@ public struct MetalUIViewRepresentable<Input: ShaderInputProtocol>: UIViewRepres
         self.shaderInput = shaderInput
     }
     
+    /// Creates the `MetalRenderView` view for Metal rendering in a SwiftUI context.
     public func makeUIView(context: Context) -> UIViewType<Input> {
-        let metalElement = MetalElement(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
-        //os_log("Drawable size - width: %f, height: %f", log: OSLog.default, type: .info, drawableSize.width, drawableSize.height)
-        metalElement.delegate = metalElement
-        metalElement.drawableSize = drawableSize
-        return metalElement
+        let metalRenderView = MetalRenderView(fragmentShaderName: fragmentShaderName, vertexShaderName: vertexShaderName, shaderInput: shaderInput)
+        metalRenderView.delegate = metalRenderView
+        metalRenderView.drawableSize = drawableSize
+        return metalRenderView
     }
     
-    public func updateUIView(_ uiView: MetalElement<Input>, context: Context) {
+    /// Updates the `MetalRenderView` view with the latest drawable size and triggers a redraw if needed.
+    public func updateUIView(_ uiView: MetalRenderView<Input>, context: Context) {
         uiView.frame.size = drawableSize
         uiView.drawableSize = drawableSize
-        uiView.setNeedsDisplay() // This will trigger a redraw
+        uiView.setNeedsDisplay()
     }
     
 }

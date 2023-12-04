@@ -8,7 +8,7 @@ let package = Package(
     name: "ShaderView",
     platforms: [
         .iOS(.v13),
-        .macOS(.v10_15)
+        .macOS(.v11)
     ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.

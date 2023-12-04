@@ -7,7 +7,6 @@
 
 import Foundation
 import Metal
-import os.log
 import Combine
 
 
@@ -45,6 +44,7 @@ internal class ShaderLibrary {
     """
     
     static let functions: String = """
+    //insipred by https://www.shadertoy.com/view/ctcyWn
             constant float pi = 3.14159265358979323846;
 
             metal::float2x2 Rot(float a) {
@@ -349,6 +349,7 @@ internal class ShaderLibrary {
     
     
     private init() {
+        
         self.device = DeviceManager.shared.device
         
         if DeviceManager.shared.isSuccessfullyInitialized {
@@ -378,14 +379,14 @@ internal class ShaderLibrary {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let shaderFunction):
-                    Logger.debug("Attempting to store shader with a key: \(key)")
+                    ShaderViewLogger.debug("Attempting to store shader with a key: \(key)")
                     self?.store(shader: .compiled(shaderFunction), forKey: key)
-                    Logger.debug("Succesfully stored shader with a key: \(key)")
+                    ShaderViewLogger.debug("Succesfully stored shader with a key: \(key)")
                 case .failure(let error):
                     switch error {
                     case .functionCreationFailed(let errorMessage):
                         //fatalError("Failed to compile and store shader for key \(key): \(errorMessage)")
-                        Logger.error("Failed to compile and store shader for key \(key): \(errorMessage)")
+                        ShaderViewLogger.error("Failed to compile and store shader for key \(key): \(errorMessage)")
                         //self?.fallbackGraphicsSetup()
                         self?.performFallback()
                     }
@@ -396,7 +397,7 @@ internal class ShaderLibrary {
     
     private func store(shader: ShaderState, forKey key: String) {
         //os_log("Storing shader for key: %{PUBLIC}@", log: OSLog.default, type: .debug, key)
-        Logger.debug("Storing shader for key: \(key)")
+        ShaderViewLogger.debug("Storing shader for key: \(key)")
         shaderCache[key] = shader
         shaderStateSubject.send((name: key, state: shaderCache[key]!))
     }
@@ -404,7 +405,7 @@ internal class ShaderLibrary {
     
     
     func retrieveShader(forKey key: String) -> MTLFunction? {
-        Logger.debug("Retrieving shader for key: \(key)")
+        ShaderViewLogger.debug("Retrieving shader for key: \(key)")
         // First, check if the shader is in the cache.
         if let shaderState = shaderCache[key] {
             switch shaderState {
@@ -417,7 +418,7 @@ internal class ShaderLibrary {
             case .error:
                 //TODO: consider fallbackbehavior
                 // If there was an error, the shader is not available.
-                Logger.error("Shader for key \(key) had an error during compilation.")
+                ShaderViewLogger.error("Shader for key \(key) had an error during compilation.")
                 //os_log("Shader for key %{PUBLIC}@ had an error during compilation.", log: OSLog.default, type: .error, key)
                 return nil
             }
@@ -428,7 +429,7 @@ internal class ShaderLibrary {
                 shaderCache[key] = .compiled(function)
                 return function
             } else {
-                os_log("Failed to make shader function for key %{PUBLIC}@.", log: OSLog.default, type: .error, key)
+                ShaderViewLogger.error("Failed to make shader function for key \(key).")
                 return nil
             }
         }
@@ -437,7 +438,7 @@ internal class ShaderLibrary {
     
     private func makeFunction(name: String) -> MTLFunction {
         //os_log("Making function for name: %{PUBLIC}@", log: OSLog.default, type: .debug, name)
-        Logger.debug("Making function for name: \(name)")
+        ShaderViewLogger.debug("Making function for name: \(name)")
         if let shaderFunction = shaderCompiler!.makeFunction(name: name){
             return shaderFunction
         } else {

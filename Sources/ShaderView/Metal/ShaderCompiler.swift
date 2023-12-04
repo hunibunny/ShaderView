@@ -16,13 +16,13 @@ class ShaderCompiler {
     
     init?() {
         guard let sharedDevice = DeviceManager.shared.device else {
-            Logger.error("MTLDevice could not be obtained from DeviceManager.")
+            ShaderViewLogger.error("MTLDevice could not be obtained from DeviceManager.")
             return nil
         }
         self.device = sharedDevice
         
         guard let newLibrary = device.makeDefaultLibrary() else {
-            Logger.error("Failed to create the default MTLLibrary.")
+            ShaderViewLogger.error("Failed to create the default MTLLibrary.")
             return nil
         }
         self.library = newLibrary
@@ -39,10 +39,10 @@ class ShaderCompiler {
     }
     
     func compileShaderAsync(_ source: String, key: String, completion: @escaping (Result<MTLFunction, ShaderCompilationError>) -> Void) {
-        Logger.debug("Going to start to compile a shader with key: \(key)")
+        ShaderViewLogger.debug("Going to start to compile a shader with key: \(key)")
         
         DispatchQueue.global().async {
-            Logger.debug("Starting compilation for a shader with key: \(key)")
+            ShaderViewLogger.debug("Starting compilation for a shader with key: \(key)")
             
                 // Synchronize access to the device
                 var shaderLibrary: MTLLibrary?
@@ -52,7 +52,7 @@ class ShaderCompiler {
                         compileOptions.fastMathEnabled = false
                         shaderLibrary = try self.device.makeLibrary(source: source, options: compileOptions)
                     } catch let error as NSError {
-                        Logger.error("Error compiling Metal library: \(error)")
+                        ShaderViewLogger.error("Error compiling Metal library: \(error)")
                             // Directly print the error information
                         /*
                         print("Description: \(error.localizedDescription)")
@@ -67,18 +67,18 @@ class ShaderCompiler {
                             print("Underlying Error: \(underlyingError)")
                         }
                          */
-                        //Logger.error("Failed to create shader with key: \(key) due to error with creating library from string")
+                        //ShaderViewLogger.error("Failed to create shader with key: \(key) due to error with creating library from string")
                         completion(.failure(.functionCreationFailed("Failed to create shader with key: \(key) due to error with creating library from string")))
                     }
                 }
                 
            
                 guard let library = shaderLibrary, let shaderFunction = library.makeFunction(name: key) else {
-                    Logger.error("Failed to create shader with key: \(key)")
+                    ShaderViewLogger.error("Failed to create shader with key: \(key)")
                     completion(.failure(.functionCreationFailed("Failed to create shader function with key: \(key)")))
                     return
                 }
-                Logger.debug("Successfully created a shader with key: \(key)")
+            ShaderViewLogger.debug("Successfully created a shader with key: \(key)")
                 completion(.success(shaderFunction))
            
         }

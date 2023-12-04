@@ -82,7 +82,7 @@ class ShaderViewModel: ObservableObject {
             }
             
         case .error:
-            Logger.error("Error compiling shader: \(key)")
+            ShaderViewLogger.error("Error compiling shader: \(key)")
             viewState = .error
         default:
             break
