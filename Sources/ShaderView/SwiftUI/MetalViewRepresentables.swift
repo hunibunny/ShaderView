@@ -31,11 +31,11 @@ public struct MetalNSViewRepresentable: NSViewRepresentable {
         ///   - fragmentShaderName: The name of the fragment shader.
         ///   - vertexShaderName: The name of the vertex shader.
         ///   - shaderInput: The input data for the shader.
-    public init(drawableSize: CGSize, fragmentShaderName: String, vertexShaderName: String, shaderInput: Any) {
+    public init(drawableSize: CGSize, fragmentShaderName: String, vertexShaderName: String, shaderInput: Any? = ShaderInput()) {
         self.drawableSize = drawableSize
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
-        self.shaderInput = shaderInput
+        self.shaderInput = shaderInput!
         print(self.shaderInput.self)
         
     }
@@ -72,11 +72,11 @@ public struct MetalUIViewRepresentable: UIViewRepresentable {
        ///   - fragmentShaderName: The name of the fragment shader.
        ///   - vertexShaderName: The name of the vertex shader.
        ///   - shaderInput: The input data for the shader.
-    public init(drawableSize: CGSize, fragmentShaderName: String,  vertexShaderName: String,  shaderInput: Any) {
+    public init(drawableSize: CGSize, fragmentShaderName: String,  vertexShaderName: String,  shaderInput: Any? = ShaderInput()) {
         self.drawableSize = drawableSize
         self.fragmentShaderName = fragmentShaderName
         self.vertexShaderName = vertexShaderName
-        self.shaderInput = shaderInput
+        self.shaderInput = shaderInput!
         print(self.shaderInput.self)
     }
     
