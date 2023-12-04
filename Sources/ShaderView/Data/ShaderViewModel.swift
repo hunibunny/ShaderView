@@ -8,21 +8,26 @@
 import Combine
 
 
-class ShaderViewModel: ObservableObject {
+public class ShaderViewModel: ObservableObject {
+    @Published var shaderInput: ShaderInputProtocol
+    @Published var fragmentShaderName: String
+    @Published var vertexShaderName: String
+    
+    @Published var isTimeCountingActive: Bool = true
+    
     @Published var viewState: ViewState = .placeholder
     private var cancellables: Set<AnyCancellable> = []
     private var shaderSubscription: AnyCancellable?
     
-    var vertexShaderName: String
-    var fragmentShaderName: String
     private var vertexShaderReady = false
     private var fragmentShaderReady = false
     private var transitionedToMetalView = false
     
     
-    init(vertexShaderName: String, fragmentShaderName: String) {
+    init(vertexShaderName: String, fragmentShaderName: String, shaderInput: ShaderInputProtocol) {
         self.vertexShaderName = vertexShaderName
         self.fragmentShaderName = fragmentShaderName
+        self.shaderInput = shaderInput
         
         if(!ShaderLibrary.shared.metalEnabled){
             viewState = .error

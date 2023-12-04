@@ -13,7 +13,7 @@
 
        let shaderView = ShaderView()
         let customShaderInput = ShaderInput()
-        let representable = MetalNSViewRepresentable(drawableSize: CGSize(width: 100, height: 100), fragmentShaderName: "defaultVertex", vertexShaderName: "defult", shaderInput: ShaderInput())
+        //let representable = MetalNSViewRepresentable(drawableSize: CGSize(width: 100, height: 100), shaderViewModel: shaderViewModel())
         //let metalRender = MetalRenderView<Input: ShaderInput()>(coder: NSCoder())
         
         func testShaderViewInit() {
