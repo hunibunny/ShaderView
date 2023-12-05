@@ -16,4 +16,7 @@ import Foundation
 public protocol ShaderInputProtocol {
     var time: Float {get set}
     init()
+    init(time: Float)
+    func copy() -> ShaderInputProtocol
 }
+

@@ -23,4 +23,12 @@ public class ShaderInput: ShaderInputProtocol {
     public required init() {
         self.time = 0.0
     }
+    
+    public required init(time: Float){
+        self.time = time;
+    }
+    
+    public func copy() -> ShaderInputProtocol {
+            return ShaderInput(time: self.time)
+    }
 }
