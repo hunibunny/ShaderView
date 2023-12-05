@@ -36,7 +36,7 @@ public struct ShaderView: View {
         self.fallbackView = fallbackView ?? AnyView(FallbackView())
         self.placeholderView = placeholderView ?? AnyView(PlaceholderView())
         self.shaderInput = shaderInput ?? ShaderInput()
-        print(type(of: self.shaderInput))
+        
         // Setup shader names and determine if default shaders are used.
         if let name = fragmentShaderName {
             self.fragmentShaderName = name

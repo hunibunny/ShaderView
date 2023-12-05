@@ -53,21 +53,6 @@ class ShaderCompiler {
                         shaderLibrary = try self.device.makeLibrary(source: source, options: compileOptions)
                     } catch let error as NSError {
                         ShaderViewLogger.error("Error compiling Metal library: \(error)")
-                            // Directly print the error information
-                        /*
-                        print("Description: \(error.localizedDescription)")
-
-                        if let failureReason = error.localizedFailureReason {
-                            print("Failure Reason: \(failureReason)")
-                        }
-                        if let recoverySuggestion = error.localizedRecoverySuggestion {
-                            print("Recovery Suggestion: \(recoverySuggestion)")
-                        }
-                        if let underlyingError = error.userInfo[NSUnderlyingErrorKey] {
-                            print("Underlying Error: \(underlyingError)")
-                        }
-                         */
-                        //ShaderViewLogger.error("Failed to create shader with key: \(key) due to error with creating library from string")
                         completion(.failure(.functionCreationFailed("Failed to create shader with key: \(key) due to error with creating library from string")))
                     }
                 }

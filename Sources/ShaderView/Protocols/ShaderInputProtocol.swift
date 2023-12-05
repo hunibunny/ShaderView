@@ -19,5 +19,6 @@ public protocol ShaderInputProtocol {
     init()
     init(time: Float)
     func copy() -> ShaderInputType
+    func metalData() -> Data
 }
 

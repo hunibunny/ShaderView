@@ -42,13 +42,9 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.shaderInput = shaderViewModel.shaderInput.copy()
         super.init(frame: .zero, device: DeviceManager.shared.device)
         
-        print(type(of: self.shaderInput))
        
         setupMetal()
         subscribeToShaderInput()
-        let testShaderInput = ShaderInput()
-        print("test shaderinput")
-        print(type(of: testShaderInput))
         
     }
     
@@ -126,9 +122,6 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.shaderInput.time = currentTime
 
         
-        print("newshaderinputtime and type")
-        print(newShaderInput.time)
-        print(type(of: newShaderInput))
         // Trigger any necessary rendering update here
     }
     
@@ -172,8 +165,6 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         shaderInput.time = elapsedTime
         //}
         
-        print(shaderInput.time)
-        
         
         let renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.colorAttachments[0].texture = drawable.texture
@@ -200,9 +191,25 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         renderEncoder.setRenderPipelineState(renderPipelineState)
         
         
-        //TODO: decide on the size, possibly set possibility to change its size
-        let bufferSize = 3 * 1024 // 4KB in bytes should be more than enough for any 2d shader use, consider reducing
-        let buffer = device?.makeBuffer(bytes: &shaderInput, length:  bufferSize, options: [])
+        var buffer: MTLBuffer?
+        
+        let metalData = shaderInput.metalData()
+        metalData.withUnsafeBytes { rawBufferPointer in
+            // Correctly assign to the 'buffer' declared outside the closure
+            buffer = device?.makeBuffer(bytes: rawBufferPointer.baseAddress!,
+                                       length: rawBufferPointer.count,
+                                       options: [])
+            // Now 'buffer' is available in the outer scope
+        }
+        
+        if buffer == nil {
+            ShaderViewLogger.error("Buffer creation failed class conforming to ShaderInputProtocol, creating placeholder buffer")
+            //let bufferSize = 3 * 1024 // 4KB in bytes should be more than enough for any 2d shader use, consider reducing
+            var defaultData = MetalShaderInput(time: 0.0)
+            buffer = device?.makeBuffer(bytes: &defaultData, length: MemoryLayout<MetalShaderInput>.size, options: [])
+        }
+
+
         renderEncoder.setFragmentBuffer(viewportBuffer, offset: 0, index: 0)
         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 1)
         
@@ -217,3 +224,8 @@ class MetalRenderView: MTKView, MTKViewDelegate {
 }
 
 
+/*
+ //TODO: decide on the size, possibly set possibility to change its size
+ let bufferSize = 3 * 1024 // 4KB in bytes should be more than enough for any 2d shader use, consider reducing
+ let buffer = device?.makeBuffer(bytes: &shaderInput, length:  bufferSize, options: [])
+ */

@@ -32,4 +32,14 @@ public class ShaderInput: ShaderInputProtocol {
     public func copy() -> ShaderInputType {
             return ShaderInput(time: self.time)
     }
+    
+    public func metalData() -> Data {
+        var metalInput = MetalShaderInput(time: self.time)
+        return Data(bytes: &metalInput, count: MemoryLayout<MetalShaderInput>.size)
+    }
+}
+
+// Struct that matches the Metal shader input
+struct MetalShaderInput {
+    var time: Float
 }
