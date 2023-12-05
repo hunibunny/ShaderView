@@ -42,10 +42,14 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.shaderInput = shaderViewModel.shaderInput.copy()
         super.init(frame: .zero, device: DeviceManager.shared.device)
         
-        print(shaderInput.self)
+        print(type(of: self.shaderInput))
        
         setupMetal()
         subscribeToShaderInput()
+        let testShaderInput = ShaderInput()
+        print("test shaderinput")
+        print(type(of: testShaderInput))
+        
     }
     
     /// Required initializer for decoding. Not intended for direct use.
@@ -121,6 +125,10 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         // Restore the preserved time to the new copy
         self.shaderInput.time = currentTime
 
+        
+        print("newshaderinputtime and type")
+        print(newShaderInput.time)
+        print(type(of: newShaderInput))
         // Trigger any necessary rendering update here
     }
     
@@ -164,6 +172,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         shaderInput.time = elapsedTime
         //}
         
+        print(shaderInput.time)
         
         
         let renderPassDescriptor = MTLRenderPassDescriptor()
