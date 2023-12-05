@@ -23,7 +23,6 @@ public struct ShaderView: View {
     @State var shadersLoaded: Bool = false
     let fallbackView: AnyView
     let placeholderView: AnyView
-    let shaderInput: any ShaderInputProtocol
     
     /// Initializes a new instance of `ShaderView`.
        /// - Parameters:
@@ -35,7 +34,6 @@ public struct ShaderView: View {
     public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, fallbackView: AnyView? = nil, placeholderView: AnyView? = nil, shaderInput: (any ShaderInputProtocol)? = nil) {
         self.fallbackView = fallbackView ?? AnyView(FallbackView())
         self.placeholderView = placeholderView ?? AnyView(PlaceholderView())
-        self.shaderInput = shaderInput ?? ShaderInput()
         
         // Setup shader names and determine if default shaders are used.
         if let name = fragmentShaderName {
@@ -54,7 +52,7 @@ public struct ShaderView: View {
         }
         
         // Initialize the shader view model with the shader names and input.
-        self.shaderViewModel = ShaderViewModel(vertexShaderName: self.vertexShaderName, fragmentShaderName: self.fragmentShaderName, shaderInput: self.shaderInput)
+        self.shaderViewModel = ShaderViewModel(vertexShaderName: self.vertexShaderName, fragmentShaderName: self.fragmentShaderName, shaderInput: shaderInput ?? ShaderInput())
         
         // TODO: This is fine until adding loading and add real-time compilation for user shaders.
         if(!usingDefaultShaders){
