@@ -17,6 +17,7 @@ import SwiftUI
 /// - Note: `ShaderInput` is not thread-safe. It should be used and modified from the same thread to prevent data races,
 ///   preferably the main thread when interacting with UI components. Ensure it is not accessed or modified from multiple threads concurrently.
 public class ShaderInput: ShaderInputProtocol {
+    public typealias ShaderInputType = ShaderInput
     ///Used to track time for shader
     public var time: Float = 0.0
 
@@ -28,7 +29,7 @@ public class ShaderInput: ShaderInputProtocol {
         self.time = time;
     }
     
-    public func copy() -> ShaderInputProtocol {
+    public func copy() -> ShaderInputType {
             return ShaderInput(time: self.time)
     }
 }

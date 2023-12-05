@@ -9,7 +9,7 @@ import Combine
 
 
 class ShaderViewModel: ObservableObject {
-    @Published var shaderInput: ShaderInputProtocol
+    @Published var shaderInput: any ShaderInputProtocol
     @Published var fragmentShaderName: String
     @Published var vertexShaderName: String
     
@@ -24,7 +24,7 @@ class ShaderViewModel: ObservableObject {
     private var transitionedToMetalView = false
     
     
-    init(vertexShaderName: String, fragmentShaderName: String, shaderInput: ShaderInputProtocol) {
+    init(vertexShaderName: String, fragmentShaderName: String, shaderInput: any ShaderInputProtocol) {
         self.vertexShaderName = vertexShaderName
         self.fragmentShaderName = fragmentShaderName
         self.shaderInput = shaderInput

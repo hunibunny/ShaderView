@@ -14,9 +14,10 @@ import Foundation
 /// - Properties:
 ///   - time: A `Float` used to pass time-related data to shaders.
 public protocol ShaderInputProtocol {
+    associatedtype ShaderInputType: ShaderInputProtocol
     var time: Float {get set}
     init()
     init(time: Float)
-    func copy() -> ShaderInputProtocol
+    func copy() -> ShaderInputType
 }
 

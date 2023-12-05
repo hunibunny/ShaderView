@@ -21,7 +21,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     
     private var vertexShaderName: String = "" //think of making these let
     private var fragmentShaderName: String = ""
-    private var shaderInput: ShaderInputProtocol
+    private var shaderInput: any ShaderInputProtocol
     //private var isTimeCountingActive: Bool = true
     
     var startTime: Date = Date()
@@ -42,7 +42,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.shaderInput = shaderViewModel.shaderInput.copy()
         super.init(frame: .zero, device: DeviceManager.shared.device)
         
-        print(self.shaderInput.self)
+       
         setupMetal()
         subscribeToShaderInput()
     }
@@ -110,7 +110,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     /// Updates `shaderInput` in response to changes, preserving certain properties like time.
     /// - Parameters:
     ///   - newShaderInput: The updated shader input received from `ShaderViewModel`.
-    private func updateShaderInput(_ newShaderInput: ShaderInputProtocol) {
+    private func updateShaderInput(_ newShaderInput: any ShaderInputProtocol) {
         // Update shaderInput and any other relevant properties
         let currentTime = shaderInput.time
 
@@ -162,6 +162,8 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.elapsedTime = Float(currentTime.timeIntervalSince(startTime))
         shaderInput.time = elapsedTime
         //}
+        
+        
         
         let renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.colorAttachments[0].texture = drawable.texture
