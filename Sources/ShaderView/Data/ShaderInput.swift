@@ -9,16 +9,18 @@
 import SwiftUI
 
 
-/// `ShaderInput`: A class designed to hold and manage inputs for shaders.
+
+/// `ShaderInput` is a concrete implementation of `ShaderInputProtocol` used for managing shader inputs.
 ///
-/// It provides a `time` property to pass time-related data to shaders, which is crucial for animations or time-based effects in rendering.
-/// This class conforms to `ShaderInputProtocol` and is intended to be used with `MetalRenderView` for rendering operations.
+/// This class simplifies passing uniform data to Metal shaders, particularly for animations and real-time rendering effects.
+/// It holds a `time` variable, a common requirement for shaders that produce time-varying visual effects.
 ///
-/// - Note: `ShaderInput` is not thread-safe. It should be used and modified from the same thread to prevent data races,
-///   preferably the main thread when interacting with UI components. Ensure it is not accessed or modified from multiple threads concurrently.
+/// - Note: Instances of `ShaderInput` are not thread-safe. Modify them on the same thread where they are used, preferably the main thread for UI-related operations.
+///
+/// - Important: Ensure `ShaderInput` instances are not accessed concurrently from multiple threads to avoid data races.
 public class ShaderInput: ShaderInputProtocol {
     public typealias ShaderInputType = ShaderInput
-    ///Used to track time for shader
+    /// A `Float` that tracks time for shader, typically used for animations or time-based shader effects.
     public var time: Float = 0.0
 
     public required init() {
@@ -29,17 +31,22 @@ public class ShaderInput: ShaderInputProtocol {
         self.time = time;
     }
     
+    /// Creates and returns a copy of the current instance.
+    /// Useful for creating distinct instances with the same initial state.
     public func copy() -> ShaderInputType {
             return ShaderInput(time: self.time)
     }
     
+    /// Prepares and returns a `Data` object that contains the shader input data formatted for Metal.
+    /// This method is crucial for bridging Swift data structures to Metal's lower-level data handling.
     public func metalData() -> Data {
         var metalInput = MetalShaderInput(time: self.time)
         return Data(bytes: &metalInput, count: MemoryLayout<MetalShaderInput>.size)
     }
 }
 
-// Struct that matches the Metal shader input
+/// A struct that mirrors the layout of a Metal shader's input structure.
+/// This struct is used within `ShaderInput.metalData()` to format Swift data into a form compatible with Metal.
 struct MetalShaderInput {
     var time: Float
 }

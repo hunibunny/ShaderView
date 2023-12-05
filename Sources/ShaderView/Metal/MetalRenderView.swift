@@ -6,7 +6,6 @@
 //
 
 import MetalKit
-import SwiftUI
 import Combine
 
 
@@ -16,13 +15,12 @@ import Combine
 /// - Note: This class is intended for use as part of the package and may not be suitable for standalone use.
 ///         It relies on other components in the package for full functionality.
 class MetalRenderView: MTKView, MTKViewDelegate {
-    @ObservedObject var shaderViewModel: ShaderViewModel
+    var shaderViewModel: ShaderViewModel
     private var shaderInputSubscription: AnyCancellable?
     
-    private var vertexShaderName: String = "" //think of making these let
-    private var fragmentShaderName: String = ""
+    private let vertexShaderName: String
+    private let fragmentShaderName: String
     private var shaderInput: any ShaderInputProtocol
-    //private var isTimeCountingActive: Bool = true
     
     var startTime: Date = Date()
     var elapsedTime: Float = 0.0
@@ -195,16 +193,14 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         
         let metalData = shaderInput.metalData()
         metalData.withUnsafeBytes { rawBufferPointer in
-            // Correctly assign to the 'buffer' declared outside the closure
             buffer = device?.makeBuffer(bytes: rawBufferPointer.baseAddress!,
                                        length: rawBufferPointer.count,
                                        options: [])
-            // Now 'buffer' is available in the outer scope
+
         }
         
         if buffer == nil {
             ShaderViewLogger.error("Buffer creation failed class conforming to ShaderInputProtocol, creating placeholder buffer")
-            //let bufferSize = 3 * 1024 // 4KB in bytes should be more than enough for any 2d shader use, consider reducing
             var defaultData = MetalShaderInput(time: 0.0)
             buffer = device?.makeBuffer(bytes: &defaultData, length: MemoryLayout<MetalShaderInput>.size, options: [])
         }
@@ -222,10 +218,3 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     
     
 }
-
-
-/*
- //TODO: decide on the size, possibly set possibility to change its size
- let bufferSize = 3 * 1024 // 4KB in bytes should be more than enough for any 2d shader use, consider reducing
- let buffer = device?.makeBuffer(bytes: &shaderInput, length:  bufferSize, options: [])
- */

@@ -13,8 +13,6 @@ class ShaderViewModel: ObservableObject {
     @Published var fragmentShaderName: String
     @Published var vertexShaderName: String
     
-    //@Published var isTimeCountingActive: Bool = true
-    
     @Published var viewState: ViewState = .placeholder
     private var cancellables: Set<AnyCancellable> = []
     private var shaderSubscription: AnyCancellable?
