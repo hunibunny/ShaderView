@@ -42,6 +42,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.shaderInput = shaderViewModel.shaderInput.copy()
         super.init(frame: .zero, device: DeviceManager.shared.device)
         
+        print(shaderInput.self)
        
         setupMetal()
         subscribeToShaderInput()
