@@ -129,6 +129,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         dump(self.shaderInput, to: &output)
         ShaderViewLogger.debug("ShaderInput updated with new values")
         ShaderViewLogger.debug(output)
+        ShaderViewLogger.error("ehe")
         
         // Trigger any necessary rendering update here
     }

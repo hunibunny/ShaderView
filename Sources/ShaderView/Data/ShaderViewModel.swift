@@ -9,7 +9,15 @@ import Combine
 
 
 class ShaderViewModel: ObservableObject {
-    @Published var shaderInput: any ShaderInputProtocol
+    @Published var shaderInput: any ShaderInputProtocol{
+        didSet {
+            // Log the change when shaderInput changes
+            var output = ""
+            dump(self.shaderInput, to: &output)
+            ShaderViewLogger.error("shaderInputChnaged, observed from shaderViewmodel")
+            ShaderViewLogger.error(output)
+        }
+    }
     @Published var fragmentShaderName: String
     @Published var vertexShaderName: String
     
