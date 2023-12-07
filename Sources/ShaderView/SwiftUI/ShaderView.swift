@@ -34,12 +34,14 @@ public struct ShaderView: View {
     public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, fallbackView: AnyView? = nil, placeholderView: AnyView? = nil, shaderInput: (any ShaderInputProtocol)? = nil) {
         self.fallbackView = fallbackView ?? AnyView(FallbackView())
         self.placeholderView = placeholderView ?? AnyView(PlaceholderView())
+        
+        let usingDefaultShaders = fragmentShaderName == nil || vertexShaderName == nil
 
         // Setup shader names and determine if default shaders are used.
         let finalFragmentShaderName = fragmentShaderName ?? "defaultFragmentShader"
         let finalVertexShaderName = vertexShaderName ?? "defaultVertexShader"
                
-        let usingDefaultShaders = fragmentShaderName == nil && vertexShaderName == nil
+       
                
         
         // Initialize the shader view model with the shader names and input.
