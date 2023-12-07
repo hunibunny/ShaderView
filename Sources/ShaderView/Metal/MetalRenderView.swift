@@ -41,7 +41,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.shaderInput = shaderViewModel.shaderInput.copy()
         super.init(frame: .zero, device: DeviceManager.shared.device)
         
-        ShaderViewLogger.debug("Created new MetalRenderView")
+        ShaderViewLogger.error("Created new MetalRenderView")
         setupMetal()
         subscribeToShaderInput()
         
@@ -185,9 +185,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
             return
         }
         
-        
-        
-        
+
         
         //first buffer viewportbuffer second other stuff like variables
         renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)  // Use the next available index
