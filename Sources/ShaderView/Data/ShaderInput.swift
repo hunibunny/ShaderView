@@ -33,13 +33,13 @@ open class ShaderInput: ShaderInputProtocol {
     
     /// Creates and returns a copy of the current instance.
     /// Useful for creating distinct instances with the same initial state.
-    public func copy() -> ShaderInputType {
+    open func copy() -> ShaderInputType {
             return ShaderInput(time: self.time)
     }
     
     /// Prepares and returns a `Data` object that contains the shader input data formatted for Metal.
     /// This method is crucial for bridging Swift data structures to Metal's lower-level data handling.
-    public func metalData() -> Data {
+    open func metalData() -> Data {
         var metalInput = MetalShaderInput(time: self.time)
         return Data(bytes: &metalInput, count: MemoryLayout<MetalShaderInput>.size)
     }
