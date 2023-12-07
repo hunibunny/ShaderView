@@ -18,7 +18,7 @@ import SwiftUI
 /// - Note: Instances of `ShaderInput` are not thread-safe. Modify them on the same thread where they are used, preferably the main thread for UI-related operations.
 ///
 /// - Important: Ensure `ShaderInput` instances are not accessed concurrently from multiple threads to avoid data races.
-public class ShaderInput: ShaderInputProtocol {
+open class ShaderInput: ShaderInputProtocol {
     public typealias ShaderInputType = ShaderInput
     /// A `Float` that tracks time for shader, typically used for animations or time-based shader effects.
     public var time: Float = 0.0
