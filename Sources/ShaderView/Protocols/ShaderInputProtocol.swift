@@ -22,7 +22,7 @@ import Foundation
 /// - Methods:
 ///   - metalData(): Returns a `Data` object containing the conforming type's properties formatted for use in Metal shaders.
 ///   - copy(): Creates and returns a copy of the instance, preserving the current state.
-public protocol ShaderInputProtocol: AnyObject {
+public protocol ShaderInputProtocol: AnyObject, ObservableObject{
     associatedtype ShaderInputType: ShaderInputProtocol
     init()
     init(time: Float)
