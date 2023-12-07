@@ -22,10 +22,11 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     private let fragmentShaderName: String
     private var shaderInput: any ShaderInputProtocol
     
+    
     var startTime: Date = Date()
     var elapsedTime: Float = 0.0
     
-    private var vertexBuffer: MTLBuffer?
+    private var viewportBuffer: MTLBuffer?
     var renderPipelineState: MTLRenderPipelineState?
     
     
@@ -40,7 +41,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.shaderInput = shaderViewModel.shaderInput.copy()
         super.init(frame: .zero, device: DeviceManager.shared.device)
         
-       
+        ShaderViewLogger.debug("Created new MetalRenderView")
         setupMetal()
         subscribeToShaderInput()
         
@@ -56,20 +57,26 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     /// - Note: Real-time shader compilation features, if added, may trigger errors captured here.
     private func setupMetal() {
         guard let device = DeviceManager.shared.device else {
-            ShaderViewLogger.error("Metal is not supported on this device")
-            fatalError("Metal is not supported on this device")
+            ShaderViewLogger.error("MetalRenderView failed to access device")
+            fatalError("MetalRenderView failed to access device")
         }
         
         guard
             let vertexFunction = ShaderLibrary.shared.retrieveShader(forKey: vertexShaderName),
             let fragmentFunction = ShaderLibrary.shared.retrieveShader(forKey: fragmentShaderName)
         else {
-            ShaderViewLogger.error("Metal is not supported on this device")
-            fatalError("Failed to retrieve shaders")
+            ShaderViewLogger.error("MetalRenderView failed to access shaders")
+            fatalError("MetalRenderView failed to access shaders")
         }
         
         // Set up the render pipeline, currently same for every shader but maybe consider making it changeable
         setupRenderPipeline(device: device, vertexFunction: vertexFunction, fragmentFunction: fragmentFunction)
+        
+        
+        //Set up viewportbuffer
+        var viewport = Viewport(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
+        
+        viewportBuffer = device.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
     }
     
     
@@ -133,7 +140,9 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     
     /// Responds to changes in the view's drawable size.
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        var viewport = Viewport(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
         
+        viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
     }
     
     /// Overrides `drawableSize` to trigger a redraw correctly on both macOS and iOS.
@@ -177,11 +186,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         }
         
         
-        var viewport = Viewport(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
         
-        
-        
-        let viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
         
         
         //first buffer viewportbuffer second other stuff like variables
@@ -199,12 +204,13 @@ class MetalRenderView: MTKView, MTKViewDelegate {
 
         }
         
+        /*
         if buffer == nil {
             ShaderViewLogger.error("Buffer creation failed class conforming to ShaderInputProtocol, creating placeholder buffer")
             var defaultData = MetalShaderInput(time: 0.0)
             buffer = device?.makeBuffer(bytes: &defaultData, length: MemoryLayout<MetalShaderInput>.size, options: [])
         }
-
+        */
 
         renderEncoder.setFragmentBuffer(viewportBuffer, offset: 0, index: 0)
         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 1)
