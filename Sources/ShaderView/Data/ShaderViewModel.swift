@@ -9,15 +9,7 @@ import Combine
 
 
 class ShaderViewModel: ObservableObject {
-    @Published var shaderInput: any ShaderInputProtocol{
-        didSet {
-            // Log the change when shaderInput changes
-            var output = ""
-            dump(self.shaderInput, to: &output)
-            ShaderViewLogger.error("shaderInputChnaged, observed from shaderViewmodel")
-            ShaderViewLogger.error(output)
-        }
-    }
+    @Published var shaderInput: any ShaderInputProtocol
     @Published var fragmentShaderName: String
     @Published var vertexShaderName: String
     
@@ -35,6 +27,7 @@ class ShaderViewModel: ObservableObject {
         self.fragmentShaderName = fragmentShaderName
         self.shaderInput = shaderInput
         
+        print("ShaderViewModel's shaderInput: \(Unmanaged.passUnretained(shaderInput as AnyObject).toOpaque())")
         if(!ShaderLibrary.shared.metalEnabled){
             viewState = .error
         }
