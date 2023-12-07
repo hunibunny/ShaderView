@@ -105,6 +105,11 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     private func subscribeToShaderInput() {
         shaderInputSubscription = shaderViewModel.$shaderInput
             .sink { [weak self] newShaderInput in
+                if let shaderInputObject = newShaderInput as AnyObject? {
+                               print("MetalRenderView's shaderInput: \(Unmanaged.passUnretained(shaderInputObject).toOpaque())")
+                           } else {
+                               print("shaderInput in MetalRenderView is not a class instance")
+                           }
                 if !(newShaderInput is ShaderInput) {  // Check if newShaderInput is not of type ShaderInput
                     self?.updateShaderInput(newShaderInput)
                 }
