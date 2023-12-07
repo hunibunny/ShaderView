@@ -35,6 +35,12 @@ public struct ShaderView: View {
         self.fallbackView = fallbackView ?? AnyView(FallbackView())
         self.placeholderView = placeholderView ?? AnyView(PlaceholderView())
         
+        if(shaderInput == nil){
+            print("ShaderInput nil, new instance will be created")
+        }
+        
+        
+        
         let usingDefaultShaders = fragmentShaderName == nil || vertexShaderName == nil
 
         // Setup shader names and determine if default shaders are used.
@@ -69,6 +75,14 @@ public struct ShaderView: View {
         .onChange(of: shaderViewModel.viewState) { newState in
             shadersLoaded = newState == .metalView
         }
+        Text("Rendering ShaderView")
+                   .onAppear {
+                       if let shaderInputObject = shaderViewModel.shaderInput as AnyObject? {
+                           print("ShaderView's shaderInput: \(Unmanaged.passUnretained(shaderInputObject).toOpaque())")
+                       } else {
+                           print("shaderInput in ShaderView is not a class instance")
+                       }
+                   }
     }
 
 }
