@@ -110,9 +110,9 @@ class MetalRenderView: MTKView, MTKViewDelegate {
                            } else {
                                print("shaderInput in MetalRenderView is not a class instance")
                            }
-                if !(newShaderInput is ShaderInput) {  // Check if newShaderInput is not of type ShaderInput
+              
                     self?.updateShaderInput(newShaderInput)
-                }
+                
             }
     }
     
