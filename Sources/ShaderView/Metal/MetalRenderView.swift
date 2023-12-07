@@ -41,7 +41,6 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.shaderInput = shaderViewModel.shaderInput.copy()
         super.init(frame: .zero, device: DeviceManager.shared.device)
         
-        ShaderViewLogger.error("Created new MetalRenderView")
         setupMetal()
         subscribeToShaderInput()
         
@@ -126,6 +125,10 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         // Restore the preserved time to the new copy
         self.shaderInput.time = currentTime
 
+        var output = ""
+        dump(self.shaderInput, to: &output)
+        ShaderViewLogger.debug("ShaderInput updated with new values")
+        ShaderViewLogger.debug(output)
         
         // Trigger any necessary rendering update here
     }
