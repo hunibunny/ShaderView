@@ -16,6 +16,7 @@ import Combine
 ///         It relies on other components in the package for full functionality.
 class MetalRenderView: MTKView, MTKViewDelegate {
     var shaderViewModel: ShaderViewModel
+    private var cancellables: Set<AnyCancellable> = []
     private var shaderInputSubscription: AnyCancellable?
     
     private let vertexShaderName: String
@@ -103,18 +104,18 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     /// Subscribes to changes in `shaderInput` from `ShaderViewModel`.
     /// Updates the view's shader input when a change occurs
     private func subscribeToShaderInput() {
-        shaderInputSubscription = shaderViewModel.$shaderInput
+        shaderViewModel.$shaderInput
             .sink { [weak self] newShaderInput in
                 if let shaderInputObject = newShaderInput as AnyObject? {
-                               print("MetalRenderView's shaderInput: \(Unmanaged.passUnretained(shaderInputObject).toOpaque())")
-                           } else {
-                               print("shaderInput in MetalRenderView is not a class instance")
-                           }
-              
-                    self?.updateShaderInput(newShaderInput)
-                
+                    print("MetalRenderView's shaderInput: \(Unmanaged.passUnretained(shaderInputObject).toOpaque())")
+                } else {
+                    print("shaderInput in MetalRenderView is not a class instance")
+                }
+                self?.updateShaderInput(newShaderInput)
             }
+            .store(in: &cancellables)
     }
+
     
     
     /// Updates `shaderInput` in response to changes, preserving certain properties like time.
@@ -229,5 +230,10 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         commandBuffer.commit()
     }
     
+    
+    deinit {
+        print("MetalRenderView is being deallocated")
+    }
+
     
 }
