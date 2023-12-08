@@ -31,10 +31,8 @@ open class ShaderInput: ShaderInputProtocol {
         self.time = time;
     }
     
-    /// Creates and returns a copy of the current instance.
-    /// Useful for creating distinct instances with the same initial state.
-    open func copy() -> ShaderInputType {
-            return ShaderInput(time: self.time)
+    open func updateProperties(from input: any ShaderInputProtocol) {
+        //no need for time updates for this specific class
     }
     
     /// Prepares and returns a `Data` object that contains the shader input data formatted for Metal.

@@ -39,7 +39,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.shaderViewModel = shaderViewModel
         self.fragmentShaderName = shaderViewModel.fragmentShaderName
         self.vertexShaderName = shaderViewModel.vertexShaderName
-        self.shaderInput = shaderViewModel.shaderInput.copy()
+        self.shaderInput = ShaderInput(time: shaderViewModel.shaderInput.time)
         super.init(frame: .zero, device: DeviceManager.shared.device)
         
         setupMetal()
@@ -123,17 +123,14 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         // Update shaderInput and any other relevant properties
         let currentTime = shaderInput.time
 
-        // Create a copy of newShaderInput
-        self.shaderInput = newShaderInput.copy()
-
-        // Restore the preserved time to the new copy
-        self.shaderInput.time = currentTime
+      
+        self.shaderInput.updateProperties(from: newShaderInput)
 
         var output = ""
         dump(self.shaderInput, to: &output)
         ShaderViewLogger.debug("ShaderInput updated with new values")
         ShaderViewLogger.debug(output)
-        ShaderViewLogger.error("ehe")
+        
         
         // Trigger any necessary rendering update here
     }
