@@ -105,21 +105,18 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     /// Subscribes to changes in `shaderInput` from `ShaderViewModel`.
     /// Updates the view's shader input when a change occurs
     private func subscribeToShaderInput() {
-            shaderInput.objectWillChangePublisher()
-                .sink { [weak self] _ in
-                    guard let self = self else { return }
-                    if !self.isFirstUpdateIgnored {
-                        self.isFirstUpdateIgnored = true
-                        return
-                    }
-                    self.updateShaderInput(self.shaderViewModel.shaderInput)
+        shaderViewModel.shaderInput.objectWillChangePublisher()
+            .sink { [weak self] _ in
+                if let shaderInput = self?.shaderViewModel.shaderInput {
+                    self?.updateShaderInput(shaderInput)
                 }
-                .store(in: &cancellables)
-        }
-    
+            }
+            .store(in: &cancellables)
+    }
+
+
     /*
-     alterantive for testing 
-     private func setupShaderInputSubscription() {
+     private func subscribeToShaderInput() {
              shaderInput.objectWillChangePublisher()
                  .sink { [weak self] _ in
                      guard let self = self else { return }
@@ -127,13 +124,27 @@ class MetalRenderView: MTKView, MTKViewDelegate {
                          self.isFirstUpdateIgnored = true
                          return
                      }
-                     self.updateShaderInput(self.shaderInput)
+                     self.updateShaderInput(self.shaderViewModel.shaderInput)
                  }
                  .store(in: &cancellables)
          }
+     
+     /*
+      alterantive for testing
+      private func setupShaderInputSubscription() {
+              shaderInput.objectWillChangePublisher()
+                  .sink { [weak self] _ in
+                      guard let self = self else { return }
+                      if !self.isFirstUpdateIgnored {
+                          self.isFirstUpdateIgnored = true
+                          return
+                      }
+                      self.updateShaderInput(self.shaderInput)
+                  }
+                  .store(in: &cancellables)
+          }
+      */
      */
-
-
     
     
     /// Updates `shaderInput` in response to changes, preserving certain properties like time.
