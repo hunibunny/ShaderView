@@ -36,7 +36,7 @@ public struct ShaderView: View {
         self.placeholderView = placeholderView ?? AnyView(PlaceholderView())
         
         if(shaderInput == nil){
-            print("ShaderInput nil, new instance will be created")
+            ShaderViewLogger.debug("ShaderInput nil, new instance will be created")
         }
         
         
@@ -75,14 +75,7 @@ public struct ShaderView: View {
         .onChange(of: shaderViewModel.viewState) { newState in
             shadersLoaded = newState == .metalView
         }
-        Text("Rendering ShaderView")
-                   .onAppear {
-                       if let shaderInputObject = shaderViewModel.shaderInput as AnyObject? {
-                           print("ShaderView's shaderInput: \(Unmanaged.passUnretained(shaderInputObject).toOpaque())")
-                       } else {
-                           print("shaderInput in ShaderView is not a class instance")
-                       }
-                   }
+        
     }
 
 }

@@ -27,7 +27,6 @@ class ShaderViewModel: ObservableObject {
         self.fragmentShaderName = fragmentShaderName
         self.shaderInput = shaderInput
         
-        print("ShaderViewModel's shaderInput: \(Unmanaged.passUnretained(shaderInput as AnyObject).toOpaque())")
         if(!ShaderLibrary.shared.metalEnabled){
             viewState = .error
         }

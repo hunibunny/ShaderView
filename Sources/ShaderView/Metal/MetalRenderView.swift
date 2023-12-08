@@ -189,7 +189,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         
         
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
-            print("Failed to create Render Command Encoder.")
+            ShaderViewLogger.error("Failed to create Render Command Encoder.")
             return
         }
         
@@ -227,11 +227,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         commandBuffer.present(drawable)
         commandBuffer.commit()
     }
-    
-    
-    deinit {
-        print("MetalRenderView is being deallocated")
-    }
+ 
 
     
 }
