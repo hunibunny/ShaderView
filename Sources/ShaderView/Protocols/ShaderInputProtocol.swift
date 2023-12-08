@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import Combine
 
 /// `ShaderInputProtocol` outlines the requirements for class types used as inputs in Metal shaders.
 /// It establishes a standardized interface for shader inputs, ensuring consistency and ease of use within the rendering pipeline.
@@ -29,5 +29,14 @@ public protocol ShaderInputProtocol: AnyObject, ObservableObject{
     var time: Float {get set}
     func copy() -> ShaderInputType
     func metalData() -> Data
+    func objectWillChangePublisher() -> AnyPublisher<Void, Never>
 }
 
+extension ShaderInputProtocol {
+    // Provide a default implementation
+    public func objectWillChangePublisher() -> AnyPublisher<Void, Never> {
+        self.objectWillChange
+            .map { _ in () } // Convert to Void
+            .eraseToAnyPublisher()
+    }
+}

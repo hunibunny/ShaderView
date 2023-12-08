@@ -7,7 +7,7 @@
 
 
 import SwiftUI
-
+import Combine
 
 
 /// `ShaderInput` is a concrete implementation of `ShaderInputProtocol` used for managing shader inputs.
@@ -43,6 +43,12 @@ open class ShaderInput: ShaderInputProtocol {
         var metalInput = MetalShaderInput(time: self.time)
         return Data(bytes: &metalInput, count: MemoryLayout<MetalShaderInput>.size)
     }
+    
+    public func objectWillChangePublisher() -> AnyPublisher<Void, Never> {
+            objectWillChange
+                .map { _ in () } // Convert to Void
+                .eraseToAnyPublisher()
+        }
 }
 
 /// A struct that mirrors the layout of a Metal shader's input structure.
