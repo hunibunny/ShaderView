@@ -39,7 +39,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.shaderViewModel = shaderViewModel
         self.fragmentShaderName = shaderViewModel.fragmentShaderName
         self.vertexShaderName = shaderViewModel.vertexShaderName
-        self.shaderInput = ShaderInput(time: shaderViewModel.shaderInput.time)
+        self.shaderInput = shaderViewModel.shaderInput.copy()
         super.init(frame: .zero, device: DeviceManager.shared.device)
         
         setupMetal()

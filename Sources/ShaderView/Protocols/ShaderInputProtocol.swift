@@ -27,6 +27,7 @@ public protocol ShaderInputProtocol: AnyObject, ObservableObject{
     init()
     init(time: Float)
     var time: Float {get set}
+    func copy() -> ShaderInputType
     func updateProperties(from input: any ShaderInputProtocol)
     func metalData() -> Data
     func objectWillChangePublisher() -> AnyPublisher<Void, Never>
