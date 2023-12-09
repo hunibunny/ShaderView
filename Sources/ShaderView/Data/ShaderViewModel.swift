@@ -10,7 +10,13 @@ import Foundation
 
 
 class ShaderViewModel: ObservableObject {
-    @Published var shaderInput: any ShaderInputProtocol
+    @Published var shaderInput: any ShaderInputProtocol{
+        didSet {
+                    shaderInput.onChange = { [weak self] in
+                        self?.objectWillChange.send()
+                    }
+                }
+    }
     @Published var fragmentShaderName: String
     @Published var vertexShaderName: String
     
@@ -27,6 +33,9 @@ class ShaderViewModel: ObservableObject {
         self.vertexShaderName = vertexShaderName
         self.fragmentShaderName = fragmentShaderName
         self.shaderInput = shaderInput
+        self.shaderInput.onChange = { [weak self] in
+                   self?.objectWillChange.send()
+               }
         
         if(!ShaderLibrary.shared.metalEnabled){
             viewState = .error

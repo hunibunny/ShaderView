@@ -22,6 +22,7 @@ open class ShaderInput: ShaderInputProtocol {
     public typealias ShaderInputType = ShaderInput
     /// A `Float` that tracks time for shader, typically used for animations or time-based shader effects.
     public var time: Float = 0.0
+    public var onChange: (() -> Void)?
 
     public required init() {
         self.time = 0.0
