@@ -22,7 +22,7 @@ open class ShaderInput: ShaderInputProtocol {
     public typealias ShaderInputType = ShaderInput
     /// A `Float` that tracks time for shader, typically used for animations or time-based shader effects.
     public var time: Float = 0.0
-    public var onChange: (() -> Void)?
+    open var onChange: (() -> Void)?
 
     public required init() {
         self.time = 0.0
@@ -48,12 +48,12 @@ open class ShaderInput: ShaderInputProtocol {
         var metalInput = MetalShaderInput(time: self.time)
         return Data(bytes: &metalInput, count: MemoryLayout<MetalShaderInput>.size)
     }
-    
+    /*
     public func objectWillChangePublisher() -> AnyPublisher<Void, Never> {
             objectWillChange
                 .map { _ in () } // Convert to Void
                 .eraseToAnyPublisher()
-        }
+        }*/
 }
 
 /// A struct that mirrors the layout of a Metal shader's input structure.

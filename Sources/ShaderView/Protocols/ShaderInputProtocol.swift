@@ -32,10 +32,11 @@ public protocol ShaderInputProtocol: AnyObject, ObservableObject{
     func copy() -> ShaderInputType
     func updateProperties(from input: any ShaderInputProtocol)
     func metalData() -> Data
-    func objectWillChangePublisher() -> AnyPublisher<Void, Never>
+    //func objectWillChangePublisher() -> AnyPublisher<Void, Never>
     
 }
 
+/*
 extension ShaderInputProtocol {
     // Provide a default implementation
     public func objectWillChangePublisher() -> AnyPublisher<Void, Never> {
@@ -44,3 +45,4 @@ extension ShaderInputProtocol {
             .eraseToAnyPublisher()
     }
 }
+*/
