@@ -105,14 +105,18 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     /// Subscribes to changes in `shaderInput` from `ShaderViewModel`.
     /// Updates the view's shader input when a change occurs
     private func subscribeToShaderInput() {
-        shaderViewModel.shaderInput.objectWillChangePublisher()
+        // Observe changes in ShaderViewModel
+        shaderViewModel.objectWillChange
             .sink { [weak self] _ in
+                // Since the change notification is now coming directly from ShaderViewModel,
+                // you can access the shaderInput from there.
                 if let shaderInput = self?.shaderViewModel.shaderInput {
                     self?.updateShaderInput(shaderInput)
                 }
             }
             .store(in: &cancellables)
     }
+
 
 
     /*
