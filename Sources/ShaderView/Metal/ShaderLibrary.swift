@@ -18,6 +18,7 @@ internal class ShaderLibrary {
     
     private let shaderCompiler: ShaderCompiler?
     
+    var metalEnabled = true
     
     private var shaderCache: [String: ShaderState] = [:]
     let shaderStateSubject = PassthroughSubject<(name: String, state: ShaderState), Never>() // Subject to publish shader state changes.
@@ -364,9 +365,10 @@ internal class ShaderLibrary {
         }
     }
     
-    //TODO: reconsider this name lol
+  
     private func performFallback(){
         shaderStateSubject.send((name: "error", state: .error))
+        metalEnabled = false
     }
     
     
