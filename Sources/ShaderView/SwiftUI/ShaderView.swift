@@ -6,8 +6,6 @@
 //  Created by Pirita Minkkinen on 8/22/23.
 //
 
-//alternative name metalview wrapper
-
 
 import SwiftUI
 import MetalKit
@@ -48,10 +46,9 @@ public struct ShaderView: View {
         let finalVertexShaderName = vertexShaderName ?? "defaultVertexShader"
                
        
-               
         
         // Initialize the shader view model with the shader names and input.
-        self.shaderViewModel = ShaderViewModel(vertexShaderName: finalVertexShaderName, fragmentShaderName: finalFragmentShaderName, shaderInput: shaderInput ?? ShaderInput())
+        self.shaderViewModel = ShaderViewModel(vertexShaderName: finalVertexShaderName, fragmentShaderName: finalFragmentShaderName, shaderInput: shaderInput ?? ShaderInput(time: 0.0))
 
         // TODO: This is fine until adding loading and add real-time compilation for user shaders.
         if(!usingDefaultShaders){

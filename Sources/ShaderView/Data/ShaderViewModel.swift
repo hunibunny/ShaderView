@@ -79,29 +79,9 @@ class ShaderViewModel: ObservableObject {
             }
         }
         
-        setupDebouncedSubscriber()
     }
     
-    private func setupDebouncedSubscriber() {
-            $shaderInput
-                // Debounce for a specific time interval, e.g., 0.5 seconds
-                .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
-                // Receive on the main thread
-                .receive(on: RunLoop.main)
-                // Subscribe to changes
-                .sink { [weak self] updatedShaderInput in
-                    // Handle the debounced value change
-                    self?.handleDebouncedChange(updatedShaderInput)
-                }
-                .store(in: &cancellables)
-        }
-
-        private func handleDebouncedChange(_ input: any ShaderInputProtocol) {
-            // Handle the change after debounce
-            // Implement your logic here
-            print("Debounced ShaderInputProtocol update")
-        }
-    
+   
     private func handleShaderStateUpdate(forKey key: String, state: ShaderState) {
         switch state {
         case .compiled(_):

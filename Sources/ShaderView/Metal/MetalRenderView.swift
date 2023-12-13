@@ -40,7 +40,10 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.shaderViewModel = shaderViewModel
         self.fragmentShaderName = shaderViewModel.fragmentShaderName
         self.vertexShaderName = shaderViewModel.vertexShaderName
-        self.shaderInput = shaderViewModel.shaderInput.copy()
+        
+        let typeOfShaderInput = type(of: shaderViewModel.shaderInput)
+        self.shaderInput = typeOfShaderInput.init(time: shaderViewModel.shaderInput.time)
+        
         super.init(frame: .zero, device: DeviceManager.shared.device)
         
         setupMetal()
@@ -119,55 +122,14 @@ class MetalRenderView: MTKView, MTKViewDelegate {
 
 
 
-    /*
-     private func subscribeToShaderInput() {
-             shaderInput.objectWillChangePublisher()
-                 .sink { [weak self] _ in
-                     guard let self = self else { return }
-                     if !self.isFirstUpdateIgnored {
-                         self.isFirstUpdateIgnored = true
-                         return
-                     }
-                     self.updateShaderInput(self.shaderViewModel.shaderInput)
-                 }
-                 .store(in: &cancellables)
-         }
-     
-     /*
-      alterantive for testing
-      private func setupShaderInputSubscription() {
-              shaderInput.objectWillChangePublisher()
-                  .sink { [weak self] _ in
-                      guard let self = self else { return }
-                      if !self.isFirstUpdateIgnored {
-                          self.isFirstUpdateIgnored = true
-                          return
-                      }
-                      self.updateShaderInput(self.shaderInput)
-                  }
-                  .store(in: &cancellables)
-          }
-      */
-     */
     
     
     /// Updates `shaderInput` in response to changes, preserving certain properties like time.
     /// - Parameters:
     ///   - newShaderInput: The updated shader input received from `ShaderViewModel`.
     private func updateShaderInput(_ newShaderInput: any ShaderInputProtocol) {
-        // Update shaderInput and any other relevant properties
-        let currentTime = shaderInput.time
-
-      
         self.shaderInput.updateProperties(from: newShaderInput)
-
-        var output = ""
-        dump(self.shaderInput, to: &output)
         ShaderViewLogger.debug("ShaderInput updated with new values")
-        ShaderViewLogger.debug(output)
-        
-        
-        // Trigger any necessary rendering update here
     }
     
     
@@ -197,7 +159,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         }
     }
     
-    /// Executes the rendering process for the current frame.
+    /// _ndering process for the current frame.
     private func render() {
         guard let drawable = currentDrawable,
               let commandBuffer = DeviceManager.shared.commandQueue?.makeCommandBuffer(),
@@ -228,7 +190,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
 
         
         //first buffer viewportbuffer second other stuff like variables
-        renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)  // Use the next available index
+        renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)  
         renderEncoder.setRenderPipelineState(renderPipelineState)
         
         
@@ -241,14 +203,6 @@ class MetalRenderView: MTKView, MTKViewDelegate {
                                        options: [])
 
         }
-        
-        /*
-        if buffer == nil {
-            ShaderViewLogger.error("Buffer creation failed class conforming to ShaderInputProtocol, creating placeholder buffer")
-            var defaultData = MetalShaderInput(time: 0.0)
-            buffer = device?.makeBuffer(bytes: &defaultData, length: MemoryLayout<MetalShaderInput>.size, options: [])
-        }
-        */
 
         renderEncoder.setFragmentBuffer(viewportBuffer, offset: 0, index: 0)
         renderEncoder.setFragmentBuffer(buffer, offset: 0, index: 1)

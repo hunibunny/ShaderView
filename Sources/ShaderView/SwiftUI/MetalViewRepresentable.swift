@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import MetalKit
 
-// Define a struct that conditionally returns the correct view for the platform.
+// conditionally returns the correct view for the platform.
 struct MetalViewRepresentable: View {
     var drawableSize: CGSize
     var shaderViewModel: ShaderViewModel

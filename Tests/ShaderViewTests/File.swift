@@ -12,7 +12,7 @@
     class MetalSwiftUIViewTests: XCTestCase {
 
        let shaderView = ShaderView()
-        let customShaderInput = ShaderInput()
+        let customShaderInput = ShaderInput(time: 0.0)
         //let representable = MetalNSViewRepresentable(drawableSize: CGSize(width: 100, height: 100), shaderViewModel: shaderViewModel())
         //let metalRender = MetalRenderView<Input: ShaderInput()>(coder: NSCoder())
         

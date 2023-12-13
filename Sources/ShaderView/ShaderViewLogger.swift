@@ -28,7 +28,6 @@ public enum ShaderViewLogLevel: Int {
 ///
 /// Usage:
 /// `ShaderViewLogger.setLogLevel(level: .debug)` to set the log level.
-/// `ShaderViewLogger.debug("Debug message")` to log a debug message.
 public class ShaderViewLogger {
     private static var currentLevel: ShaderViewLogLevel = .error // Default log level
     
@@ -37,19 +36,18 @@ public class ShaderViewLogger {
         return currentLevel.rawValue >= level.rawValue
     }
     
-    static func debug(_ message: String) {
+    internal static func debug(_ message: String) {
         if shouldLog(.debug) {
             os_log(.debug, "%{public}@", message)
         }}
     
     
-    static func error(_ message: String) {
+    internal static func error(_ message: String) {
         if shouldLog(.error){
             os_log(.error, "%{public}@", message)
-            //os_log(.error, log: OSLog(subsystem: category, category: "Error"), "%{public}@", message)
+            
         }
     }
-    
     
     
     /// Sets the current log level of the ShaderViewLogger.
