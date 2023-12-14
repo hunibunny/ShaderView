@@ -9,8 +9,6 @@ import Foundation
 import Combine
 
 /// Protocol `ShaderInputProtocol` defines requirements for classes that provide input data to Metal shaders.
-/// Classes conforming to this protocol are primarily responsible for supplying time-sensitive data to shaders, critical for animations and real-time visual effects.
-///
 /// Required Implementations:
 /// - `metalData()`: Converts the instance's properties into a `Data` object formatted for Metal shaders.
 /// - `updateProperties(from:)`: Updates the instance's properties, should be done without creating new class instance for best performance.
