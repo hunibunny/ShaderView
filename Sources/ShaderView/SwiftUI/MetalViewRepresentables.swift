@@ -43,9 +43,12 @@ struct MetalNSViewRepresentable: NSViewRepresentable {
     /// - Parameters:
     ///   - nsView: The `MetalRenderView` to update.
     func updateNSView(_ nsView: MetalRenderView, context: Context) {
-        nsView.frame.size = drawableSize
-        nsView.drawableSize = drawableSize
-        nsView.needsDisplay = true
+        if !drawableSize.width.isNaN, !drawableSize.height.isNaN, drawableSize.width > 0, drawableSize.height > 0 {
+                nsView.frame.size = drawableSize
+                nsView.drawableSize = drawableSize
+            nsView.needsDisplay = true
+            }
+        
     }
     
 }
@@ -82,9 +85,11 @@ struct MetalUIViewRepresentable: UIViewRepresentable {
     /// - Parameters:
     ///   - uiView: The `MetalRenderView` to update.
     func updateUIView(_ uiView: MetalRenderView, context: Context) {
-        uiView.frame.size = drawableSize
-        uiView.drawableSize = drawableSize
-        uiView.setNeedsDisplay()
+        if !drawableSize.width.isNaN, !drawableSize.height.isNaN, drawableSize.width > 0, drawableSize.height > 0 {
+                uiView.frame.size = drawableSize
+                uiView.drawableSize = drawableSize
+                uiView.setNeedsDisplay()
+            }
     }
     
 }
