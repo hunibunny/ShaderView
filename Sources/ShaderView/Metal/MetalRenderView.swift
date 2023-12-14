@@ -155,9 +155,9 @@ class MetalRenderView: MTKView, MTKViewDelegate {
             if drawableSize != oldValue {
                        print("drawableSize changed from \(oldValue) to \(drawableSize)")
 #if os(macOS)
-            needsDisplay = true
+            //needsDisplay = true
 #else
-            setNeedsDisplay()
+            //setNeedsDisplay()
 #endif
                    }
 
