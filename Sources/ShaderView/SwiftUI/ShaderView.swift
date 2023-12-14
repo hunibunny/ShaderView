@@ -16,6 +16,7 @@ import MetalKit
 public struct ShaderView: View {
     @ObservedObject var shaderViewModel: ShaderViewModel
     
+    @State private var metalViewSize: CGSize = .zero
     @State var shadersLoaded: Bool = false
     var usingDefaultShaders: Bool = true
     
@@ -60,20 +61,41 @@ public struct ShaderView: View {
     
     public var body: some View {
         GeometryReader { geometry in
-            switch shaderViewModel.viewState {
-            case .metalView:
-                MetalViewRepresentable(drawableSize: geometry.size, shaderViewModel: shaderViewModel)
-            case .placeholder:
-                placeholderView.frame(width: geometry.size.width, height: geometry.size.height)
-            case .error:
-                fallbackView.frame(width: geometry.size.width, height: geometry.size.height)
+            VStack(spacing: 0) {
+                contentView(for: shaderViewModel.viewState, size: geometry.size)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .edgesIgnoringSafeArea(.all)
+            .onAppear {
+                updateMetalViewSizeIfNeeded(newSize: geometry.size)
+            }
+            .onChange(of: geometry.size) { newSize in
+                updateMetalViewSizeIfNeeded(newSize: newSize)
             }
         }
         .onChange(of: shaderViewModel.viewState) { newState in
             shadersLoaded = newState == .metalView
         }
-        
     }
+    
+
+    private func contentView(for state: ViewState, size: CGSize) -> some View {
+        switch state {
+        case .metalView:
+            return AnyView(MetalViewRepresentable(drawableSize: size, shaderViewModel: shaderViewModel))
+        case .placeholder:
+            return AnyView(placeholderView)
+        case .error:
+            return AnyView(fallbackView)
+        }
+    }
+    
+    
+    private func updateMetalViewSizeIfNeeded(newSize: CGSize) {
+            if newSize.width > 0, newSize.height > 0, newSize != metalViewSize {
+                metalViewSize = newSize
+            }
+        }
 
 }
 
