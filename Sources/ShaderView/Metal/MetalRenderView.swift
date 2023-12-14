@@ -142,7 +142,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     
     /// Responds to changes in the view's drawable size.
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        var viewport = Viewport(size: vector_float2(Float(self.drawableSize.width), Float(self.drawableSize.height)))
+        var viewport = Viewport(size: vector_float2(Float(size.width), Float(size.height)))
         
         viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
     }
@@ -190,7 +190,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
 
         
         //first buffer viewportbuffer second other stuff like variables
-        renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)  
+        renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)
         renderEncoder.setRenderPipelineState(renderPipelineState)
         
         
