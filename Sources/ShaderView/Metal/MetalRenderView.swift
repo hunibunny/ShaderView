@@ -150,6 +150,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     /// Overrides `drawableSize` to trigger a redraw correctly on both macOS and iOS.
     override var drawableSize: CGSize {
         didSet {
+            print("drawableSize changed to: \(drawableSize)")
 #if os(macOS)
             needsDisplay = true
 #else
