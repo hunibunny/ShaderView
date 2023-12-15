@@ -3,6 +3,9 @@
 
 ShaderView is a SwiftUI package designed for integrating and displaying Metal shaders. It simplifies the process of using custom shaders written in `.metal`  in your SwiftUI applications.
 
+## Setup
+Add any .metal file to the project, can be empty. This will ensure that a metal library can be created and default shaders can be compiled.
+
 ### ShaderView() 
 `ShaderView()` allows you to display any shader defined in a `.metal` file. To use your custom shader, simply specify the name of the shader when initializing `ShaderView`
 #### Basic usage
@@ -159,5 +162,6 @@ public enum ShaderViewLogLevel: Int {
 }
 ```
 
-## Issues and problems
-- None yet :)
+## Known issues
+- Nothing yet :)
+
