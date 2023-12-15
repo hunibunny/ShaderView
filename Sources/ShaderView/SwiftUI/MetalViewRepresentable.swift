@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import MetalKit
 
+/*
 // conditionally returns the correct view for the platform.
 struct MetalViewRepresentable: View {
     var drawableSize: CGSize
@@ -24,3 +25,4 @@ struct MetalViewRepresentable: View {
         #endif
     }
 }
+*/

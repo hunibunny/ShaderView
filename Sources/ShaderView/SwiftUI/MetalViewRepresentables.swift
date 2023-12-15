@@ -27,7 +27,7 @@ struct MetalNSViewRepresentable: NSViewRepresentable {
     ///   - drawableSize: The size of the drawable area for Metal rendering.
     ///   - shaderViewModel: A `ShaderViewModel` instance containing shader names and input parameters.
     init(drawableSize: Binding<CGSize>, shaderViewModel: ShaderViewModel) {
-        self.drawableSize = drawableSize
+        self._drawableSize = drawableSize
         self.shaderViewModel = shaderViewModel
     }
     
@@ -71,7 +71,7 @@ struct MetalUIViewRepresentable: UIViewRepresentable {
     ///   - drawableSize: The size of the drawable area for Metal rendering.
     ///   - shaderViewModel: A `ShaderViewModel` instance containing shader names and input parameters.
     init(drawableSize: Binding<CGSize>, shaderViewModel: ShaderViewModel) {
-        self.drawableSize = drawableSize
+        self._drawableSize = drawableSize
         self.shaderViewModel = shaderViewModel
     }
     

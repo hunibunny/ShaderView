@@ -62,30 +62,29 @@ public struct ShaderView: View {
     
     public var body: some View {
         GeometryReader { geometry in
-            contentView(for: shaderViewModel.viewState, size: $finalSize)
-                .onChange(of: geometry.size) { newSize in
-                    print("GeometryReader size changed to: \(newSize)")
-                    finalSize = newSize
+            Group {
+                switch shaderViewModel.viewState {
+                case .metalView:
+                    #if os(macOS)
+                    MetalNSViewRepresentable(drawableSize: $finalSize, shaderViewModel: shaderViewModel)
+                    #else
+                    MetalUIViewRepresentable(drawableSize: $finalSize, shaderViewModel: shaderViewModel)
+                    #endif
+                case .placeholder:
+                    placeholderView
+                case .error:
+                    fallbackView
                 }
+            }
+            .onChange(of: geometry.size) { newSize in
+                print("GeometryReader size changed to: \(newSize)")
+                finalSize = newSize
+            }
         }
         .onChange(of: shaderViewModel.viewState) { newState in
             shadersLoaded = newState == .metalView
         }
     }
-    
-    
-    private func contentView(for state: ViewState, size: CGSize) -> some View {
-        switch state {
-        case .metalView:
-            return AnyView(MetalViewRepresentable(drawableSize: size, shaderViewModel: shaderViewModel))
-        case .placeholder:
-            return AnyView(placeholderView)
-        case .error:
-            return AnyView(fallbackView)
-        }
-    }
-    
-    
     
 }
 
