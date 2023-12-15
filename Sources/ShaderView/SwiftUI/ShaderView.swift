@@ -77,7 +77,6 @@ public struct ShaderView: View {
                 }
             }
             .onChange(of: geometry.size) { newSize in
-                print("GeometryReader size changed to: \(newSize)")
                 finalSize = newSize
             }
         }
