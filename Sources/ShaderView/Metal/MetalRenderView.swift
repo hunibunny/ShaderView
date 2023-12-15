@@ -162,7 +162,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         self.render()
     }
     
-    /// _ndering process for the current frame.
+    //TODO: optimze buffer updates
     private func render() {
         guard let drawable = currentDrawable,
               let commandBuffer = DeviceManager.shared.commandQueue?.makeCommandBuffer(),

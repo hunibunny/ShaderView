@@ -44,12 +44,7 @@ struct MetalNSViewRepresentable: NSViewRepresentable {
     /// - Parameters:
     ///   - nsView: The `MetalRenderView` to update.
     func updateNSView(_ nsView: MetalRenderView, context: Context) {
-        if !drawableSize.width.isNaN, !drawableSize.height.isNaN, drawableSize.width > 0, drawableSize.height > 0 {
-                nsView.frame.size = drawableSize
-                nsView.drawableSize = drawableSize
-           
-            }
-        
+        nsView.updateSize(size: drawableSize)
     }
     
 }
