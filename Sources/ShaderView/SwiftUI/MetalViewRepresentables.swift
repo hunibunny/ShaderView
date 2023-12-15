@@ -19,14 +19,14 @@ import SwiftUI
 struct MetalNSViewRepresentable: NSViewRepresentable {
     typealias NSViewType = MetalRenderView
     
-    let drawableSize: CGSize
+    @Binding var drawableSize: CGSize
     let shaderViewModel: ShaderViewModel
     
     /// Initializes a `MetalNSViewRepresentable` for macOS, setting up the necessary environment for Metal rendering.
     /// - Parameters:
     ///   - drawableSize: The size of the drawable area for Metal rendering.
     ///   - shaderViewModel: A `ShaderViewModel` instance containing shader names and input parameters.
-    init(drawableSize: CGSize, shaderViewModel: ShaderViewModel) {
+    init(drawableSize: Binding<CGSize>, shaderViewModel: ShaderViewModel) {
         self.drawableSize = drawableSize
         self.shaderViewModel = shaderViewModel
     }
@@ -70,7 +70,7 @@ struct MetalUIViewRepresentable: UIViewRepresentable {
     /// - Parameters:
     ///   - drawableSize: The size of the drawable area for Metal rendering.
     ///   - shaderViewModel: A `ShaderViewModel` instance containing shader names and input parameters.
-    init(drawableSize: CGSize, shaderViewModel: ShaderViewModel) {
+    init(drawableSize: Binding<CGSize>, shaderViewModel: ShaderViewModel) {
         self.drawableSize = drawableSize
         self.shaderViewModel = shaderViewModel
     }

@@ -62,7 +62,7 @@ public struct ShaderView: View {
     
     public var body: some View {
         GeometryReader { geometry in
-            contentView(for: shaderViewModel.viewState, size: geometry.size)
+            contentView(for: shaderViewModel.viewState, size: $finalSize)
                 .onChange(of: geometry.size) { newSize in
                     print("GeometryReader size changed to: \(newSize)")
                     finalSize = newSize
