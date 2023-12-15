@@ -16,7 +16,6 @@ import MetalKit
 public struct ShaderView: View {
     @ObservedObject var shaderViewModel: ShaderViewModel
  
-    @State private var finalSize: CGSize = .zero
     @State var shadersLoaded: Bool = false
     var usingDefaultShaders: Bool = true
     
@@ -62,10 +61,8 @@ public struct ShaderView: View {
     public var body: some View {
         GeometryReader { geometry in
             
-            contentView(for: shaderViewModel.viewState, size: finalSize)
-                .onChange(of: geometry.size) { newSize in
-                                   finalSize = newSize
-                               }        }
+                contentView(for: shaderViewModel.viewState, size: geometry.size)
+                       }
         .onChange(of: shaderViewModel.viewState) { newState in
             shadersLoaded = newState == .metalView
         }

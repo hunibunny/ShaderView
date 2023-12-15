@@ -133,24 +133,20 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     }
     
     
-    /// Renders content for each frame.
-    /// - Parameter view: The `MTKView` responsible for displaying the content.
-    func draw(in view: MTKView) {
-        self.render()
-    }
+
     
     
     /// Responds to changes in the view's drawable size.
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         if !size.width.isNaN, !size.height.isNaN, size.width > 0, size.height > 0 {
-                let currentTime = Date()
-                print("updated to new size: \(size) at \(currentTime)")
+               
                 var viewport = Viewport(size: vector_float2(Float(size.width), Float(size.height)))
-                print("Viewport size being set: \(viewport.size)")
+               
                 viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
             }
     }
     
+    /*
     /// Overrides `drawableSize` to trigger a redraw correctly on both macOS and iOS.
     override var drawableSize: CGSize {
         didSet {
@@ -166,6 +162,13 @@ class MetalRenderView: MTKView, MTKViewDelegate {
             
         }
     }
+     */
+    
+    /// Renders content for each frame.
+    /// - Parameter view: The `MTKView` responsible for displaying the content.
+    func draw(in view: MTKView) {
+        self.render()
+    }
     
     /// _ndering process for the current frame.
     private func render() {
@@ -175,12 +178,6 @@ class MetalRenderView: MTKView, MTKViewDelegate {
             ShaderViewLogger.error("Failed to get necessary Metal objects for rendering")
             return
         }
-        
-        if let viewportBuffer = viewportBuffer {
-                let bufferPointer = viewportBuffer.contents().assumingMemoryBound(to: Viewport.self)
-                let viewportSize = bufferPointer.pointee.size
-                print("Viewport size at render time: \(viewportSize)")
-            }
         
         //if(isTimeCountingActive){
         let currentTime = Date()
