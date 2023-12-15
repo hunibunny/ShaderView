@@ -1,4 +1,4 @@
-
+![Swift](https://img.shields.io/badge/swift-v5.8-orange.svg)
 # ShaderView
 
 ShaderView is a SwiftUI package designed for integrating and displaying Metal shaders. It simplifies the process of using custom shaders written in `.metal`  in your SwiftUI applications.
