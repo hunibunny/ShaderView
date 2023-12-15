@@ -145,7 +145,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         let currentTime = Date()
         print("updated to new size: \(size) at \(currentTime)")
         var viewport = Viewport(size: vector_float2(Float(size.width), Float(size.height)))
-        
+        print("Viewport size being set: \(viewport.size)")
         viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
     }
     
@@ -174,6 +174,12 @@ class MetalRenderView: MTKView, MTKViewDelegate {
             return
         }
         
+        if let viewportBuffer = viewportBuffer {
+                let bufferPointer = viewportBuffer.contents().assumingMemoryBound(to: Viewport.self)
+                let viewportSize = bufferPointer.pointee.size
+                print("Viewport size at render time: \(viewportSize)")
+            }
+        
         //if(isTimeCountingActive){
         let currentTime = Date()
         self.elapsedTime = Float(currentTime.timeIntervalSince(startTime))
@@ -194,7 +200,6 @@ class MetalRenderView: MTKView, MTKViewDelegate {
         }
         
 
-        
         //first buffer viewportbuffer second other stuff like variables
         renderEncoder.setVertexBuffer(viewportBuffer, offset: 0, index: 0)
         renderEncoder.setRenderPipelineState(renderPipelineState)

@@ -12,7 +12,7 @@ import Metal
 class ShaderCompiler {
     private let device: MTLDevice
     private let library: MTLLibrary  //this is the library used to access shaders from .metal files
-    private let queue = DispatchQueue(label: "com.yourapp.ShaderCompiler")
+    private let queue = DispatchQueue(label: "com.shaderViewPackage.ShaderCompiler")
     
     init?() {
         guard let sharedDevice = DeviceManager.shared.device else {
