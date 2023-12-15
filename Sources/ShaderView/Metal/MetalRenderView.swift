@@ -22,7 +22,9 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     private let vertexShaderName: String
     private let fragmentShaderName: String
     private var shaderInput: any ShaderInputProtocol
-    
+
+    private var viewportUpdateTimer: Timer?
+    private let viewportUpdateDelay: TimeInterval = 0.001
     
     var startTime: Date = Date()
     var elapsedTime: Float = 0.0
@@ -138,13 +140,16 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     
     /// Responds to changes in the view's drawable size.
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        if !size.width.isNaN, !size.height.isNaN, size.width > 0, size.height > 0 {
-               print("new size \(size)")
+            guard !size.width.isNaN, !size.height.isNaN, size.width > 0, size.height > 0 else { return }
+
+            viewportUpdateTimer?.invalidate() // Invalidate the existing timer
+
+            viewportUpdateTimer = Timer.scheduledTimer(withTimeInterval: viewportUpdateDelay, repeats: false) { [weak self] _ in
+                print("Viewport update after debounce: \(size)")
                 var viewport = Viewport(size: vector_float2(Float(size.width), Float(size.height)))
-               
-                viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
+                self?.viewportBuffer = self?.device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
             }
-    }
+        }
     
     /*
     /// Overrides `drawableSize` to trigger a redraw correctly on both macOS and iOS.
