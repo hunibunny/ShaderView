@@ -62,6 +62,9 @@ public struct ShaderView: View {
         GeometryReader { geometry in
             
                 contentView(for: shaderViewModel.viewState, size: geometry.size)
+                .onChange(of: geometry.size) { newSize in
+                                    print("GeometryReader size changed to: \(newSize)")
+                                }
                        }
         .onChange(of: shaderViewModel.viewState) { newState in
             shadersLoaded = newState == .metalView

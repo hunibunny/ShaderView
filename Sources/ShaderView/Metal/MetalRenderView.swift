@@ -139,7 +139,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     /// Responds to changes in the view's drawable size.
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         if !size.width.isNaN, !size.height.isNaN, size.width > 0, size.height > 0 {
-               
+               print("new size \(size)")
                 var viewport = Viewport(size: vector_float2(Float(size.width), Float(size.height)))
                
                 viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
