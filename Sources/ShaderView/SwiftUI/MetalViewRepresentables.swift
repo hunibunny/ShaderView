@@ -9,6 +9,7 @@
 import SwiftUI
 
 
+
 /// `MetalNSViewRepresentable` (macOS) or `MetalUIViewRepresentable` (iOS) are SwiftUI views that facilitate the rendering of Metal content.
 /// They act as a bridge between `ShaderView` and `MetalRenderView`, handling the necessary setup and updates for Metal rendering.
 ///
@@ -58,7 +59,11 @@ struct MetalNSViewRepresentable: NSViewRepresentable {
 struct MetalUIViewRepresentable: UIViewRepresentable {
     typealias UIViewType = MetalRenderView
     
-    let drawableSize: CGSize
+    @Binding var drawableSize: CGSize
+
+    private let debounceTimeInterval: TimeInterval = 0.1
+    private var sizeUpdateWorkItem: DispatchWorkItem?
+    //let drawableSize: CGSize
     let shaderViewModel: ShaderViewModel
     
     
@@ -85,11 +90,17 @@ struct MetalUIViewRepresentable: UIViewRepresentable {
     /// - Parameters:
     ///   - uiView: The `MetalRenderView` to update.
     func updateUIView(_ uiView: MetalRenderView, context: Context) {
-        if uiView.drawableSize != drawableSize {
-              uiView.frame.size = drawableSize
-              uiView.drawableSize = drawableSize
-             
-          }
+        sizeUpdateWorkItem?.cancel()
+
+               let workItem = DispatchWorkItem {
+                   // Update the view with the final size
+                   uiView.frame.size = self.drawableSize
+                   uiView.drawableSize = self.drawableSize
+                   uiView.setNeedsDisplay()
+               }
+
+               DispatchQueue.main.asyncAfter(deadline: .now() + debounceTimeInterval, execute: workItem)
+               sizeUpdateWorkItem = workItem
         
     }
     

@@ -142,11 +142,13 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     
     /// Responds to changes in the view's drawable size.
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        let currentTime = Date()
-        print("updated to new size: \(size) at \(currentTime)")
-        var viewport = Viewport(size: vector_float2(Float(size.width), Float(size.height)))
-        print("Viewport size being set: \(viewport.size)")
-        viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
+        if !size.width.isNaN, !size.height.isNaN, size.width > 0, size.height > 0 {
+                let currentTime = Date()
+                print("updated to new size: \(size) at \(currentTime)")
+                var viewport = Viewport(size: vector_float2(Float(size.width), Float(size.height)))
+                print("Viewport size being set: \(viewport.size)")
+                viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
+            }
     }
     
     /// Overrides `drawableSize` to trigger a redraw correctly on both macOS and iOS.

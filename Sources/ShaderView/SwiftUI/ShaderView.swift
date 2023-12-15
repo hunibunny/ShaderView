@@ -15,8 +15,8 @@ import MetalKit
 /// It provides a fallback and placeholder view for different states of shader loading.
 public struct ShaderView: View {
     @ObservedObject var shaderViewModel: ShaderViewModel
-    
-    @State private var metalViewSize: CGSize = .zero
+ 
+    @State private var finalSize: CGSize = .zero
     @State var shadersLoaded: Bool = false
     var usingDefaultShaders: Bool = true
     
@@ -61,18 +61,11 @@ public struct ShaderView: View {
     
     public var body: some View {
         GeometryReader { geometry in
-            VStack(spacing: 0) {
-                contentView(for: shaderViewModel.viewState, size: geometry.size)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .edgesIgnoringSafeArea(.all)
-            .onAppear {
-                updateMetalViewSizeIfNeeded(newSize: geometry.size)
-            }
-            .onChange(of: geometry.size) { newSize in
-                updateMetalViewSizeIfNeeded(newSize: newSize)
-            }
-        }
+            
+            contentView(for: shaderViewModel.viewState, size: finalSize)
+                .onChange(of: geometry.size) { newSize in
+                                   finalSize = newSize
+                               }        }
         .onChange(of: shaderViewModel.viewState) { newState in
             shadersLoaded = newState == .metalView
         }
@@ -91,11 +84,6 @@ public struct ShaderView: View {
     }
     
     
-    private func updateMetalViewSizeIfNeeded(newSize: CGSize) {
-            if newSize.width > 0, newSize.height > 0, newSize != metalViewSize {
-                metalViewSize = newSize
-            }
-        }
 
 }
 
