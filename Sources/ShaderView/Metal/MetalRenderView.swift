@@ -139,7 +139,9 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     
     
     /// Responds to changes in the view's drawable size.
+     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        /*
             guard !size.width.isNaN, !size.height.isNaN, size.width > 0, size.height > 0 else { return }
 
             viewportUpdateTimer?.invalidate() // Invalidate the existing timer
@@ -149,8 +151,20 @@ class MetalRenderView: MTKView, MTKViewDelegate {
                 var viewport = Viewport(size: vector_float2(Float(size.width), Float(size.height)))
                 self?.viewportBuffer = self?.device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
             }
+        */
         }
     
+    func updateSize(size: CGSize) {
+           if !size.width.isNaN, !size.height.isNaN, size.width > 0, size.height > 0 {
+               var viewport = Viewport(size: vector_float2(Float(size.width), Float(size.height)))
+               viewportBuffer = device?.makeBuffer(bytes: &viewport, length: MemoryLayout<Viewport>.size, options: [])
+#if os(macOS)
+            needsDisplay = true
+#else
+            setNeedsDisplay()
+#endif
+           }
+       }
     /*
     /// Overrides `drawableSize` to trigger a redraw correctly on both macOS and iOS.
     override var drawableSize: CGSize {
