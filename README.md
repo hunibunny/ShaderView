@@ -162,6 +162,3 @@ public enum ShaderViewLogLevel: Int {
 }
 ```
 
-## Known issues
-- Nothing yet :)
-

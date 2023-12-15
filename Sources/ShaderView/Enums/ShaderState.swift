@@ -14,7 +14,7 @@ enum ShaderState: Equatable {
         case (.compiling, .compiling), (.error, .error):
             return true
         case (.compiled(let lhsFunction), .compiled(let rhsFunction)):
-            //This should do since the name should be unique in my package :)
+            //This should do since the name should be unique anyways
             return lhsFunction.name == rhsFunction.name
         default:
             return false
