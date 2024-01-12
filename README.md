@@ -17,7 +17,7 @@ ShaderView()
 - `vertexShaderName`: Optional String. Name of the vertex shader. Defaults to a standard shader if not provided. 
 - `fallbackView`: Optional View. A view displayed in case of an error. Defaults to `FallbackView()` if not provided. 
 - `placeholderView`: Optional View. A view displayed while shaders are loading. Defaults to `PlaceholderView()` if not provided. 
-- `shaderInput`: Optional ShaderInputProtocol. The input for the shader. Defaults to a new instance of `ShaderInput()` if not provided. 
+- `shaderInput`: Optional ShaderInputable. The input for the shader. Defaults to a new instance of `ShaderInput()` if not provided. 
 ### Metal code integration
 When using only one of the default shaders (defaultFragmentShader or defaultVertexShader) it is crucial to match output of the vertex shader to input of the fragment shader. Here are some default layouts which will ensure that your shaders will work with the package especially when you choose to only use one of the default shaders. 
 #### Definitions of structs needed for package
@@ -57,16 +57,16 @@ vertex VertexOutput customVertexShader(uint vertexID [[vertex_id]],
 
 ## Customizing shader input:
 
-### ShaderInputProtocol
+### ShaderInputable
 Any shader input given to `ShaderView` has to conform to this protocol. It requires methods used by the package for converting data to metal friendly form, and managing its changes. 
 ```Swift
-public protocol ShaderInputProtocol: AnyObject, ObservableObject{
+public protocol ShaderInputable: AnyObject, ObservableObject{
     init(time: Float)
     
     var time: Float {get set}
     var onChange: (() -> Void)? { get set }
 
-    func updateProperties(from input: any ShaderInputProtocol)
+    func updateProperties(from input: any ShaderInputable)
     func metalData() -> Data
 }
 ```
@@ -74,11 +74,11 @@ public protocol ShaderInputProtocol: AnyObject, ObservableObject{
 - `init(time: Float)`: A constructor that initializes the shader input with a given time value.
 - `var time: Float`: A property representing the time, which is managed by the package to count time every frame.
 - `var onChange: (() -> Void)?`: An optional closure that can be called whenever the shader's properties change to change shader inputs during runtime.
-- `func updateProperties(from input: any ShaderInputProtocol)`: A method to update the properties of the shader input from another instance conforming to `ShaderInputProtocol`. Should be done to same class members without creating a new instance for best performance of the package.
+- `func updateProperties(from input: any ShaderInputable)`: A method to update the properties of the shader input from another instance conforming to `ShaderInputable`. Should be done to same class members without creating a new instance for best performance of the package.
 - `func metalData() -> Data`: A method to convert shader input properties into a Metal-compatible `Data` format. Which will be used by package to make correct size of buffer. 
 #### Example of using the protocol
 ```Swift
-class ShaderInputProtocolExample: ShaderInputProtocol {
+class ShaderInputableExample: ShaderInputable {
 
     var time: Float = 0.0
     var onChange: (() -> Void)?
@@ -95,8 +95,8 @@ class ShaderInputProtocolExample: ShaderInputProtocol {
         self.isActive = true
     }
 
-    func updateProperties(from input: any ShaderInputProtocol){
-        guard let input = input as? ShaderInputProtocolExample else {
+    func updateProperties(from input: any ShaderInputable){
+        guard let input = input as? ShaderInputableExample else {
             return
         }
         self.isActive = input.isActive;
@@ -125,7 +125,7 @@ class SubclassedShaderInput: ShaderInput {
         super.init(time: time)
     }
 
-    override func updateProperties(from input: any ShaderInputProtocol){
+    override func updateProperties(from input: any ShaderInputable){
         guard let input = input as? SubclassedShaderInput else {
             return
         }
@@ -143,7 +143,7 @@ class SubclassedShaderInput: ShaderInput {
 For metal to be able to read shader input data correctly, the buffer sizes and expectations need to match. It's recommended to define custom shader input struct that will also be defined in metal in the same way.
 - Note: Sometimes same type of variables have different sizes in swift and metal, and buffers don't match. Padding can be used to fix this problem of different size of buffers on passing data to shaders.
 ##### Example of custom shader input struct for metalData() 
-This example is compatible with SubclassedShaderInput and ShaderInputProtocolExample from above.
+This example is compatible with SubclassedShaderInput and ShaderInputableExample from above.
 ```Swift
 struct CustomMetalShaderInput {
     var time: Float

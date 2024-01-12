@@ -31,7 +31,7 @@ public struct ShaderView: View {
     ///   - fallbackView: A view to show in case of an error.
     ///   - placeholderView: A view to display while shaders are loading.
     ///   - shaderInput: The input for the shader. If nil, a default instance is created.
-    public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, fallbackView: AnyView? = nil, placeholderView: AnyView? = nil, shaderInput: (any ShaderInputProtocol)? = nil) {
+    public init(fragmentShaderName: String? = nil, vertexShaderName: String? = nil, fallbackView: AnyView? = nil, placeholderView: AnyView? = nil, shaderInput: (any ShaderInputable)? = nil) {
         self.fallbackView = fallbackView ?? AnyView(FallbackView())
         self.placeholderView = placeholderView ?? AnyView(PlaceholderView())
         

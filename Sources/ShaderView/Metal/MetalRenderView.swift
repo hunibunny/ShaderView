@@ -21,7 +21,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     
     private let vertexShaderName: String
     private let fragmentShaderName: String
-    private var shaderInput: any ShaderInputProtocol
+    private var shaderInput: any ShaderInputable
 
     private var viewportUpdateTimer: Timer?
     private let viewportUpdateDelay: TimeInterval = 0.001
@@ -129,7 +129,7 @@ class MetalRenderView: MTKView, MTKViewDelegate {
     /// Updates `shaderInput` in response to changes, preserving certain properties like time.
     /// - Parameters:
     ///   - newShaderInput: The updated shader input received from `ShaderViewModel`.
-    private func updateShaderInput(_ newShaderInput: any ShaderInputProtocol) {
+    private func updateShaderInput(_ newShaderInput: any ShaderInputable) {
         self.shaderInput.updateProperties(from: newShaderInput)
         ShaderViewLogger.debug("ShaderInput updated with new values")
     }

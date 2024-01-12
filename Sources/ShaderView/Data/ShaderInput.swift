@@ -10,14 +10,14 @@ import SwiftUI
 import Combine
 
 
-/// `ShaderInput` is a default class implementing `ShaderInputProtocol` for managing data passed to shaders.
+/// `ShaderInput` is a default class implementing `ShaderInputable` for managing data passed to shaders.
 /// Properties:
 /// - `time`: Tracks time for shaders.
 /// - `onChange`: An optional closure that can be set to react to changes in the shader input's properties. Currently not used.
 ///
 /// - Note: This class does not support thread-safe modifications. Synchronize access if used across multiple threads.
 
-open class ShaderInput: ShaderInputProtocol {
+open class ShaderInput: ShaderInputable {
     /// - Note: The `time` property is automatically managed by the package, incrementing each frame to facilitate time-based shader effects. Users do not need to manually track or update 'time' unless custom time behaviors are desired.
     public var time: Float = 0.0
     public var onChange: (() -> Void)?
@@ -28,9 +28,9 @@ open class ShaderInput: ShaderInputProtocol {
         self.time = time;
     }
     
-    /// Updates the properties of this instance based on another `ShaderInputProtocol` instance.
+    /// Updates the properties of this instance based on another `ShaderInputable` instance.
     /// For `ShaderInput`, this method currently has no implementation as time updates are not required.
-    open func updateProperties(from input: any ShaderInputProtocol) {
+    open func updateProperties(from input: any ShaderInputable) {
         //no need for time updates for this specific class
     }
     
